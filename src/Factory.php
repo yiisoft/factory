@@ -32,7 +32,7 @@ class Factory implements FactoryInterface
      * @throws InvalidConfigException
      * @throws NotInstantiableException
      */
-    public function __construct(ContainerInterface $container, array $definitions = [])
+    public function __construct(ContainerInterface $container = null, array $definitions = [])
     {
         $this->container = $container;
         $this->setMultiple($definitions);

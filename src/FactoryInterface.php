@@ -8,7 +8,7 @@
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use yii\di\exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Factory allows for creation of object using runtime parameters.

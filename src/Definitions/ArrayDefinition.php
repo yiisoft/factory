@@ -3,7 +3,8 @@
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use yii\di\exceptions\NotInstantiableException;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 /**
  * Builds object by array config.
@@ -23,7 +24,7 @@ class ArrayDefinition implements Definition
     public function __construct(string $class, array $params = [], array $config = [])
     {
         if (empty($class)) {
-            throw Exception('class name not given');
+            throw new InvalidConfigException('class name not given');
         }
         $this->class  = $class;
         $this->params = $params;

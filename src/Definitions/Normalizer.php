@@ -2,7 +2,7 @@
 
 namespace Yiisoft\Factory\Definitions;
 
-use yii\di\exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Class Definition represents a definition in a container

@@ -2,7 +2,7 @@
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use yii\di\exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Reference points to a class name in the container

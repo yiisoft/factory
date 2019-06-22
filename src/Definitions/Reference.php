@@ -3,7 +3,7 @@
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use yii\di\exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Class Reference allows us to define a dependency to a service in the container in another service definition.

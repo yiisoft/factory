@@ -2,7 +2,7 @@
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use yii\di\exceptions\NotFoundException;
+use Yiisoft\Factory\Exceptions\NotFoundException;
 
 /**
  * An invalid dependency is created when a parameter has no type and no default value.
