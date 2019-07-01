@@ -18,7 +18,7 @@
     },
     "require-dev": {
         "league/container": "^3.2",
-        "yiisoft/di": "dev-master",
+        "yiisoft/di": "^3.0@dev",
         "phpunit/phpunit": "^7.2"
     },
     "autoload": {
