@@ -50,23 +50,4 @@ class Reference implements Definition
 
         return $result;
     }
-
-    /**
-     * Restores class state after using `var_export()`.
-     *
-     * @param array $state
-     * @return self
-     * @throws InvalidConfigException when $state property does not contain `id` parameter
-     * @see var_export()
-     */
-    public static function __set_state($state)
-    {
-        if (!isset($state['id'])) {
-            throw new InvalidConfigException(
-                'Failed to instantiate class "Reference". Required parameter "id" is missing'
-            );
-        }
-
-        return new self($state['id']);
-    }
 }
