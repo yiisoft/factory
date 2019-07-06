@@ -1,5 +1,4 @@
 <?php
-
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
@@ -13,13 +12,13 @@ class ArrayBuilder
 {
     private static $dependencies = [];
 
-    public function build(ContainerInterface $container, ArrayDefinition $def)
+    public function build(ContainerInterface $container, ArrayDefinition $definition)
     {
-        $class = $def->getClass();
+        $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
 
-        if (!empty($def->getParams())) {
-            foreach (array_values($def->getParams()) as $index => $param) {
+        if (!empty($definition->getParams())) {
+            foreach (array_values($definition->getParams()) as $index => $param) {
                 if ($param instanceof DefinitionInterface) {
                     $dependencies[$index] = $param;
                 } else {
@@ -30,7 +29,7 @@ class ArrayBuilder
 
         $resolved = $this->resolveDependencies($container, $dependencies);
         $object = new $class(...$resolved);
-        return $this->configure($container, $object, $def->getConfig());
+        return $this->configure($container, $object, $definition->getConfig());
     }
 
     /**
@@ -84,7 +83,7 @@ class ArrayBuilder
 
     private static $resolver;
 
-    private function getResolver()
+    private function getResolver(): ClassNameResolver
     {
         if (static::$resolver === null) {
             // For now use hard coded resolver.

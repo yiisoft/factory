@@ -2,7 +2,6 @@
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\Normalizer;
 
 /**
  * Class DynamicReference allows us to define a dependency to a service not defined in the container.

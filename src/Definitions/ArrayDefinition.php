@@ -1,5 +1,4 @@
 <?php
-
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
@@ -7,8 +6,7 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 /**
- * Builds object by array config.
- * @package yii\di
+ * Builds object by array config
  */
 class ArrayDefinition implements DefinitionInterface
 {
@@ -16,11 +14,6 @@ class ArrayDefinition implements DefinitionInterface
     private $params;
     private $config;
 
-    /**
-     * @param string $class class name, must not be empty
-     * @param array $params
-     * @param array $config
-     */
     public function __construct(string $class, array $params = [], array $config = [])
     {
         if (empty($class)) {
@@ -58,19 +51,12 @@ class ArrayDefinition implements DefinitionInterface
     private const CLASS_KEY = '__class';
     private const PARAMS_KEY = '__construct()';
 
-    /**
-     * @param string $class class name
-     * @param array $params
-     * @param array $config
-     * @return self
-     */
     public static function fromArray(string $class = null, array $params = [], array $config = []): self
     {
         $class  = $config[self::CLASS_KEY] ?? $class;
         $params = $config[self::PARAMS_KEY] ?? $params;
 
-        unset($config[self::CLASS_KEY]);
-        unset($config[self::PARAMS_KEY]);
+        unset($config[self::CLASS_KEY], $config[self::PARAMS_KEY]);
 
         if (empty($class)) {
             throw new NotInstantiableException(var_export($config, true));
@@ -90,7 +76,7 @@ class ArrayDefinition implements DefinitionInterface
 
     private static $builder;
 
-    private function getBuilder()
+    private function getBuilder(): ArrayBuilder
     {
         if (static::$builder === null) {
             static::$builder = new ArrayBuilder();
