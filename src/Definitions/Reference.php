@@ -20,7 +20,7 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
  * ]
  * ```
  */
-class Reference implements Definition
+class Reference implements DefinitionInterface
 {
     private $id;
 

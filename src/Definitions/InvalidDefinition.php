@@ -13,7 +13,7 @@ use Yiisoft\Factory\Exceptions\NotFoundException;
  *
  * These dependency must be replaced, attempting to resolve them will throw an exception
  */
-class InvalidDefinition implements Definition
+class InvalidDefinition implements DefinitionInterface
 {
     public function resolve(ContainerInterface $container, array $params = [])
     {

@@ -46,9 +46,9 @@ class Normalizer
      * @param string $id
      * @throws InvalidConfigException
      */
-    public static function normalize($config, string $id = null): Definition
+    public static function normalize($config, string $id = null): DefinitionInterface
     {
-        if ($config instanceof Definition) {
+        if ($config instanceof DefinitionInterface) {
             return $config;
         }
 

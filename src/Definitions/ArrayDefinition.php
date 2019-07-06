@@ -10,7 +10,7 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  * Builds object by array config.
  * @package yii\di
  */
-class ArrayDefinition implements Definition
+class ArrayDefinition implements DefinitionInterface
 {
     private $class;
     private $params;

@@ -5,7 +5,7 @@ namespace Yiisoft\Factory\Tests\unit\Resolvers;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\ClassDefinition;
-use Yiisoft\Factory\Definitions\Definition;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Resolvers\ClassNameResolver;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -21,7 +21,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(\DateTime::class);
 
         $this->assertCount(2, $dependencies);
@@ -34,7 +34,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(Car::class);
 
         $this->assertCount(1, $dependencies);
@@ -47,7 +47,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(GearBox::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(5, $dependencies[0]->resolve($container));
@@ -57,7 +57,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies[0]->resolve($container));
@@ -66,7 +66,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies[0]->resolve($container));
@@ -76,7 +76,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies[0]->resolve($container));
@@ -85,7 +85,7 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var Definition[] $dependencies */
+        /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies[0]->resolve($container));

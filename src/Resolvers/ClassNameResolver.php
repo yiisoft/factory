@@ -2,7 +2,7 @@
 
 namespace Yiisoft\Factory\Resolvers;
 
-use Yiisoft\Factory\Definitions\Definition;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\InvalidDefinition;
 use Yiisoft\Factory\Definitions\ValueDefinition;
@@ -13,7 +13,7 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  * This implementation resolves dependencies by using class type hints.
  * Note that service names need not match the parameter names, parameter names are ignored
  */
-class ClassNameResolver implements DependencyResolver
+class ClassNameResolver implements DependencyResolverInterface
 {
     /**
      * @inheritdoc
@@ -37,7 +37,7 @@ class ClassNameResolver implements DependencyResolver
         return $result;
     }
 
-    private function resolveParameter(\ReflectionParameter $parameter): Definition
+    private function resolveParameter(\ReflectionParameter $parameter): DefinitionInterface
     {
         $type = $parameter->getType();
         $hasDefault = $parameter->isOptional() || $parameter->isDefaultValueAvailable() || (isset($type) && $type->allowsNull());

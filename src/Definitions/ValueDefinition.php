@@ -4,7 +4,7 @@ namespace Yiisoft\Factory\Definitions;
 use Psr\Container\ContainerInterface;
 use yii\di\Container;
 
-class ValueDefinition implements Definition
+class ValueDefinition implements DefinitionInterface
 {
     private $value;
 

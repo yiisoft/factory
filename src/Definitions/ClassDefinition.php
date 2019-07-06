@@ -7,7 +7,7 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
 /**
  * Reference points to a class name in the container
  */
-class ClassDefinition implements Definition
+class ClassDefinition implements DefinitionInterface
 {
     private $class;
 

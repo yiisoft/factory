@@ -8,7 +8,7 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
 /**
  * Interface DependencyResolverInterface
  */
-interface DependencyResolver
+interface DependencyResolverInterface
 {
     /**
      * @param string $class

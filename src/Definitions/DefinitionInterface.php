@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
  * Interface DefinitionInterface
  * @package yii\di\contracts
  */
-interface Definition
+interface DefinitionInterface
 {
     /**
      * @param ContainerInterface $container

@@ -20,7 +20,7 @@ class ArrayBuilder
 
         if (!empty($def->getParams())) {
             foreach (array_values($def->getParams()) as $index => $param) {
-                if ($param instanceof Definition) {
+                if ($param instanceof DefinitionInterface) {
                     $dependencies[$index] = $param;
                 } else {
                     $dependencies[$index] = new ValueDefinition($param);
@@ -36,14 +36,14 @@ class ArrayBuilder
     /**
      * Resolves dependencies by replacing them with the actual object instances.
      * @param ContainerInterface $container
-     * @param Definition[] $dependencies the dependencies
+     * @param DefinitionInterface[] $dependencies the dependencies
      * @return array the resolved dependencies
      */
     private function resolveDependencies(ContainerInterface $container, array $dependencies): array
     {
         $container = $container->container ?? $container;
         $result = [];
-        /** @var Definition $dependency */
+        /** @var DefinitionInterface $dependency */
         foreach ($dependencies as $dependency) {
             $result[] = $this->resolveDependency($container, $dependency);
         }
@@ -55,12 +55,12 @@ class ArrayBuilder
      * This function resolves a dependency recursively, checking for loops.
      * TODO add checking for loops
      * @param ContainerInterface $container
-     * @param Definition $dependency
+     * @param DefinitionInterface $dependency
      * @return mixed
      */
-    private function resolveDependency(ContainerInterface $container, Definition $dependency)
+    private function resolveDependency(ContainerInterface $container, DefinitionInterface $dependency)
     {
-        while ($dependency instanceof Definition) {
+        while ($dependency instanceof DefinitionInterface) {
             $dependency = $dependency->resolve($container);
         }
         return $dependency;
@@ -69,7 +69,7 @@ class ArrayBuilder
     /**
      * Returns the dependencies of the specified class.
      * @param string $class class name, interface name or alias name
-     * @return Definition[] the dependencies of the specified class.
+     * @return DefinitionInterface[] the dependencies of the specified class.
      * @throws NotInstantiableException
      * @internal
      */
@@ -109,7 +109,7 @@ class ArrayBuilder
                 \call_user_func_array([$object, substr($action, 0, -2)], $arguments);
             } else {
                 // property
-                if ($arguments instanceof Definition) {
+                if ($arguments instanceof DefinitionInterface) {
                     $arguments = $arguments->resolve($container);
                 }
                 $object->$action = $arguments;

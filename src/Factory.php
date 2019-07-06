@@ -8,7 +8,7 @@
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\Definition;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Definitions\ArrayDefinition;
 
@@ -20,7 +20,7 @@ class Factory implements FactoryInterface
     public $container;
 
     /**
-     * @var Definition[] object definitions indexed by their types
+     * @var DefinitionInterface[] object definitions indexed by their types
      */
     private $definitions = [];
 
@@ -54,7 +54,7 @@ class Factory implements FactoryInterface
         return $this->getDefinition($id)->resolve($this, $params);
     }
 
-    public function getDefinition($id): Definition
+    public function getDefinition($id): DefinitionInterface
     {
         if ($this->has($id)) {
             return $this->definitions[$id];
