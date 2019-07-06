@@ -8,8 +8,8 @@
 namespace yii\di\tests\unit;
 
 use PHPUnit\Framework\TestCase;
-use yii\di\Reference;
 use yii\di\tests\support\EngineInterface;
+use Yiisoft\Factory\Definitions\Reference;
 
 /**
  * ReferenceTest contains tests for \yii\di\Reference
