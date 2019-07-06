@@ -1,5 +1,4 @@
 <?php
-
 namespace Yiisoft\Factory\Tests\Support;
 
 /**

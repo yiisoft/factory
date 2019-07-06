@@ -1,5 +1,4 @@
 <?php
-
 namespace Yiisoft\Factory\Definitions;
 
 use Yiisoft\Factory\Exceptions\InvalidConfigException;

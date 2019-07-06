@@ -1,16 +1,12 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
-
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Definitions\ArrayDefinition;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 class Factory implements FactoryInterface
 {

@@ -1,14 +1,13 @@
 <?php
-
-namespace Yiisoft\Factory\Tests\unit;
+namespace Yiisoft\Factory\Tests\Unit;
 
 use Psr\Container\ContainerInterface;
-use yii\di\Container;
+use League\Container\Container;
 
 /**
- * Test the Factory over Yiisoft Container.
+ * Test the Factory over League Container.
  */
-class FactoryOverYiisoftTest extends AbstractFactoryTest
+class FactoryOverLeagueTest extends AbstractFactoryTest
 {
     public function createContainer(iterable $definitions = []): ContainerInterface
     {
@@ -18,7 +17,7 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
     public function setupContainer(ContainerInterface $container, iterable $definitions = []): ContainerInterface
     {
         foreach ($definitions as $id => $definition) {
-            $container->set($id, $definition);
+            $container->add($id, $definition);
         }
 
         return $container;

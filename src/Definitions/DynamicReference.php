@@ -1,8 +1,7 @@
 <?php
-namespace yii\di;
+namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use yii\di\contracts\Definition;
 use Yiisoft\Factory\Definitions\Normalizer;
 
 /**
@@ -24,7 +23,7 @@ use Yiisoft\Factory\Definitions\Normalizer;
  * ]
  * ```
  */
-class DynamicReference implements Definition
+class DynamicReference implements DefinitionInterface
 {
     private $definition;
 

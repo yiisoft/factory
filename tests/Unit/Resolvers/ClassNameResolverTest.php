@@ -1,6 +1,5 @@
 <?php
-
-namespace Yiisoft\Factory\Tests\unit\Resolvers;
+namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Factory;

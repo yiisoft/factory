@@ -1,6 +1,5 @@
 <?php
-
-namespace Yiisoft\Factory\Tests\unit;
+namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
