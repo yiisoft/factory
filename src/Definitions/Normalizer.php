@@ -52,7 +52,7 @@ class Normalizer
         }
 
         if (\is_string($config)) {
-            return Reference::to($config);
+            return $id === $config ? ArrayDefinition::fromArray($config) : Reference::to($config);
         }
 
         if (\is_array($config)

@@ -66,6 +66,17 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
+    public function testTrivialDefinition(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $factory->set(EngineMarkOne::class, EngineMarkOne::class);
+        $one = $factory->get(EngineMarkOne::class);
+        $two = $factory->get(EngineMarkOne::class);
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
     public function testGetByClass(): void
     {
         $factory = new Factory($this->createContainer());
