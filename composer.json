@@ -2,7 +2,9 @@
     "name": "yiisoft/factory",
     "type": "library",
     "description": "Yii Factory",
-    "keywords": ["factory"],
+    "keywords": [
+        "factory"
+    ],
     "homepage": "http://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
@@ -35,5 +37,8 @@
         "branch-alias": {
             "dev-master": "3.0.x-dev"
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }
