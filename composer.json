@@ -15,13 +15,13 @@
         "source": "https://github.com/yiisoft/factory"
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "psr/container": "1.0.0"
     },
     "require-dev": {
         "league/container": "^3.2",
         "yiisoft/di": "^3.0@dev",
-        "phpunit/phpunit": "^7.2"
+        "phpunit/phpunit": "^8.4"
     },
     "autoload": {
         "psr-4": {
