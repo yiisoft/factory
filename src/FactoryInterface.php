@@ -23,10 +23,10 @@ interface FactoryInterface extends ContainerInterface
      *
      * ```php
      * // create an object using a class name
-     * $object = $factory->createObject(\Yiisoft\Db\Connection::class);
+     * $object = $factory->create(\Yiisoft\Db\Connection::class);
      *
      * // create an object using a configuration array
-     * $object = $factory->createObject([
+     * $object = $factory->create([
      *     '__class' => \Yiisoft\Db\Connection::class,
      *     'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
      *     'username' => 'root',
@@ -35,7 +35,7 @@ interface FactoryInterface extends ContainerInterface
      * ]);
      *
      * // create an object with two constructor parameters
-     * $object = $factory->createObject('MyClass', [$param1, $param2]);
+     * $object = $factory->create('MyClass', [$param1, $param2]);
      * ```
      *
      * Using [[Container|dependency injection container]], this method can also identify
