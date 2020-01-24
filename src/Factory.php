@@ -2,10 +2,12 @@
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Di\CompositeContainer;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Definitions\ArrayDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\NotFoundException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 class Factory implements FactoryInterface
@@ -30,7 +32,10 @@ class Factory implements FactoryInterface
      */
     public function __construct(ContainerInterface $container = null, array $definitions = [])
     {
-        $this->container = $container;
+        $compositeContainer = new CompositeContainer();
+        $compositeContainer->attach($container);
+        $compositeContainer->attach($this);
+        $this->container = $compositeContainer;
         $this->setMultiple($definitions);
     }
 
@@ -39,7 +44,7 @@ class Factory implements FactoryInterface
      */
     public function create($config, array $params = [])
     {
-        return Normalizer::normalize($config)->resolve($this, $params);
+        return Normalizer::normalize($config)->resolve($this->container, $params);
     }
 
     /**
@@ -47,7 +52,7 @@ class Factory implements FactoryInterface
      */
     public function get($id, array $params = [])
     {
-        return $this->getDefinition($id)->resolve($this, $params);
+        return $this->getDefinition($id)->resolve($this->container, $params);
     }
 
     public function getDefinition($id): DefinitionInterface
