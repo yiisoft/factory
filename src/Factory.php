@@ -33,7 +33,9 @@ class Factory implements FactoryInterface
     public function __construct(ContainerInterface $container = null, array $definitions = [])
     {
         $compositeContainer = new CompositeContainer();
-        $compositeContainer->attach($container);
+        if ($container !== null) {
+            $compositeContainer->attach($container);
+        }
         $compositeContainer->attach($this);
         $this->container = $compositeContainer;
         $this->setMultiple($definitions);
