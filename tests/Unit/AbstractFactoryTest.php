@@ -1,11 +1,11 @@
 <?php
 namespace Yiisoft\Factory\Tests\Unit;
 
+use League\Container\Container;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use League\Container\Container;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
@@ -135,5 +135,12 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two->getEngine());
         $this->assertNotSame($one, $two);
         $this->assertSame($one->getEngine(), $two->getEngine());
+    }
+
+    public function testRedefineDependency()
+    {
+        $container = $this->createContainer([EngineInterface::class => new EngineMarkOne()]);
+        $factory = new Factory($container, [EngineInterface::class => new EngineMarkTwo()]);
+        self::assertInstanceOf(EngineMarkTwo::class, $factory->get(EngineInterface::class));
     }
 }

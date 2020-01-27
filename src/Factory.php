@@ -47,6 +47,10 @@ class Factory implements FactoryInterface
      */
     public function get($id, array $params = [])
     {
+        if ($this->container !== null && !$this->has($id) && $this->container->has($id)) {
+            return $this->container->get($id, $params);
+        }
+
         return $this->getDefinition($id)->resolve($this, $params);
     }
 
