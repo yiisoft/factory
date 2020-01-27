@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
@@ -9,7 +10,6 @@ use Yiisoft\Factory\Definitions\ArrayDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotFoundException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
-
 
 class Factory implements FactoryInterface
 {
