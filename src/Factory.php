@@ -50,21 +50,19 @@ class Factory implements FactoryInterface
      */
     public function get($id)
     {
-        if ($this->container !== null) {
-            try {
-                return $this->getDefinition($id)->resolve($this);
-            } catch (ContainerExceptionInterface $e) {
-                try {
-                    return $this->container->get($id);
-                } catch (ContainerExceptionInterface $e) {
-                    // ignore
-                }
-            }
-
-            throw new NotFoundException("No definition for $id");
+        if ($this->container === null) {
+            return $this->getDefinition($id)->resolve($this);
         }
 
-        return $this->getDefinition($id)->resolve($this);
+        try {
+            return $this->getDefinition($id)->resolve($this);
+        } catch (ContainerExceptionInterface $e) {
+            try {
+                return $this->container->get($id);
+            } catch (ContainerExceptionInterface $e) {
+                throw new NotFoundException("No definition for $id");
+            }
+        }
     }
 
     public function getDefinition($id): DefinitionInterface
