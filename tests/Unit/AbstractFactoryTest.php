@@ -136,4 +136,12 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertNotSame($one, $two);
         $this->assertSame($one->getEngine(), $two->getEngine());
     }
+
+    public function testGetDependencyRedefinedByConstructor()
+    {
+        $container = $this->createContainer([EngineInterface::class => new EngineMarkOne()]);
+        $factory = new Factory($container, [EngineInterface::class => new EngineMarkTwo()]);
+        $this->assertInstanceOf(EngineMarkTwo::class, $factory->get(EngineInterface::class));
+    }
+
 }
