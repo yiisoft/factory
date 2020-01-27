@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory\Tests\Support;
 
 use Yiisoft\Injector\Tests\Support\ColorInterface;
