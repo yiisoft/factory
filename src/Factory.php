@@ -2,11 +2,14 @@
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Definitions\ArrayDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\NotFoundException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
+
 
 class Factory implements FactoryInterface
 {
@@ -47,6 +50,23 @@ class Factory implements FactoryInterface
      */
     public function get($id, array $params = [])
     {
+        if ($this->container !== null) {
+            try {
+                return $this->getDefinition($id)->resolve($this, $params);
+            } catch (ContainerExceptionInterface $e) {
+                try {
+                    if ($params !== []) {
+                        return $this->container->get($id, $params);
+                    }
+                    return $this->container->get($id);
+                } catch (ContainerExceptionInterface $e) {
+                    // ignore
+                }
+            }
+
+            throw new NotFoundException("No definition for $id");
+        }
+
         return $this->getDefinition($id)->resolve($this, $params);
     }
 
