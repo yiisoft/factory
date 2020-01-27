@@ -48,20 +48,13 @@ class Factory implements FactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function get($id, array $params = [])
+    public function get($id)
     {
         if ($this->container !== null) {
             try {
-                return $this->getDefinition($id)->resolve($this, $params);
+                return $this->getDefinition($id)->resolve($this);
             } catch (ContainerExceptionInterface $e) {
                 try {
-                    if ($params !== []) {
-                        $this->container->set($id, [
-                            'class' => $id,
-                            '__construct()' => $params
-                        ]);
-                        return $this->container->get($id);
-                    }
                     return $this->container->get($id);
                 } catch (ContainerExceptionInterface $e) {
                     // ignore
@@ -71,7 +64,7 @@ class Factory implements FactoryInterface
             throw new NotFoundException("No definition for $id");
         }
 
-        return $this->getDefinition($id)->resolve($this, $params);
+        return $this->getDefinition($id)->resolve($this);
     }
 
     public function getDefinition($id): DefinitionInterface
