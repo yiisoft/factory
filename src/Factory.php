@@ -56,7 +56,11 @@ class Factory implements FactoryInterface
             } catch (ContainerExceptionInterface $e) {
                 try {
                     if ($params !== []) {
-                        return $this->container->get($id, $params);
+                        $this->container->set($id, [
+                            'class' => $id,
+                            '__construct()' => $params
+                        ]);
+                        return $this->container->get($id);
                     }
                     return $this->container->get($id);
                 } catch (ContainerExceptionInterface $e) {

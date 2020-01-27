@@ -43,7 +43,11 @@ class Reference implements DefinitionInterface
             $result = $container->get($this->id);
         } else {
             /** @noinspection PhpMethodParametersCountMismatchInspection passing parameters for containers supporting them */
-            $result = $container->get($this->id, $params);
+            $container->set($this->id, [
+                'class' => $this->id,
+                '__construct()' => $params
+            ]);
+            $result = $container->get($this->id);
         }
 
         return $result;

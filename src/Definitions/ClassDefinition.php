@@ -31,7 +31,11 @@ class ClassDefinition implements DefinitionInterface
                 $result = $container->get($this->class);
             } else {
                 /** @noinspection PhpMethodParametersCountMismatchInspection passing parameters for containers supporting them */
-                $result = $container->get($this->class, $params);
+                $container->set($this->class, [
+                    'class' => $this->class,
+                    '__construct()' => $params
+                ]);
+                $result = $container->get($this->class);
             }
         } catch (\Throwable $t) {
             if ($this->optional) {
