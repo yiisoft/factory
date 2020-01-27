@@ -7,7 +7,6 @@ use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Definitions\ArrayDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotFoundException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 class Factory implements FactoryInterface
