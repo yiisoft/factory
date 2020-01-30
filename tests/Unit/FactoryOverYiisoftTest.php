@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory\Tests\Unit;
 
 use Psr\Container\ContainerInterface;

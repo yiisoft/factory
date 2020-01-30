@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory\Tests\Unit\Definitions;
 
 use PHPUnit\Framework\TestCase;
