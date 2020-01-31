@@ -50,7 +50,7 @@ abstract class AbstractFactoryTest extends TestCase
     /**
      * If class name is used as ID, factory should try creating such class.
      */
-    public function testShouldCreateAClassIfNotDefinedInConfig(): void
+    public function testCreateAClassIfNotDefinedInConfig(): void
     {
         $factory = new Factory($this->createContainer());
         $one = $factory->create(EngineMarkOne::class);
@@ -63,7 +63,7 @@ abstract class AbstractFactoryTest extends TestCase
     /**
      * Configuration specified in {@see Factory::create()} should be merged with configuration stored in a factory.
      */
-    public function testShouldMergeFactoryConfig(): void
+    public function testMergeFactoryConfig(): void
     {
         $factory = new Factory($this->createContainer(), [
             EngineMarkOne::class => [
@@ -82,7 +82,7 @@ abstract class AbstractFactoryTest extends TestCase
     /**
      * Configuration specified in {@see Factory::create()} has more priority than configuration stored in a factory.
      */
-    public function testShouldOverrideFactoryConfig(): void
+    public function testOverrideFactoryConfig(): void
     {
         $factory = new Factory($this->createContainer(), [
             EngineMarkOne::class => [
@@ -99,7 +99,7 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertEquals(43, $instance->getNumber());
     }
 
-    public function testCanGetByAlias(): void
+    public function testGetByAlias(): void
     {
         $factory = new Factory($this->createContainer(), [
             'engine' => EngineMarkOne::class,
@@ -122,7 +122,7 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
-    public function testCanCreateFactory(): void
+    public function testCreateFactory(): void
     {
         $container = $this->createContainer();
         $this->setupContainer($container, [
@@ -163,7 +163,7 @@ abstract class AbstractFactoryTest extends TestCase
     /**
      * In case class to be created has dependencies, these are looked for in DI container.
      */
-    public function testResolvesDependenciesUsingContainer(): void
+    public function testResolveDependenciesUsingContainer(): void
     {
         $container = $this->createContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -182,7 +182,7 @@ abstract class AbstractFactoryTest extends TestCase
      * Falling back to container is not desired because it would likely result to implicitly returning the
      * same instance of the object when calling {@see Factory::create()} multiple times with the same ID.
      */
-    public function testDoesNotFallbackToContainer(): void
+    public function testDoNotFallbackToContainer(): void
     {
         $container = $this->createContainer([
             EngineMarkOne::class => [
