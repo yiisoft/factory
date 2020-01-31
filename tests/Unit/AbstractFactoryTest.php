@@ -34,16 +34,17 @@ abstract class AbstractFactoryTest extends TestCase
     }
 
     /**
-     * TODO: this is weird. Do we need such behavior?
+     * Factory should always return new instance even if an object is set to it.
+     * In this case it is being cloned.
      */
-    public function testSingleton(): void
+    public function testObjectIsCloned(): void
     {
         $factory = new Factory($this->createContainer(), [
             'engine' => new EngineMarkOne(),
         ]);
         $one = $factory->create('engine');
         $two = $factory->create('engine');
-        $this->assertSame($one, $two);
+        $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
