@@ -94,5 +94,4 @@ class ArrayDefinition implements DefinitionInterface
             array_merge($this->config, $other->config)
         );
     }
-
 }
