@@ -180,17 +180,6 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertSame($one->getEngine(), $two->getEngine());
     }
 
-
-    public function testGetDependencyRedefinedByConstructor()
-    {
-        $container = $this->createContainer([EngineInterface::class => new EngineMarkOne()]);
-        $factory = new Factory($container, [EngineInterface::class => new EngineMarkTwo()]);
-        $this->assertInstanceOf(EngineMarkTwo::class, $factory->get(EngineInterface::class));
-        $car = $factory->create(Car::class);
-        $this->assertInstanceOf(Car::class, $car);
-        $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
-    }
-
     /**
      * When resolving dependencies, factory should rely on container only
      */
@@ -210,7 +199,7 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(Car::class, $instance);
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
 
-        $this->assertEquals($instance->getEngine()->getNumber(), 0);
+        $this->assertEquals(0, $instance->getEngine()->getNumber());
     }
     /**
      * Falling back to container is not desired because it would likely result to implicitly returning the
@@ -230,27 +219,5 @@ abstract class AbstractFactoryTest extends TestCase
         $instance = $factory->create(EngineMarkOne::class);
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertNotEquals(42, $instance->getNumber());
-    }
-
-    /**
-     * When resolving dependencies, factory should rely on container only
-     */
-    public function testDoNotResolveDependenciesFromFactory(): void
-    {
-        $container = $this->createContainer([
-            EngineInterface::class => new EngineMarkOne(),
-        ]);
-        $factory = new Factory($container, [
-            EngineInterface::class => [
-                '__class' => EngineMarkOne::class,
-                'setNumber()' => [42],
-            ],
-        ]);
-
-        $instance = $factory->create(Car::class);
-        $this->assertInstanceOf(Car::class, $instance);
-        $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
-
-        $this->assertEquals($instance->getEngine()->getNumber(), 0);
     }
 }
