@@ -1,7 +1,9 @@
 <?php
+
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\FactoryInterface;
 
 class ValueDefinition implements DefinitionInterface
 {
@@ -14,6 +16,10 @@ class ValueDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container, array $params = [])
     {
+        if ($container instanceof FactoryInterface && is_object($this->value)) {
+            return clone $this->value;
+        }
+
         return $this->value;
     }
 

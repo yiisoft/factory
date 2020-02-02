@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
@@ -83,5 +84,14 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         return static::$builder;
+    }
+
+    public function merge(self $other): self
+    {
+        return new static(
+            $other->class,
+            array_merge($this->params, $other->params),
+            array_merge($this->config, $other->config)
+        );
     }
 }
