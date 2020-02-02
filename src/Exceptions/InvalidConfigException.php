@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory\Exceptions;
 
 use Psr\Container\ContainerExceptionInterface;

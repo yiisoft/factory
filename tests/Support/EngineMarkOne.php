@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Factory\Tests\Support;
 
 /**
@@ -8,7 +9,7 @@ class EngineMarkOne implements EngineInterface
 {
     public const NAME = 'Mark One';
 
-    private $number;
+    private int $number = 0;
 
 
     /**

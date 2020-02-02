@@ -1,4 +1,5 @@
 <?php
+
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
