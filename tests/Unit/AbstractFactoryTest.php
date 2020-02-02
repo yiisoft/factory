@@ -199,4 +199,26 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertNotEquals(42, $instance->getNumber());
     }
+
+    /**
+     * When resolving dependencies, factory should rely on container only
+     */
+    public function testDoNotResolveDependenciesFromFactory(): void
+    {
+        $container = $this->createContainer([
+            EngineInterface::class => new EngineMarkOne(),
+        ]);
+        $factory = new Factory($container, [
+            EngineInterface::class => [
+                '__class' => EngineMarkOne::class,
+                'setNumber()' => [42],
+            ],
+        ]);
+
+        $instance = $factory->create(Car::class);
+        $this->assertInstanceOf(Car::class, $instance);
+        $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
+
+        $this->assertEquals($instance->getEngine()->getNumber(), 0);
+    }
 }
