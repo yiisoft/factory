@@ -184,14 +184,12 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testDoNotFallbackToContainer(): void
     {
-        $container = $this->createContainer(
-            [
-                EngineMarkOne::class => [
-                    '__class' => EngineMarkOne::class,
-                    'setNumber()' => [42],
-                ],
-            ]
-        );
+        $container = $this->createContainer([
+            EngineMarkOne::class => [
+                '__class' => EngineMarkOne::class,
+                'setNumber()' => [42],
+            ],
+        ]);
 
         $factory = new Factory($container);
 
