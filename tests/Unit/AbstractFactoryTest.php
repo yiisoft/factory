@@ -219,6 +219,6 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(Car::class, $instance);
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
 
-        $this->assertEquals($instance->getEngine()->getNumber(), 0);
+        $this->assertEquals(0, $instance->getEngine()->getNumber());
     }
 }
