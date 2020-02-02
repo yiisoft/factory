@@ -200,7 +200,7 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertNotEquals(42, $instance->getNumber());
     }
 
-    public function testGetDependencyRedefinedByConstructor()
+    public function testGetDependencyRedefinedByConstructor(): void
     {
         $container = $this->createContainer([EngineInterface::class => new EngineMarkOne()]);
         $factory = new Factory($container, [EngineInterface::class => new EngineMarkTwo()]);
