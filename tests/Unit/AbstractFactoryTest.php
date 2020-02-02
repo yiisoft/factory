@@ -181,6 +181,26 @@ abstract class AbstractFactoryTest extends TestCase
     }
 
     /**
+     * Falling back to container is not desired because it would likely result to implicitly returning the
+     * same instance of the object when calling {@see Factory::create()} multiple times with the same ID.
+     */
+    public function testDoNotFallbackToContainer(): void
+    {
+        $container = $this->createContainer([
+            EngineMarkOne::class => [
+                '__class' => EngineMarkOne::class,
+                'setNumber()' => [42],
+            ],
+        ]);
+
+        $factory = new Factory($container);
+
+        $instance = $factory->create(EngineMarkOne::class);
+        $this->assertInstanceOf(EngineMarkOne::class, $instance);
+        $this->assertNotEquals(42, $instance->getNumber());
+    }
+
+    /**
      * When resolving dependencies, factory should rely on container only
      */
     public function testDoNotResolveDependenciesFromFactory(): void
@@ -200,24 +220,5 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
 
         $this->assertEquals(0, $instance->getEngine()->getNumber());
-    }
-    /**
-     * Falling back to container is not desired because it would likely result to implicitly returning the
-     * same instance of the object when calling {@see Factory::create()} multiple times with the same ID.
-     */
-    public function testDoNotFallbackToContainer(): void
-    {
-        $container = $this->createContainer([
-            EngineMarkOne::class => [
-                '__class' => EngineMarkOne::class,
-                'setNumber()' => [42],
-            ],
-        ]);
-
-        $factory = new Factory($container);
-
-        $instance = $factory->create(EngineMarkOne::class);
-        $this->assertInstanceOf(EngineMarkOne::class, $instance);
-        $this->assertNotEquals(42, $instance->getNumber());
     }
 }
