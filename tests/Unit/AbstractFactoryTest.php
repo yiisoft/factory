@@ -4,8 +4,6 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use League\Container\Container;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
@@ -178,6 +176,28 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two->getEngine());
         $this->assertNotSame($one, $two);
         $this->assertSame($one->getEngine(), $two->getEngine());
+    }
+
+    /**
+     * Falling back to container is not desired because it would likely result to implicitly returning the
+     * same instance of the object when calling {@see Factory::create()} multiple times with the same ID.
+     */
+    public function testDoNotFallbackToContainer(): void
+    {
+        $container = $this->createContainer(
+            [
+                EngineMarkOne::class => [
+                    '__class' => EngineMarkOne::class,
+                    'setNumber()' => [42],
+                ],
+            ]
+        );
+
+        $factory = new Factory($container);
+
+        $instance = $factory->create(EngineMarkOne::class);
+        $this->assertInstanceOf(EngineMarkOne::class, $instance);
+        $this->assertNotEquals(42, $instance->getNumber());
     }
 
     public function testGetDependencyRedefinedByConstructor()
