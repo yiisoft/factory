@@ -4,7 +4,6 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Di\Container;
 use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -152,7 +151,7 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testCreateWithParams(): void
     {
-        $factory = new Factory(new Container());
+        $factory = new Factory($this->createContainer());
         $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
