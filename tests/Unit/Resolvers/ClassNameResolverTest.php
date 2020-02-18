@@ -3,13 +3,20 @@
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
+use Yiisoft\Factory\Definitions\InvalidDefinition;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Resolvers\ClassNameResolver;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\ArrayArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\BooleanArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\CallableArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\IntArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\ObjectArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\StringArgument;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
@@ -17,17 +24,40 @@ use Yiisoft\Factory\Tests\Support\OptionalInterfaceDependency;
 
 class ClassNameResolverTest extends TestCase
 {
-    public function testResolveConstructor(): void
+    /**
+     * @dataProvider constructorsProvider()
+     * @param string $class
+     * @param array $arguments
+     * @throws \Yiisoft\Factory\Exceptions\NotInstantiableException
+     */
+    public function testResolveConstructors(string $class, array $arguments): void
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(\DateTime::class);
+        $dependencies = $resolver->resolveConstructor($class);
 
-        $this->assertCount(2, $dependencies);
-        // Since reflection for built in classes does not get default values.
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
-        $this->assertEquals(null, $dependencies[1]->resolve($container));
+        $this->assertCount(count($arguments), $dependencies);
+        foreach ($arguments as $index => $value) {
+            $this->assertSame($value, $dependencies[$index]->resolve($container));
+        }
+    }
+
+    /**
+     * @dataProvider callablesProvider()
+     * @param callable $callback
+     * @param array $arguments
+     */
+    public function testResolveCallables(callable $callback, array $arguments): void
+    {
+        $resolver = new ClassNameResolver();
+        $container = new Factory();
+
+        $dependencies = $resolver->resolveCallable($callback);
+
+        $this->assertCount(count($arguments), $dependencies);
+        foreach ($arguments as $index => $value) {
+            $this->assertSame($value, $dependencies[$index]->resolve($container));
+        }
     }
 
     public function testResolveCarConstructor(): void
@@ -43,51 +73,68 @@ class ClassNameResolverTest extends TestCase
         $dependencies[0]->resolve($container);
     }
 
-    public function testResolveGearBoxConstructor(): void
+    /**
+     * @dataProvider hasNoDefaultValueProvider()
+     * @param string $class
+     * @throws \Yiisoft\Factory\Exceptions\NotInstantiableException
+     */
+    public function testFailResolveArgument(string $class): void
     {
         $resolver = new ClassNameResolver();
-        $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(GearBox::class);
+        $dependencies = $resolver->resolveConstructor($class);
+
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(5, $dependencies[0]->resolve($container));
+        $this->assertInstanceOf(InvalidDefinition::class, $dependencies[0]);
     }
 
-    public function testOptionalInterfaceDependency(): void
+    public function constructorsProvider(): array
     {
-        $resolver = new ClassNameResolver();
-        $container = new Factory();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(OptionalInterfaceDependency::class);
-        $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
-    }
-    public function testNullableInterfaceDependency(): void
-    {
-        $resolver = new ClassNameResolver();
-        $container = new Factory();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(NullableInterfaceDependency::class);
-        $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        return [
+            [\DateTime::class, [null, null]],
+            [NullableConcreteDependency::class, [null]],
+            [OptionalConcreteDependency::class, [null]],
+            [NullableInterfaceDependency::class, [null]],
+            [OptionalInterfaceDependency::class, [null]],
+            [GearBox::class, [5]],
+        ];
     }
 
-    public function testOptionalConcreteDependency(): void
+    public function callablesProvider(): array
     {
-        $resolver = new ClassNameResolver();
-        $container = new Factory();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(OptionalConcreteDependency::class);
-        $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        return [
+            [
+                function (string $string = '') {
+                },
+                [''],
+            ],
+            [
+                function (?string $nullableWithDefaultValue = '') {
+                },
+                [''],
+            ],
+            [
+                function (?string $nullable) {
+                },
+                [null],
+            ],
+            [
+                function (?int $nullable, int $b = 0) {
+                },
+                [null, 0],
+            ],
+        ];
     }
-    public function testNullableConcreteDependency(): void
+
+    public function hasNoDefaultValueProvider(): array
     {
-        $resolver = new ClassNameResolver();
-        $container = new Factory();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(NullableConcreteDependency::class);
-        $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        return [
+            'array' => [ArrayArgument::class],
+            'callable' => [CallableArgument::class],
+            'int' => [IntArgument::class],
+            'object' => [ObjectArgument::class],
+            'string' => [StringArgument::class],
+            'bool' => [BooleanArgument::class],
+        ];
     }
 }
