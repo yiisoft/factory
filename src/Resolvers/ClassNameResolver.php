@@ -41,7 +41,7 @@ class ClassNameResolver implements DependencyResolverInterface
     {
         $type = $parameter->getType();
 
-        if (($type !== null && $type->allowsNull()) || $function->isInternal()){
+        if (($type !== null && $type->allowsNull()) || $function->isInternal()) {
             return new ValueDefinition(
                 $parameter->isDefaultValueAvailable()
                     ? $parameter->getDefaultValue()
