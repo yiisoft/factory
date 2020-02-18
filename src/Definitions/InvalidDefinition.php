@@ -18,6 +18,6 @@ class InvalidDefinition implements DefinitionInterface
 {
     public function resolve(ContainerInterface $container, array $params = [])
     {
-        throw new NotFoundException('Invalid reference');
+        throw new NotFoundException(null, 'Invalid reference');
     }
 }
