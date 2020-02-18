@@ -2,8 +2,8 @@
 
 namespace Yiisoft\Factory\Resolvers;
 
-use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\ClassDefinition;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\InvalidDefinition;
 use Yiisoft\Factory\Definitions\ValueDefinition;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
@@ -40,19 +40,16 @@ class ClassNameResolver implements DependencyResolverInterface
     private function resolveParameter(\ReflectionParameter $parameter): DefinitionInterface
     {
         $type = $parameter->getType();
-        $hasDefault = $parameter->isOptional() || $parameter->isDefaultValueAvailable() || (isset($type) && $type->allowsNull());
 
-        if (!$hasDefault && $type === null) {
-            return new InvalidDefinition();
+        if ($parameter->isOptional()) {
+            return new ValueDefinition($parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null);
         }
 
-        // Our parameter has a class type hint
         if ($type !== null && !$type->isBuiltin()) {
             return new ClassDefinition($type->getName(), $type->allowsNull());
         }
 
-        // Our parameter does not have a class type hint and either has a default value or is nullable.
-        return new ValueDefinition($parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null);
+        return new InvalidDefinition();
     }
 
     /**
