@@ -32,17 +32,25 @@ class ClassNameResolver implements DependencyResolverInterface
     {
         $result = [];
         foreach ($reflectionFunction->getParameters() as $parameter) {
-            $result[] = $this->resolveParameter($parameter);
+            $result[] = $this->resolveParameter($parameter, $reflectionFunction);
         }
         return $result;
     }
 
-    private function resolveParameter(\ReflectionParameter $parameter): DefinitionInterface
+    private function resolveParameter(\ReflectionParameter $parameter, \ReflectionFunctionAbstract $function): DefinitionInterface
     {
         $type = $parameter->getType();
 
+        if (($type !== null && $type->allowsNull()) || $function->isInternal()){
+            return new ValueDefinition(
+                $parameter->isDefaultValueAvailable()
+                    ? $parameter->getDefaultValue()
+                    : null
+            );
+        }
+
         if ($parameter->isOptional()) {
-            return new ValueDefinition($parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null);
+            return new ValueDefinition($parameter->getDefaultValue());
         }
 
         if ($type !== null && !$type->isBuiltin()) {
