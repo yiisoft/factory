@@ -3,13 +3,20 @@
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
+use Yiisoft\Factory\Definitions\InvalidDefinition;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Resolvers\ClassNameResolver;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\ArrayArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\BooleanArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\CallableArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\IntArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\ObjectArgument;
+use Yiisoft\Factory\Tests\Support\HasNoDefaultValue\StringArgument;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
@@ -89,5 +96,32 @@ class ClassNameResolverTest extends TestCase
         $dependencies = $resolver->resolveConstructor(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies[0]->resolve($container));
+    }
+
+    /**
+     * @dataProvider hasNoDefaultValueProvider()
+     * @param string $class
+     * @throws \Yiisoft\Factory\Exceptions\NotInstantiableException
+     */
+    public function testFailResolveArgument(string $class): void
+    {
+        $resolver = new ClassNameResolver();
+        /** @var DefinitionInterface[] $dependencies */
+        $dependencies = $resolver->resolveConstructor($class);
+
+        $this->assertCount(1, $dependencies);
+        $this->assertInstanceOf(InvalidDefinition::class, $dependencies[0]);
+    }
+
+    public function hasNoDefaultValueProvider(): array
+    {
+        return [
+            'array' => [ArrayArgument::class],
+            'callable' => [CallableArgument::class],
+            'int' => [IntArgument::class],
+            'object' => [ObjectArgument::class],
+            'string' => [StringArgument::class],
+            'bool' => [BooleanArgument::class],
+        ];
     }
 }
