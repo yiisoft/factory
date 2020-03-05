@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use League\Container\Container;
 use Yiisoft\Factory\Factory;
-use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
@@ -18,9 +17,7 @@ use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
  */
 abstract class AbstractFactoryTest extends TestCase
 {
-    abstract public function createContainer(iterable $definitions = []): ContainerInterface;
-
-    abstract public function setupContainer(ContainerInterface $container, iterable $definitions = []): ContainerInterface;
+    abstract public function createContainer(array $definitions = []): ContainerInterface;
 
     public function testCanCreateByAlias(): void
     {
@@ -122,29 +119,6 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
-    }
-
-    public function testCreateFactory(): void
-    {
-        $container = $this->createContainer();
-        $this->setupContainer($container, [
-            ContainerInterface::class => $container,
-        ]);
-        $factory = new Factory($container, [
-            'factory' => [
-                '__class' => Factory::class,
-                '__construct()' => [
-                    'parent'        => Reference::to(ContainerInterface::class),
-                    'definitions'   => [],
-                ],
-            ],
-        ]);
-        $one = $factory->create('factory');
-        $two = $factory->create('factory');
-        $this->assertNotSame($one, $two);
-        $this->assertNotSame($one, $factory);
-        $this->assertInstanceOf(Factory::class, $one);
-        $this->assertInstanceOf(Factory::class, $two);
     }
 
     /**
