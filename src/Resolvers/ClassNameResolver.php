@@ -15,9 +15,6 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  */
 class ClassNameResolver implements DependencyResolverInterface
 {
-    /**
-     * @inheritdoc
-     */
     public function resolveConstructor(string $class): array
     {
         $reflectionClass = new \ReflectionClass($class);
@@ -55,9 +52,6 @@ class ClassNameResolver implements DependencyResolverInterface
         return new ValueDefinition($parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function resolveCallable(callable $callable): array
     {
         return $this->resolveFunction(new \ReflectionFunction(\Closure::fromCallable($callable)));

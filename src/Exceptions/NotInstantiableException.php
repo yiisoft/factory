@@ -10,9 +10,6 @@ use Psr\Container\ContainerExceptionInterface;
  */
 class NotInstantiableException extends \Exception implements ContainerExceptionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($class, $message = null, $code = 0, \Exception $previous = null)
     {
         if ($message === null) {

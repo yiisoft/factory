@@ -35,9 +35,6 @@ class Factory implements FactoryInterface
         $this->setMultiple($definitions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create($config, array $params = [])
     {
         $definition = Normalizer::normalize($config);
@@ -53,9 +50,6 @@ class Factory implements FactoryInterface
         return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get($id, array $params = [])
     {
         return $this->getDefinition($id)->resolve($this, $params);
