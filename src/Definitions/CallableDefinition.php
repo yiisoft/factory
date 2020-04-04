@@ -13,9 +13,9 @@ class CallableDefinition implements DefinitionInterface
         $this->method = $method;
     }
 
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
         $callback = $this->method;
-        return $callback($container, $params);
+        return $callback($container);
     }
 }

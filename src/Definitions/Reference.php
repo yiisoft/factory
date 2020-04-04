@@ -38,14 +38,9 @@ class Reference implements DefinitionInterface
         return new self($id);
     }
 
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
-        if (empty($params)) {
-            $result = $container->get($this->id);
-        } else {
-            /** @noinspection PhpMethodParametersCountMismatchInspection passing parameters for containers supporting them */
-            $result = $container->get($this->id, $params);
-        }
+        $result = $container->get($this->id);
 
         return $result;
     }

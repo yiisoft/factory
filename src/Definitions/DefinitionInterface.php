@@ -12,8 +12,7 @@ interface DefinitionInterface
 {
     /**
      * @param ContainerInterface $container
-     * @param array $params constructor params
      * @return mixed|object
      */
-    public function resolve(ContainerInterface $container, array $params = []);
+    public function resolve(ContainerInterface $container);
 }
