@@ -40,8 +40,6 @@ class Reference implements DefinitionInterface
 
     public function resolve(ContainerInterface $container)
     {
-        $result = $container->get($this->id);
-
-        return $result;
+        return $container->get($this->id);
     }
 }
