@@ -44,6 +44,7 @@ class Normalizer
      *
      * @param mixed $config
      * @param string $id
+     * @param array $params
      * @throws InvalidConfigException
      */
     public static function normalize($config, string $id = null, array $params = []): DefinitionInterface
