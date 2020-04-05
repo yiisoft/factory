@@ -53,7 +53,10 @@ class Normalizer
         }
 
         if (\is_string($config)) {
-            return $id === $config || (!empty($params) && class_exists($config)) ? ArrayDefinition::fromArray($config, $params) : Reference::to($config);
+            if ($id === $config || (!empty($params) && class_exists($config))) {
+                return ArrayDefinition::fromArray($config, $params);
+            }
+            return Reference::to($config);
         }
 
         if (\is_callable($config)) {
