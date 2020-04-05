@@ -16,7 +16,7 @@ use Yiisoft\Factory\Exceptions\NotFoundException;
  */
 class InvalidDefinition implements DefinitionInterface
 {
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
         throw new NotFoundException('Invalid reference');
     }

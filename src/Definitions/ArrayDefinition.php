@@ -66,12 +66,8 @@ class ArrayDefinition implements DefinitionInterface
         return new static($class, $params, $config);
     }
 
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
-        if (!empty($params)) {
-            $this->params = array_merge($this->params, $params);
-        }
-
         return $this->getBuilder()->build($container, $this);
     }
 

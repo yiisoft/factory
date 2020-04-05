@@ -44,26 +44,28 @@ class Normalizer
      *
      * @param mixed $config
      * @param string $id
+     * @param array $params
      * @throws InvalidConfigException
      */
-    public static function normalize($config, string $id = null): DefinitionInterface
+    public static function normalize($config, string $id = null, array $params = []): DefinitionInterface
     {
         if ($config instanceof DefinitionInterface) {
             return $config;
         }
 
         if (\is_string($config)) {
-            return $id === $config ? ArrayDefinition::fromArray($config) : Reference::to($config);
-        }
-
-        if (\is_array($config)
-            && !(isset($config[0], $config[1]) && count($config) === 2)
-        ) {
-            return ArrayDefinition::fromArray($id, [], $config);
+            if ($id === $config || (!empty($params) && class_exists($config))) {
+                return ArrayDefinition::fromArray($config, $params);
+            }
+            return Reference::to($config);
         }
 
         if (\is_callable($config)) {
             return new CallableDefinition($config);
+        }
+
+        if (\is_array($config)) {
+            return ArrayDefinition::fromArray($id, [], $config);
         }
 
         if (\is_object($config)) {

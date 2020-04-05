@@ -37,8 +37,8 @@ class DynamicReference implements DefinitionInterface
         return new self($definition);
     }
 
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
-        return $this->definition->resolve($container, $params);
+        return $this->definition->resolve($container);
     }
 }

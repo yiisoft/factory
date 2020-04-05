@@ -25,15 +25,10 @@ class ClassDefinition implements DefinitionInterface
         $this->optional = $optional;
     }
 
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
         try {
-            if (empty($params)) {
-                $result = $container->get($this->class);
-            } else {
-                /** @noinspection PhpMethodParametersCountMismatchInspection passing parameters for containers supporting them */
-                $result = $container->get($this->class, $params);
-            }
+            $result = $container->get($this->class);
         } catch (\Throwable $t) {
             if ($this->optional) {
                 return null;

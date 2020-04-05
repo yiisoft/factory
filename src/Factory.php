@@ -37,12 +37,12 @@ class Factory implements FactoryInterface
 
     public function create($config, array $params = [])
     {
-        $definition = Normalizer::normalize($config);
+        $definition = Normalizer::normalize($config, null, $params);
         if ($definition instanceof ArrayDefinition) {
             $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
         }
 
-        return $definition->resolve($this, $params);
+        return $definition->resolve($this);
     }
 
     private function merge(DefinitionInterface $one, DefinitionInterface $two): DefinitionInterface

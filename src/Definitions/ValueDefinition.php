@@ -14,7 +14,7 @@ class ValueDefinition implements DefinitionInterface
         $this->value = $value;
     }
 
-    public function resolve(ContainerInterface $container, array $params = [])
+    public function resolve(ContainerInterface $container)
     {
         if ($container instanceof FactoryInterface && is_object($this->value)) {
             return clone $this->value;
