@@ -19,7 +19,7 @@ use Psr\Container\ContainerInterface;
  * ]
  * ```
  */
-class Reference implements DefinitionInterface
+class Reference implements ReferenceInterface
 {
     private $id;
 

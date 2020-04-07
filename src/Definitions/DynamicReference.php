@@ -23,7 +23,7 @@ use Psr\Container\ContainerInterface;
  * ]
  * ```
  */
-class DynamicReference implements DefinitionInterface
+class DynamicReference implements ReferenceInterface
 {
     private $definition;
 

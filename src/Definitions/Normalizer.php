@@ -49,7 +49,7 @@ class Normalizer
      */
     public static function normalize($config, string $id = null, array $params = []): DefinitionInterface
     {
-        if ($config instanceof DefinitionInterface) {
+        if ($config instanceof ReferenceInterface) {
             return $config;
         }
 
