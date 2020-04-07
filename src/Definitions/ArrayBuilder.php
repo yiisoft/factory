@@ -5,6 +5,7 @@ namespace Yiisoft\Factory\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Resolvers\ClassNameResolver;
+use Yiisoft\Factory\Tests\Support\EngineInterface;
 
 /**
  * Builds object by ArrayDefinition.
@@ -19,14 +20,25 @@ class ArrayBuilder
         $dependencies = $this->getDependencies($class);
 
         if (!empty($definition->getParams())) {
-            foreach (array_values($definition->getParams()) as $index => $param) {
+            foreach ($definition->getParams() as $index => $param) {
                 if ($param instanceof DefinitionInterface) {
-                    $dependencies[$index] = $param;
+                    if (is_string($index)) {
+                        $dependencies[$index] = $param;
+                    } else {
+                        $dependencies[key($dependencies)] = $param;
+                        next($dependencies);
+                    }
                 } else {
-                    $dependencies[$index] = new ValueDefinition($param);
+                    if (is_string($index)) {
+                        $dependencies[$index] = new ValueDefinition($param);
+                    } else {
+                        $dependencies[key($dependencies)] = new ValueDefinition($param);
+                        next($dependencies);
+                    }
                 }
             }
         }
+
 
         $resolved = $this->resolveDependencies($container, $dependencies);
         $object = new $class(...$resolved);

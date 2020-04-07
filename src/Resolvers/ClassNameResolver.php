@@ -29,7 +29,7 @@ class ClassNameResolver implements DependencyResolverInterface
     {
         $result = [];
         foreach ($reflectionFunction->getParameters() as $parameter) {
-            $result[] = $this->resolveParameter($parameter);
+            $result[$parameter->getName()] = $this->resolveParameter($parameter);
         }
         return $result;
     }

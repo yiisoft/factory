@@ -126,7 +126,7 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testCreateWithParams(): void
     {
-        $factory = new Factory(new Container());
+        $factory = new Factory($this->createContainer());
         $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
