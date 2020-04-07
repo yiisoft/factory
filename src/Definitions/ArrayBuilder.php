@@ -21,7 +21,7 @@ class ArrayBuilder
 
         if (!empty($definition->getParams())) {
             foreach ($definition->getParams() as $index => $param) {
-                if ($param instanceof DefinitionInterface) {
+                if ($param instanceof ReferenceInterface) {
                     if (is_string($index)) {
                         $dependencies[$index] = $param;
                     } else {
