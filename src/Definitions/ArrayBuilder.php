@@ -25,20 +25,36 @@ class ArrayBuilder
                     if (is_string($index)) {
                         $dependencies[$index] = $param;
                     } else {
-                        $dependencies[key($dependencies)] = $param;
-                        next($dependencies);
+                        reset($dependencies);
+                        $depIndex = 0;
+                        while (current($dependencies)) {
+                            if ($index === $depIndex) {
+                                $dependencies[key($dependencies)] = $param;
+                                break;
+                            }
+                            next($dependencies);
+                            $depIndex++;
+                        }
                     }
                 } else {
                     if (is_string($index)) {
                         $dependencies[$index] = new ValueDefinition($param);
                     } else {
-                        $dependencies[key($dependencies)] = new ValueDefinition($param);
-                        next($dependencies);
+
+                        reset($dependencies);
+                        $depIndex = 0;
+                        while (current($dependencies)) {
+                            if ($index === $depIndex) {
+                                $dependencies[key($dependencies)] = new ValueDefinition($param);
+                                break;
+                            }
+                            next($dependencies);
+                            $depIndex++;
+                        }
                     }
                 }
             }
         }
-
 
         $resolved = $this->resolveDependencies($container, $dependencies);
         $object = new $class(...$resolved);

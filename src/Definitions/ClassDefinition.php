@@ -25,6 +25,11 @@ class ClassDefinition implements DefinitionInterface
         $this->optional = $optional;
     }
 
+    public function getType(): string
+    {
+        return $this->class;
+    }
+
     public function resolve(ContainerInterface $container)
     {
         try {
