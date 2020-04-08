@@ -5,7 +5,6 @@ namespace Yiisoft\Factory\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Resolvers\ClassNameResolver;
-use Yiisoft\Factory\Tests\Support\EngineInterface;
 
 /**
  * Builds object by ArrayDefinition.
