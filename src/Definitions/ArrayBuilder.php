@@ -23,11 +23,7 @@ class ArrayBuilder
                 if ($param instanceof ReferenceInterface) {
                     $this->injectParam($dependencies, $index, $param);
                 } else {
-                    if (is_string($index)) {
-                        $dependencies[$index] = new ValueDefinition($param);
-                    } else {
-                        $this->injectParam($dependencies, $index, new ValueDefinition($param));
-                    }
+                    $this->injectParam($dependencies, $index, new ValueDefinition($param));
                 }
             }
         }
