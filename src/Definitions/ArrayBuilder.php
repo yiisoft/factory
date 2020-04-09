@@ -17,9 +17,11 @@ class ArrayBuilder
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
+        $params = $definition->getParams();
 
-        if (!empty($definition->getParams())) {
-            foreach ($definition->getParams() as $index => $param) {
+        if (!empty($params)) {
+            $this->validateParams($params);
+            foreach ($params as $index => $param) {
                 if ($param instanceof ReferenceInterface) {
                     $this->injectParam($dependencies, $index, $param);
                 } else {
@@ -31,6 +33,29 @@ class ArrayBuilder
         $resolved = $this->resolveDependencies($container, $dependencies);
         $object = new $class(...$resolved);
         return $this->configure($container, $object, $definition->getConfig());
+    }
+
+    private function validateParams(array $params):void
+    {
+        $stringParamDetected = false;
+        $intParamDetected = false;
+        foreach ($params as $index => $param) {
+            if (is_string($params)) {
+                $stringParamDetected = true;
+                if ($intParamDetected) {
+                    throw new \InvalidArgumentException(
+                        "Params indexed by name and by position in the same array are not allowed."
+                    );
+                }
+            } else {
+                $intParamDetected = true;
+                if ($stringParamDetected) {
+                    throw new \InvalidArgumentException(
+                        "Params indexed by name and by position in the same array are not allowed."
+                    );
+                }
+            }
+        }
     }
 
     private function injectParam(array &$dependencies, $index, $param): void
