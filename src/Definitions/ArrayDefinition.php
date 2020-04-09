@@ -86,8 +86,17 @@ class ArrayDefinition implements DefinitionInterface
     {
         return new static(
             $other->class,
-            array_merge($this->params, $other->params),
+            $this->mergeParams($this->params, $other->params),
             array_merge($this->config, $other->config)
         );
+    }
+
+    private function mergeParams(array $selfParams, array $otherParams): array
+    {
+        foreach ($otherParams as $index => $param) {
+            $selfParams[$index] = $otherParams[$index];
+        }
+
+        return $selfParams;
     }
 }
