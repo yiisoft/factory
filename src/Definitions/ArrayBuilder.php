@@ -21,35 +21,12 @@ class ArrayBuilder
         if (!empty($definition->getParams())) {
             foreach ($definition->getParams() as $index => $param) {
                 if ($param instanceof ReferenceInterface) {
-                    if (is_string($index)) {
-                        $dependencies[$index] = $param;
-                    } else {
-                        reset($dependencies);
-                        $depIndex = 0;
-                        while (current($dependencies)) {
-                            if ($index === $depIndex) {
-                                $dependencies[key($dependencies)] = $param;
-                                break;
-                            }
-                            next($dependencies);
-                            $depIndex++;
-                        }
-                    }
+                    $this->injectParam($dependencies, $index, $param);
                 } else {
                     if (is_string($index)) {
                         $dependencies[$index] = new ValueDefinition($param);
                     } else {
-
-                        reset($dependencies);
-                        $depIndex = 0;
-                        while (current($dependencies)) {
-                            if ($index === $depIndex) {
-                                $dependencies[key($dependencies)] = new ValueDefinition($param);
-                                break;
-                            }
-                            next($dependencies);
-                            $depIndex++;
-                        }
+                        $this->injectParam($dependencies, $index, new ValueDefinition($param));
                     }
                 }
             }
@@ -58,6 +35,24 @@ class ArrayBuilder
         $resolved = $this->resolveDependencies($container, $dependencies);
         $object = new $class(...$resolved);
         return $this->configure($container, $object, $definition->getConfig());
+    }
+
+    private function injectParam(array &$dependencies, $index, $param): void
+    {
+        if (is_string($index)) {
+            $dependencies[$index] = $param;
+        } else {
+            reset($dependencies);
+            $depIndex = 0;
+            while (current($dependencies)) {
+                if ($index === $depIndex) {
+                    $dependencies[key($dependencies)] = $param;
+                    break;
+                }
+                next($dependencies);
+                $depIndex++;
+            }
+        }
     }
 
     /**
