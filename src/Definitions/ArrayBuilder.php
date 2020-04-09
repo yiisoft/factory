@@ -35,25 +35,25 @@ class ArrayBuilder
         return $this->configure($container, $object, $definition->getConfig());
     }
 
-    private function validateParams(array $params):void
+    private function validateParams(array $params): void
     {
         $stringParamDetected = false;
         $intParamDetected = false;
         foreach ($params as $index => $param) {
             if (is_string($params)) {
-                $stringParamDetected = true;
                 if ($intParamDetected) {
                     throw new \InvalidArgumentException(
                         "Params indexed by name and by position in the same array are not allowed."
                     );
                 }
+                $stringParamDetected = true;
             } else {
-                $intParamDetected = true;
                 if ($stringParamDetected) {
                     throw new \InvalidArgumentException(
                         "Params indexed by name and by position in the same array are not allowed."
                     );
                 }
+                $intParamDetected = true;
             }
         }
     }
