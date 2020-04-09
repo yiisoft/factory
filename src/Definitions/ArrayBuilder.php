@@ -41,20 +41,21 @@ class ArrayBuilder
         $intParamDetected = false;
         foreach ($params as $index => $param) {
             if (is_string($params)) {
-                if ($intParamDetected) {
-                    throw new \InvalidArgumentException(
-                        "Params indexed by name and by position in the same array are not allowed."
-                    );
-                }
                 $stringParamDetected = true;
-            } else {
-                if ($stringParamDetected) {
-                    throw new \InvalidArgumentException(
-                        "Params indexed by name and by position in the same array are not allowed."
-                    );
+                if ($intParamDetected) {
+                    break;
                 }
+            } else {
                 $intParamDetected = true;
+                if ($stringParamDetected) {
+                    break;
+                }
             }
+        }
+        if ($intParamDetected && $stringParamDetected) {
+            throw new \InvalidArgumentException(
+                "Params indexed by name and by position in the same array are not allowed."
+            );
         }
     }
 
