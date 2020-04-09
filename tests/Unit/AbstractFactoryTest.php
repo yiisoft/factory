@@ -2,6 +2,7 @@
 
 namespace Yiisoft\Factory\Tests\Unit;
 
+use Assert\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use League\Container\Container;
@@ -10,6 +11,7 @@ use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
+use Yiisoft\Factory\Tests\Support\TwoParamsDependency;
 
 /**
  * General tests for factory.
@@ -134,6 +136,36 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(Car::class, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
         $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithNamedParams(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
+        $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(Car::class, $one);
+        $this->assertInstanceOf(Car::class, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
+        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithInvalidParams(): void
+    {
+        $factory = new Factory($this->createContainer());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $factory->create(TwoParamsDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
+    }
+
+    public function testCreateWithRandomOrderedParams(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $object = $factory->create(TwoParamsDependency::class, [1 => 'param2', 0 => 'param1']);
+
+        $this->assertInstanceOf(TwoParamsDependency::class, $object);
+        $this->assertSame('param1', $object->getFirstParam());
+        $this->assertSame('param2', $object->getSecondParam());
     }
 
     /**

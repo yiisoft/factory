@@ -21,6 +21,7 @@ class ArrayBuilder
 
         if (!empty($params)) {
             $this->validateParams($params);
+
             foreach ($params as $index => $param) {
                 if ($param instanceof ReferenceInterface) {
                     $this->injectParam($dependencies, $index, $param);
@@ -40,7 +41,7 @@ class ArrayBuilder
         $stringParamDetected = false;
         $intParamDetected = false;
         foreach ($params as $index => $param) {
-            if (is_string($params)) {
+            if (is_string($index)) {
                 $stringParamDetected = true;
                 if ($intParamDetected) {
                     break;
