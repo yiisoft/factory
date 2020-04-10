@@ -11,7 +11,7 @@ use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
-use Yiisoft\Factory\Tests\Support\TwoParamsDependency;
+use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 
 /**
  * General tests for factory.
@@ -155,17 +155,17 @@ abstract class AbstractFactoryTest extends TestCase
         $factory = new Factory($this->createContainer());
 
         $this->expectException(\InvalidArgumentException::class);
-        $factory->create(TwoParamsDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
+        $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
     }
 
     public function testCreateWithRandomOrderedParams(): void
     {
         $factory = new Factory($this->createContainer());
-        $object = $factory->create(TwoParamsDependency::class, [1 => 'param2', 0 => 'param1']);
+        $object = $factory->create(TwoParametersDependency::class, [1 => 'param2', 0 => 'param1']);
 
-        $this->assertInstanceOf(TwoParamsDependency::class, $object);
-        $this->assertSame('param1', $object->getFirstParam());
-        $this->assertSame('param2', $object->getSecondParam());
+        $this->assertInstanceOf(TwoParametersDependency::class, $object);
+        $this->assertSame('param1', $object->getFirstParameter());
+        $this->assertSame('param2', $object->getSecondParameter());
     }
 
     /**

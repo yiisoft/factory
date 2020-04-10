@@ -17,16 +17,16 @@ class ArrayBuilder
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
-        $params = $definition->getParams();
+        $parameters = $definition->getParams();
 
-        if (!empty($params)) {
-            $this->validateParams($params);
+        if (!empty($parameters)) {
+            $this->validateParameters($parameters);
 
-            foreach ($params as $index => $param) {
-                if ($param instanceof ReferenceInterface) {
-                    $this->injectParam($dependencies, $index, $param);
+            foreach ($parameters as $index => $parameter) {
+                if ($parameter instanceof ReferenceInterface) {
+                    $this->injectParameter($dependencies, $index, $parameter);
                 } else {
-                    $this->injectParam($dependencies, $index, new ValueDefinition($param));
+                    $this->injectParameter($dependencies, $index, new ValueDefinition($parameter));
                 }
             }
         }
@@ -36,44 +36,44 @@ class ArrayBuilder
         return $this->configure($container, $object, $definition->getConfig());
     }
 
-    private function validateParams(array $params): void
+    private function validateParameters(array $parameters): void
     {
-        $stringParamDetected = false;
-        $intParamDetected = false;
-        foreach ($params as $index => $param) {
+        $hasStringParameter = false;
+        $hasIntParameter = false;
+        foreach ($parameters as $index => $parameter) {
             if (is_string($index)) {
-                $stringParamDetected = true;
-                if ($intParamDetected) {
+                $hasStringParameter = true;
+                if ($hasIntParameter) {
                     break;
                 }
             } else {
-                $intParamDetected = true;
-                if ($stringParamDetected) {
+                $hasIntParameter = true;
+                if ($hasStringParameter) {
                     break;
                 }
             }
         }
-        if ($intParamDetected && $stringParamDetected) {
+        if ($hasIntParameter && $hasStringParameter) {
             throw new \InvalidArgumentException(
-                "Params indexed by name and by position in the same array are not allowed."
+                'Parameters indexed by name and by position in the same array are not allowed.'
             );
         }
     }
 
-    private function injectParam(array &$dependencies, $index, $param): void
+    private function injectParameter(array &$dependencies, $index, $parameter): void
     {
         if (is_string($index)) {
-            $dependencies[$index] = $param;
+            $dependencies[$index] = $parameter;
         } else {
             reset($dependencies);
-            $depIndex = 0;
+            $dependencyIndex = 0;
             while (current($dependencies)) {
-                if ($index === $depIndex) {
-                    $dependencies[key($dependencies)] = $param;
+                if ($index === $dependencyIndex) {
+                    $dependencies[key($dependencies)] = $parameter;
                     break;
                 }
                 next($dependencies);
-                $depIndex++;
+                $dependencyIndex++;
             }
         }
     }
