@@ -38,7 +38,7 @@ class Factory implements FactoryInterface
     public function create($config, array $params = [])
     {
         $definition = Normalizer::normalize($config, null, $params);
-        if ($definition instanceof ArrayDefinition) {
+        if ($definition instanceof ArrayDefinition && $this->has($definition->getClass())) {
             $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
         }
 

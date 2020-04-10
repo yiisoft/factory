@@ -17,13 +17,16 @@ class ArrayBuilder
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
+        $parameters = $definition->getParams();
 
-        if (!empty($definition->getParams())) {
-            foreach (array_values($definition->getParams()) as $index => $param) {
-                if ($param instanceof DefinitionInterface) {
-                    $dependencies[$index] = $param;
+        if (!empty($parameters)) {
+            $this->validateParameters($parameters);
+
+            foreach ($parameters as $index => $parameter) {
+                if ($parameter instanceof ReferenceInterface) {
+                    $this->injectParameter($dependencies, $index, $parameter);
                 } else {
-                    $dependencies[$index] = new ValueDefinition($param);
+                    $this->injectParameter($dependencies, $index, new ValueDefinition($parameter));
                 }
             }
         }
@@ -31,6 +34,48 @@ class ArrayBuilder
         $resolved = $this->resolveDependencies($container, $dependencies);
         $object = new $class(...$resolved);
         return $this->configure($container, $object, $definition->getConfig());
+    }
+
+    private function validateParameters(array $parameters): void
+    {
+        $hasStringParameter = false;
+        $hasIntParameter = false;
+        foreach ($parameters as $index => $parameter) {
+            if (is_string($index)) {
+                $hasStringParameter = true;
+                if ($hasIntParameter) {
+                    break;
+                }
+            } else {
+                $hasIntParameter = true;
+                if ($hasStringParameter) {
+                    break;
+                }
+            }
+        }
+        if ($hasIntParameter && $hasStringParameter) {
+            throw new \InvalidArgumentException(
+                'Parameters indexed by name and by position in the same array are not allowed.'
+            );
+        }
+    }
+
+    private function injectParameter(array &$dependencies, $index, $parameter): void
+    {
+        if (is_string($index)) {
+            $dependencies[$index] = $parameter;
+        } else {
+            reset($dependencies);
+            $dependencyIndex = 0;
+            while (current($dependencies)) {
+                if ($index === $dependencyIndex) {
+                    $dependencies[key($dependencies)] = $parameter;
+                    break;
+                }
+                next($dependencies);
+                $dependencyIndex++;
+            }
+        }
     }
 
     /**

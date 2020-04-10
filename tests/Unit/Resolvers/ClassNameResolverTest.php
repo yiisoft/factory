@@ -26,8 +26,8 @@ class ClassNameResolverTest extends TestCase
 
         $this->assertCount(2, $dependencies);
         // Since reflection for built in classes does not get default values.
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
-        $this->assertEquals(null, $dependencies[1]->resolve($container));
+        $this->assertEquals(null, $dependencies['time']->resolve($container));
+        $this->assertEquals(null, $dependencies['timezone']->resolve($container));
     }
 
     public function testResolveCarConstructor(): void
@@ -38,9 +38,9 @@ class ClassNameResolverTest extends TestCase
         $dependencies = $resolver->resolveConstructor(Car::class);
 
         $this->assertCount(1, $dependencies);
-        $this->assertInstanceOf(ClassDefinition::class, $dependencies[0]);
+        $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $this->expectException(NotInstantiableException::class);
-        $dependencies[0]->resolve($container);
+        $dependencies['engine']->resolve($container);
     }
 
     public function testResolveGearBoxConstructor(): void
@@ -50,7 +50,7 @@ class ClassNameResolverTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(GearBox::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(5, $dependencies[0]->resolve($container));
+        $this->assertEquals(5, $dependencies['maxGear']->resolve($container));
     }
 
     public function testOptionalInterfaceDependency(): void
@@ -60,7 +60,7 @@ class ClassNameResolverTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
     public function testNullableInterfaceDependency(): void
     {
@@ -69,7 +69,7 @@ class ClassNameResolverTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
 
     public function testOptionalConcreteDependency(): void
@@ -79,7 +79,7 @@ class ClassNameResolverTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
     public function testNullableConcreteDependency(): void
     {
@@ -88,6 +88,6 @@ class ClassNameResolverTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies[0]->resolve($container));
+        $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
 }
