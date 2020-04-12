@@ -1,5 +1,4 @@
 <?php
-// .phpstorm.meta.php
 
 namespace PHPSTORM_META {
 
