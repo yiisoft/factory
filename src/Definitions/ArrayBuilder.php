@@ -151,7 +151,10 @@ class ArrayBuilder
         foreach ($config as $action => $arguments) {
             if (substr($action, -2) === '()') {
                 // method call
-                \call_user_func_array([$object, substr($action, 0, -2)], $arguments);
+                $setter = \call_user_func_array([$object, substr($action, 0, -2)], $arguments);
+                if (\is_object($setter)) {
+                    $object = $setter;
+                }
             } else {
                 // property
                 if ($arguments instanceof DefinitionInterface) {
