@@ -152,7 +152,7 @@ class ArrayBuilder
             if (substr($action, -2) === '()') {
                 // method call
                 $setter = \call_user_func_array([$object, substr($action, 0, -2)], $arguments);
-                if (\is_object($setter)) {
+                if (\is_object($setter) && $setter instanceof $object) {
                     $object = $setter;
                 }
             } else {
