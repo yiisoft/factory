@@ -23,7 +23,7 @@ class ArrayBuilder
             $this->validateParameters($parameters);
 
             foreach ($parameters as $index => $parameter) {
-                if ($parameter instanceof ReferenceInterface) {
+                if ($parameter instanceof ReferenceInterface || is_array($parameter)) {
                     $this->injectParameter($dependencies, $index, $parameter);
                 } else {
                     $this->injectParameter($dependencies, $index, new ValueDefinition($parameter));
@@ -32,7 +32,7 @@ class ArrayBuilder
         }
 
         $resolved = $this->resolveDependencies($container, $dependencies);
-        $object = new $class(...$resolved);
+        $object = new $class(...array_values($resolved));
         return $this->configure($container, $object, $definition->getConfig());
     }
 
@@ -89,8 +89,11 @@ class ArrayBuilder
         $container = $container->container ?? $container;
         $result = [];
         /** @var DefinitionInterface $dependency */
-        foreach ($dependencies as $dependency) {
-            $result[] = $this->resolveDependency($container, $dependency);
+        foreach ($dependencies as $key => $dependency) {
+            $result[$key] = is_array($dependency)
+                ? $this->resolveDependencies($container, $dependency)
+                : $this->resolveDependency($container, $dependency)
+            ;
         }
 
         return $result;
