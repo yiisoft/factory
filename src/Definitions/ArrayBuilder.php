@@ -90,10 +90,13 @@ class ArrayBuilder
         $result = [];
         /** @var DefinitionInterface $dependency */
         foreach ($dependencies as $key => $dependency) {
-            $result[$key] = is_array($dependency)
-                ? $this->resolveDependencies($container, $dependency)
-                : $this->resolveDependency($container, $dependency)
-            ;
+            if (is_array($dependency)) {
+                $result[$key] = $this->resolveDependencies($container, $dependency);
+            } elseif ($dependency instanceof DefinitionInterface) {
+                $result[$key] = $this->resolveDependency($container, $dependency);
+            } else {
+                $result[$key] = $dependency;
+            }
         }
 
         return $result;
