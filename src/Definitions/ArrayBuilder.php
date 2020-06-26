@@ -84,15 +84,8 @@ class ArrayBuilder
     {
         $container = $container->container ?? $container;
         $result = [];
-        /** @var DefinitionInterface $dependency */
         foreach ($dependencies as $key => $dependency) {
-            if (is_array($dependency)) {
-                $result[$key] = $this->resolveDependencies($container, $dependency);
-            } elseif ($dependency instanceof DefinitionInterface) {
-                $result[$key] = $this->resolveDependency($container, $dependency);
-            } else {
-                $result[$key] = $dependency;
-            }
+            $result[$key] = $this->resolveDependency($container, $dependency);
         }
 
         return $result;
@@ -102,15 +95,20 @@ class ArrayBuilder
      * This function resolves a dependency recursively, checking for loops.
      * TODO add checking for loops
      * @param ContainerInterface $container
-     * @param DefinitionInterface $dependency
+     * @param mixed $dependency
      * @return mixed
      */
-    private function resolveDependency(ContainerInterface $container, DefinitionInterface $dependency)
+    private function resolveDependency(ContainerInterface $container, $dependency)
     {
-        while ($dependency instanceof DefinitionInterface) {
-            $dependency = $dependency->resolve($container);
+        while (true) {
+            if ($dependency instanceof DefinitionInterface) {
+                $dependency = $dependency->resolve($container);
+            } elseif (is_array($dependency)) {
+                return $this->resolveDependencies($container, $dependency);
+            }
+
+            return $dependency;
         }
-        return $dependency;
     }
 
     /**
