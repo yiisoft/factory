@@ -11,6 +11,7 @@ use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
+use Yiisoft\Factory\Tests\Support\ScalarHolder;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 
 /**
@@ -226,5 +227,19 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
 
         $this->assertEquals(0, $instance->getEngine()->getNumber());
+    }
+
+    public function testScalarValues(): void
+    {
+        $container = $this->createContainer([]);
+
+        $factory = new Factory($container);
+
+        $scalarHolder = $factory->create(ScalarHolder::class, [
+            '__construct()' => ['test', 42],
+        ]);
+
+        $this->assertEquals('tests', $scalarHolder->getName());
+        $this->assertEquals(42, $scalarHolder->getValue());
     }
 }
