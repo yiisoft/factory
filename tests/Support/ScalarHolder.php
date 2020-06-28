@@ -3,7 +3,6 @@
 
 namespace Yiisoft\Factory\Tests\Support;
 
-
 class ScalarHolder
 {
     private string $name;
