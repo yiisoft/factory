@@ -25,6 +25,9 @@ class ClassNameResolver implements DependencyResolverInterface
         return $constructor === null ? [] : $this->resolveFunction($constructor);
     }
 
+    /**
+     * @suppress PhanUndeclaredMethod
+     */
     private function resolveFunction(\ReflectionFunctionAbstract $reflectionFunction): array
     {
         $result = [];
@@ -34,6 +37,9 @@ class ClassNameResolver implements DependencyResolverInterface
         return $result;
     }
 
+    /**
+     * @suppress PhanUndeclaredMethod
+     */
     private function resolveParameter(\ReflectionParameter $parameter): DefinitionInterface
     {
         $type = $parameter->getType();
