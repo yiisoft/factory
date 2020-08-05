@@ -20,9 +20,11 @@
         "psr/container": "1.0.0"
     },
     "require-dev": {
+        "infection/infection": "^0.16.3",
         "league/container": "^3.2",
-        "yiisoft/di": "^3.0@dev",
-        "phpunit/phpunit": "^8.4"
+        "phan/phan": "^3.0.2",
+        "phpunit/phpunit": "^9.2",
+        "yiisoft/di": "^3.0@dev"
     },
     "autoload": {
         "psr-4": {
