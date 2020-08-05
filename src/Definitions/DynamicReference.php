@@ -32,9 +32,9 @@ class DynamicReference implements ReferenceInterface
         $this->definition = Normalizer::normalize($definition);
     }
 
-    public static function to($definition): DynamicReference
+    public static function to(string $id): DynamicReference
     {
-        return new self($definition);
+        return new self($id);
     }
 
     public function resolve(ContainerInterface $container)
