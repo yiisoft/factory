@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yiisoft\Factory\Tests\Support;
 
 class ScalarHolder
