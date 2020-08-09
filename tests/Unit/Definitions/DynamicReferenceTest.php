@@ -11,7 +11,6 @@ use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 
 class DynamicReferenceTest extends TestCase
 {
-
     public function createContainer(): ContainerInterface
     {
         return new Container([
