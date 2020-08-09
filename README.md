@@ -59,3 +59,11 @@ The code is statically analyzed with [Phan](https://github.com/phan/phan/wiki). 
 ./vendor/bin/phan
 ```
 
+## Unit testing
+
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+
+```php
+./vendor/bin/phpunit
+```
+
