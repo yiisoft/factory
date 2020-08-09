@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 
 /**
  * Class DynamicReference allows us to define a dependency to a service not defined in the container.
- * Definition may be defined multiple ways ( @see Normalizer ).
+ * Definition may be defined multiple ways {@see Normalizer}.
  * For example:
  * ```php
  * [
@@ -34,12 +34,14 @@ class DynamicReference implements ReferenceInterface
 
     /**
      * @param mixed $definition
+     *
      * @return DynamicReference
-     * @see Normalizer
+     *
+     * {@see Normalizer}
      */
     public static function to($definition): DynamicReference
     {
-        return new self($id);
+        return new self($definition);
     }
 
     public function resolve(ContainerInterface $container)
