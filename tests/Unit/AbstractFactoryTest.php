@@ -239,7 +239,7 @@ abstract class AbstractFactoryTest extends TestCase
             '__construct()' => ['test', 42],
         ]);
 
-        $this->assertEquals('tests', $scalarHolder->getName());
+        $this->assertEquals('test', $scalarHolder->getName());
         $this->assertEquals(42, $scalarHolder->getValue());
     }
 }
