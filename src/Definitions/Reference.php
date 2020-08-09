@@ -37,9 +37,10 @@ class Reference implements ReferenceInterface
 
     /**
      * @param string $id
-     * @return Reference
+     *
+     * @return ReferenceInterface
      */
-    public static function to($id): Reference
+    public static function to($id): ReferenceInterface
     {
         if (!\is_string($id)) {
             throw new \RuntimeException('$id should be string.');
