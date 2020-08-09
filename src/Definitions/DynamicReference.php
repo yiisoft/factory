@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
 
 /**
  * Class DynamicReference allows us to define a dependency to a service not defined in the container.
- * This class implements the array configuration syntax common to Yii
+ * Definition may be defined multiple ways {@see Normalizer}.
  * For example:
  * ```php
  * [
@@ -17,7 +19,7 @@ use Psr\Container\ContainerInterface;
  *            DynamicReference::to([
  *                '__class' => SomeClass::class,
  *                'someProp' => 15
- *            ]
+ *            ])
  *        ]
  *    ]
  * ]
@@ -32,7 +34,14 @@ class DynamicReference implements ReferenceInterface
         $this->definition = Normalizer::normalize($definition);
     }
 
-    public static function to($definition): DynamicReference
+    /**
+     * @param mixed $definition
+     *
+     * @return ReferenceInterface
+     *
+     * {@see Normalizer}
+     */
+    public static function to($definition): ReferenceInterface
     {
         return new self($definition);
     }

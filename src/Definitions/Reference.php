@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
@@ -33,8 +35,16 @@ class Reference implements ReferenceInterface
         return $this->id;
     }
 
-    public static function to(string $id): Reference
+    /**
+     * @param string $id
+     *
+     * @return ReferenceInterface
+     */
+    public static function to($id): ReferenceInterface
     {
+        if (!\is_string($id)) {
+            throw new \RuntimeException('$id should be string.');
+        }
         return new self($id);
     }
 

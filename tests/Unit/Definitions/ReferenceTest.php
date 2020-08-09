@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Factory\Tests\Unit\Definitions;
 
 use PHPUnit\Framework\TestCase;
@@ -15,5 +17,11 @@ class ReferenceTest extends TestCase
     {
         $ref = Reference::to(EngineInterface::class);
         $this->assertSame(EngineInterface::class, $ref->getId());
+    }
+
+    public function testInvalid(): void
+    {
+        $this->expectErrorMessage('$id should be string.');
+        Reference::to(['__class' => EngineInterface::class]);
     }
 }
