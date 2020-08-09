@@ -16,3 +16,11 @@ with dependencies resolved by a PSR-11 container.
 
 ## General usage
 
+## Unit testing
+
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+
+```php
+./vendor/bin/phpunit
+```
+
