@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Factory\Resolvers;
 
 use Yiisoft\Factory\Definitions\DefinitionInterface;
