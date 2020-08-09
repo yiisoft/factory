@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
@@ -21,12 +23,21 @@ class ClassNameResolverTest extends TestCase
     {
         $resolver = new ClassNameResolver();
         $container = new Factory();
+
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->resolveConstructor(\DateTime::class);
 
+
         $this->assertCount(2, $dependencies);
+
+
         // Since reflection for built in classes does not get default values.
-        $this->assertEquals(null, $dependencies['time']->resolve($container));
+        if (version_compare(phpversion(), '8.0', '>=')) {
+            $this->assertEquals('now', $dependencies['datetime']->resolve($container));
+        } else {
+            $this->assertEquals(null, $dependencies['time']->resolve($container));
+        }
+
         $this->assertEquals(null, $dependencies['timezone']->resolve($container));
     }
 
