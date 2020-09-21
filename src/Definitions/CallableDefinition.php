@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Injector\Injector;
 
 class CallableDefinition implements DefinitionInterface
 {
     private $method;
 
-    public function __construct(callable $method)
+    public function __construct($method)
     {
         $this->method = $method;
     }
@@ -18,6 +19,10 @@ class CallableDefinition implements DefinitionInterface
     public function resolve(ContainerInterface $container)
     {
         $callback = $this->method;
+        if ($container->has(Injector::class)) {
+            return $container->get(Injector::class)->invoke($callback);
+        }
+
         return $callback($container);
     }
 }
