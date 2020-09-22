@@ -105,15 +105,13 @@ class ArrayBuilder
      */
     private function resolveDependency(ContainerInterface $container, $dependency)
     {
-        while (true) {
-            if ($dependency instanceof DefinitionInterface) {
-                $dependency = $dependency->resolve($container);
-            } elseif (is_array($dependency)) {
-                return $this->resolveDependencies($container, $dependency);
-            }
-
-            return $dependency;
+        if ($dependency instanceof DefinitionInterface) {
+            $dependency = $dependency->resolve($container);
+        } elseif (is_array($dependency)) {
+            return $this->resolveDependencies($container, $dependency);
         }
+
+        return $dependency;
     }
 
     /**
