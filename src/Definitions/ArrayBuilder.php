@@ -88,7 +88,6 @@ class ArrayBuilder
      */
     private function resolveDependencies(ContainerInterface $container, array $dependencies): array
     {
-        $container = $container->container ?? $container;
         $result = [];
         foreach ($dependencies as $key => $dependency) {
             $result[$key] = $this->resolveDependency($container, $dependency);
