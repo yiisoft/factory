@@ -7,8 +7,8 @@ namespace Yiisoft\Factory\Tests\Unit;
 use Assert\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use League\Container\Container;
 use Yiisoft\Factory\Factory;
+use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
@@ -30,6 +30,30 @@ abstract class AbstractFactoryTest extends TestCase
         ]);
         $one = $factory->create('engine');
         $two = $factory->create('engine');
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    public function testCanCreateByInterfaceAsStringDefinition(): void
+    {
+        $factory = new Factory($this->createContainer(), [
+            EngineInterface::class => EngineMarkOne::class,
+        ]);
+        $one = $factory->create(EngineInterface::class);
+        $two = $factory->create(EngineInterface::class);
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    public function testCanCreateByInterfaceAsReferenceDefinition(): void
+    {
+        $factory = new Factory($this->createContainer(), [
+            EngineInterface::class => EngineMarkOne::class,
+        ]);
+        $one = $factory->create(Reference::to(EngineInterface::class));
+        $two = $factory->create(Reference::to(EngineInterface::class));
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);

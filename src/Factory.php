@@ -16,7 +16,7 @@ class Factory implements FactoryInterface
     /**
      * @var ContainerInterface parent container
      */
-    public $container;
+    private $container;
 
     /**
      * @var DefinitionInterface[] object definitions indexed by their types
@@ -44,6 +44,10 @@ class Factory implements FactoryInterface
             $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
         }
 
+        if ($definition instanceof ArrayDefinition) {
+            return $definition->resolve($this->container ?? $this);
+        }
+
         return $definition->resolve($this);
     }
 
@@ -52,9 +56,14 @@ class Factory implements FactoryInterface
         return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 
-    public function get($id, array $params = [])
+    public function get($id)
     {
-        return $this->getDefinition($id)->resolve($this, $params);
+        $definition = $this->getDefinition($id);
+        if ($definition instanceof ArrayDefinition) {
+            return $definition->resolve($this->container ?? $this);
+        }
+
+        return $definition->resolve($this);
     }
 
     public function getDefinition($id): DefinitionInterface

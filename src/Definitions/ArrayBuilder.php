@@ -88,7 +88,6 @@ class ArrayBuilder
      */
     private function resolveDependencies(ContainerInterface $container, array $dependencies): array
     {
-        $container = $container->container ?? $container;
         $result = [];
         foreach ($dependencies as $key => $dependency) {
             $result[$key] = $this->resolveDependency($container, $dependency);
@@ -106,15 +105,13 @@ class ArrayBuilder
      */
     private function resolveDependency(ContainerInterface $container, $dependency)
     {
-        while (true) {
-            if ($dependency instanceof DefinitionInterface) {
-                $dependency = $dependency->resolve($container);
-            } elseif (is_array($dependency)) {
-                return $this->resolveDependencies($container, $dependency);
-            }
-
-            return $dependency;
+        if ($dependency instanceof DefinitionInterface) {
+            $dependency = $dependency->resolve($container);
+        } elseif (is_array($dependency)) {
+            return $this->resolveDependencies($container, $dependency);
         }
+
+        return $dependency;
     }
 
     /**
