@@ -32,7 +32,7 @@ class ClassNameResolverTest extends TestCase
 
 
         // Since reflection for built in classes does not get default values.
-        if (version_compare(phpversion(), '8.0', '>=')) {
+        if (PHP_VERSION_ID >= 80000) {
             $this->assertEquals('now', $dependencies['datetime']->resolve($container));
         } else {
             $this->assertEquals(null, $dependencies['time']->resolve($container));

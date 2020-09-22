@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Unit;
 
-use Assert\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Factory;

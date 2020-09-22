@@ -13,9 +13,13 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  */
 class ArrayDefinition implements DefinitionInterface
 {
-    private $class;
-    private $params;
-    private $config;
+    private const CLASS_KEY = '__class';
+    private const PARAMS_KEY = '__construct()';
+
+    private static ?ArrayBuilder $builder = null;
+    private string $class;
+    private array $params;
+    private array $config;
 
     public function __construct(string $class, array $params = [], array $config = [])
     {
@@ -27,32 +31,20 @@ class ArrayDefinition implements DefinitionInterface
         $this->config = $config;
     }
 
-    /**
-     * @return string
-     */
     public function getClass(): string
     {
         return $this->class;
     }
 
-    /**
-     * @return array
-     */
     public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
-
-    private const CLASS_KEY = '__class';
-    private const PARAMS_KEY = '__construct()';
 
     public static function fromArray(string $class = null, array $params = [], array $config = []): self
     {
@@ -72,8 +64,6 @@ class ArrayDefinition implements DefinitionInterface
     {
         return $this->getBuilder()->build($container, $this);
     }
-
-    private static $builder;
 
     private function getBuilder(): ArrayBuilder
     {

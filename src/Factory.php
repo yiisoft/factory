@@ -16,12 +16,12 @@ class Factory implements FactoryInterface
     /**
      * @var ContainerInterface parent container
      */
-    private $container;
+    private ?ContainerInterface $container = null;
 
     /**
      * @var DefinitionInterface[] object definitions indexed by their types
      */
-    private $definitions = [];
+    private array $definitions = [];
 
     /**
      * Factory constructor.
