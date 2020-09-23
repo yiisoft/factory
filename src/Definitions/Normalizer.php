@@ -44,36 +44,72 @@ class Normalizer
      * ]);
      * ```
      *
-     * @param mixed $config
+     * @param mixed $definition
      * @param string $id
      * @param array $params
      * @throws InvalidConfigException
      */
-    public static function normalize($config, string $id = null, array $params = []): DefinitionInterface
+    public static function normalize($definition, string $id = null, array $params = []): DefinitionInterface
     {
-        if ($config instanceof DefinitionInterface) {
-            return $config;
+        if ($definition instanceof DefinitionInterface) {
+            return $definition;
         }
 
-        if (\is_string($config)) {
-            if ($id === $config || (!empty($params) && class_exists($config))) {
-                return ArrayDefinition::fromArray($config, $params);
+        if (\is_string($definition)) {
+            if ($id === $definition || (!empty($params) && class_exists($definition))) {
+                return ArrayDefinition::fromArray($definition, $params);
             }
-            return Reference::to($config);
+            return Reference::to($definition);
         }
 
-        if (\is_callable($config)) {
-            return new CallableDefinition($config);
+        if (\is_callable($definition)) {
+            return new CallableDefinition($definition);
         }
 
-        if (\is_array($config)) {
-            return ArrayDefinition::fromArray($id, [], $config);
+        if (\is_array($definition)) {
+            return ArrayDefinition::fromArray($id, [], $definition);
         }
 
-        if (\is_object($config)) {
-            return new ValueDefinition($config);
+        if (\is_object($definition)) {
+            return new ValueDefinition($definition);
         }
 
-        throw new InvalidConfigException('Invalid definition:' . var_export($config, true));
+        throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
+    }
+
+    /**
+     * Validates defintion for corectness.
+     * @param mixed $definition @see normalize()
+     * @param bool $id
+     * @return bool
+     * @throws InvalidConfigException
+     */
+    public static function validate($definition, bool $throw = true): bool
+    {
+        if ($definition instanceof DefinitionInterface) {
+            return true;
+        }
+
+        if (\is_string($definition)) {
+            return true;
+        }
+
+        if (\is_callable($definition)) {
+            return true;
+        }
+
+        if (\is_array($definition)) {
+            return true;
+        }
+
+        if (\is_object($definition)) {
+            return true;
+        }
+
+        if ($throw) {
+            throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
+        }
+
+        return false;
     }
 }
