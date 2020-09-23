@@ -13,7 +13,8 @@ use Yiisoft\Factory\Resolvers\ClassNameResolver;
  */
 class ArrayBuilder
 {
-    private static $dependencies = [];
+    private static ?ClassNameResolver $resolver = null;
+    private static array $dependencies = [];
 
     public function build(ContainerInterface $container, ArrayDefinition $definition)
     {
@@ -88,7 +89,6 @@ class ArrayBuilder
      */
     private function resolveDependencies(ContainerInterface $container, array $dependencies): array
     {
-        $container = $container->container ?? $container;
         $result = [];
         foreach ($dependencies as $key => $dependency) {
             $result[$key] = $this->resolveDependency($container, $dependency);
@@ -106,15 +106,13 @@ class ArrayBuilder
      */
     private function resolveDependency(ContainerInterface $container, $dependency)
     {
-        while (true) {
-            if ($dependency instanceof DefinitionInterface) {
-                $dependency = $dependency->resolve($container);
-            } elseif (is_array($dependency)) {
-                return $this->resolveDependencies($container, $dependency);
-            }
-
-            return $dependency;
+        if ($dependency instanceof DefinitionInterface) {
+            $dependency = $dependency->resolve($container);
+        } elseif (is_array($dependency)) {
+            return $this->resolveDependencies($container, $dependency);
         }
+
+        return $dependency;
     }
 
     /**
@@ -132,8 +130,6 @@ class ArrayBuilder
 
         return self::$dependencies[$class];
     }
-
-    private static $resolver;
 
     private function getResolver(): ClassNameResolver
     {

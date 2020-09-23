@@ -11,7 +11,7 @@ class CallableDefinition implements DefinitionInterface
 {
     private $method;
 
-    public function __construct($method)
+    public function __construct(callable $method)
     {
         $this->method = $method;
     }

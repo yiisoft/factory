@@ -9,18 +9,7 @@ namespace Yiisoft\Factory\Tests\Support;
  */
 interface EngineInterface
 {
-    /**
-     * @return string
-     */
     public function getName(): string;
-
-    /**
-     * @param int $value
-     */
     public function setNumber(int $value): void;
-
-    /**
-     * @return int
-     */
     public function getNumber(): int;
 }

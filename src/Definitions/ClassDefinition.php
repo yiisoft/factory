@@ -12,9 +12,8 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
  */
 class ClassDefinition implements DefinitionInterface
 {
-    private $class;
-
-    private $optional;
+    private string $class;
+    private bool $optional;
 
     /**
      * Constructor.

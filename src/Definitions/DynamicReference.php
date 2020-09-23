@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  */
 class DynamicReference implements ReferenceInterface
 {
-    private $definition;
+    private DefinitionInterface $definition;
 
     private function __construct($definition)
     {

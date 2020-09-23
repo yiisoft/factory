@@ -9,7 +9,7 @@ namespace Yiisoft\Factory\Tests\Support;
  */
 class GearBox
 {
-    private $maxGear;
+    private int $maxGear;
 
     public function __construct(int $maxGear = 5)
     {
