@@ -6,14 +6,14 @@ namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
-use Yiisoft\Factory\Resolvers\ClassNameResolver;
+use Yiisoft\Factory\Extractors\DefinitionExtractor;
 
 /**
  * Builds object by ArrayDefinition.
  */
 class ArrayBuilder
 {
-    private static ?ClassNameResolver $resolver = null;
+    private static ?DefinitionExtractor $extractor = null;
     private static array $dependencies = [];
 
     public function build(ContainerInterface $container, ArrayDefinition $definition)
@@ -125,20 +125,20 @@ class ArrayBuilder
     private function getDependencies(string $class): array
     {
         if (!isset(self::$dependencies[$class])) {
-            self::$dependencies[$class] = $this->getResolver()->resolveConstructor($class);
+            self::$dependencies[$class] = $this->getExtractor()->fromClassName($class);
         }
 
         return self::$dependencies[$class];
     }
 
-    private function getResolver(): ClassNameResolver
+    private function getExtractor(): DefinitionExtractor
     {
-        if (static::$resolver === null) {
-            // For now use hard coded resolver.
-            static::$resolver = new ClassNameResolver();
+        if (static::$extractor === null) {
+            // For now use hard coded extractor.
+            static::$extractor = new DefinitionExtractor();
         }
 
-        return static::$resolver;
+        return static::$extractor;
     }
 
     /**

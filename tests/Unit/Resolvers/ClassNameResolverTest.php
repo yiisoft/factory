@@ -9,7 +9,7 @@ use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
-use Yiisoft\Factory\Resolvers\ClassNameResolver;
+use Yiisoft\Factory\Extractors\DefinitionExtractor;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
@@ -17,15 +17,15 @@ use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\OptionalInterfaceDependency;
 
-class ClassNameResolverTest extends TestCase
+class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
 
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(\DateTime::class);
+        $dependencies = $resolver->fromClassName(\DateTime::class);
 
 
         $this->assertCount(2, $dependencies);
@@ -43,10 +43,10 @@ class ClassNameResolverTest extends TestCase
 
     public function testResolveCarConstructor(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(Car::class);
+        $dependencies = $resolver->fromClassName(Car::class);
 
         $this->assertCount(1, $dependencies);
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
@@ -56,48 +56,48 @@ class ClassNameResolverTest extends TestCase
 
     public function testResolveGearBoxConstructor(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(GearBox::class);
+        $dependencies = $resolver->fromClassName(GearBox::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(5, $dependencies['maxGear']->resolve($container));
     }
 
     public function testOptionalInterfaceDependency(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(OptionalInterfaceDependency::class);
+        $dependencies = $resolver->fromClassName(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
     public function testNullableInterfaceDependency(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(NullableInterfaceDependency::class);
+        $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
 
     public function testOptionalConcreteDependency(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(OptionalConcreteDependency::class);
+        $dependencies = $resolver->fromClassName(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
     public function testNullableConcreteDependency(): void
     {
-        $resolver = new ClassNameResolver();
+        $resolver = new DefinitionExtractor();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->resolveConstructor(NullableConcreteDependency::class);
+        $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
