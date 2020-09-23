@@ -51,7 +51,7 @@ class Normalizer
      */
     public static function normalize($config, string $id = null, array $params = []): DefinitionInterface
     {
-        if ($config instanceof ReferenceInterface) {
+        if ($config instanceof DefinitionInterface) {
             return $config;
         }
 

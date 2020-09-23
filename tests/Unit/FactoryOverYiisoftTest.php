@@ -22,11 +22,7 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
 
     public function testCreateFactory(): void
     {
-        $container = $this->createContainer([
-            ContainerInterface::class => static function (ContainerInterface $container) {
-                return $container;
-            },
-        ]);
+        $container = $this->createContainer();
         $factory = new Factory($container, [
             'factory' => [
                 '__class' => Factory::class,
@@ -46,11 +42,7 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
 
     public function testCreateFactoryImmutable(): void
     {
-        $container = $this->createContainer([
-            ContainerInterface::class => static function (ContainerInterface $container) {
-                return $container;
-            },
-        ]);
+        $container = $this->createContainer();
         $factory = new Factory($container, [
             'factory' => [
                 '__class' => Immutable::class,
