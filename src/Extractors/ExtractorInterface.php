@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Resolvers;
+namespace Yiisoft\Factory\Extractors;
 
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 /**
- * Interface DependencyResolverInterface
+ * Interface ExtractorInterface
  */
-interface DependencyResolverInterface
+interface ExtractorInterface
 {
     /**
      * @param string $class
      * @return DefinitionInterface[] An array of direct dependencies of $class.
      * @throws NotInstantiableException If the class is not instantiable this MUST throw a NotInstantiableException
      */
-    public function resolveConstructor(string $class): array;
+    public function fromClassName(string $class): array;
 
     /**
      * @param callable $callable
      * @return DefinitionInterface[] An array of direct dependencies of the callable.
      */
-    public function resolveCallable(callable $callable): array;
+    public function fromCallable(callable $callable): array;
 }
