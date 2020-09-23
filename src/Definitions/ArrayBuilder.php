@@ -34,7 +34,7 @@ class ArrayBuilder
             }
         }
 
-        $resolved = $this->resolveDependencies($container, $dependencies);
+        $resolved = DefinitionResolver::resolveArray($container, $dependencies);
         $object = new $class(...array_values($resolved));
         return $this->configure($container, $object, $definition->getConfig());
     }
@@ -79,40 +79,6 @@ class ArrayBuilder
                 $dependencyIndex++;
             }
         }
-    }
-
-    /**
-     * Resolves dependencies by replacing them with the actual object instances.
-     * @param ContainerInterface $container
-     * @param DefinitionInterface[] $dependencies the dependencies
-     * @return array the resolved dependencies
-     */
-    private function resolveDependencies(ContainerInterface $container, array $dependencies): array
-    {
-        $result = [];
-        foreach ($dependencies as $key => $dependency) {
-            $result[$key] = $this->resolveDependency($container, $dependency);
-        }
-
-        return $result;
-    }
-
-    /**
-     * This function resolves a dependency recursively, checking for loops.
-     * TODO add checking for loops
-     * @param ContainerInterface $container
-     * @param mixed $dependency
-     * @return mixed
-     */
-    private function resolveDependency(ContainerInterface $container, $dependency)
-    {
-        if ($dependency instanceof DefinitionInterface) {
-            $dependency = $dependency->resolve($container);
-        } elseif (is_array($dependency)) {
-            return $this->resolveDependencies($container, $dependency);
-        }
-
-        return $dependency;
     }
 
     /**
