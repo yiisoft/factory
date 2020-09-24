@@ -40,4 +40,16 @@ class DefinitionResolver
 
         return $definition;
     }
+
+    public static function ensureResolvable($value)
+    {
+        if ($value instanceof DefinitionInterface || is_array($value)) {
+            return $value;
+        }
+        if (is_callable($value)) {
+            return new CallableDefinition($value);
+        }
+
+        return new ValueDefinition($value);
+    }
 }
