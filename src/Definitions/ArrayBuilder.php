@@ -26,7 +26,7 @@ class ArrayBuilder
             $this->validateParameters($parameters);
 
             foreach ($parameters as $index => $parameter) {
-                if ($parameter instanceof ReferenceInterface || is_array($parameter)) {
+                if ($parameter instanceof DefinitionInterface || is_array($parameter)) {
                     $this->injectParameter($dependencies, $index, $parameter);
                 } else {
                     $this->injectParameter($dependencies, $index, new ValueDefinition($parameter));
