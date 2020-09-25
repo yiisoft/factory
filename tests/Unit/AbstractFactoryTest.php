@@ -59,16 +59,21 @@ abstract class AbstractFactoryTest extends TestCase
     }
 
     /**
-     * Factory should always return new instance even if an object is set to it.
-     * In this case it is being cloned.
+     * When defintion is given as a concrete object then factory returns same instance.
+     * To get new instance every time other defintion (e.g. closure) must be used.
      */
-    public function testObjectIsCloned(): void
+    public function testSameInstance(): void
     {
         $factory = new Factory($this->createContainer(), [
-            'engine' => new EngineMarkOne(),
+            'concrete' => new EngineMarkOne(),
+            'variable' => fn () => new EngineMarkOne(),
         ]);
-        $one = $factory->create('engine');
-        $two = $factory->create('engine');
+        $one = $factory->create('concrete');
+        $two = $factory->create('concrete');
+        $this->assertSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+        $one = $factory->create('variable');
+        $two = $factory->create('variable');
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
@@ -130,8 +135,8 @@ abstract class AbstractFactoryTest extends TestCase
         $factory = new Factory($this->createContainer(), [
             'engine' => EngineMarkOne::class,
         ]);
-        $one = $factory->get('engine');
-        $two = $factory->get('engine');
+        $one = $factory->create('engine');
+        $two = $factory->create('engine');
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -141,8 +146,8 @@ abstract class AbstractFactoryTest extends TestCase
     {
         $factory = new Factory($this->createContainer());
         $factory->set(EngineMarkOne::class, EngineMarkOne::class);
-        $one = $factory->get(EngineMarkOne::class);
-        $two = $factory->get(EngineMarkOne::class);
+        $one = $factory->create(EngineMarkOne::class);
+        $two = $factory->create(EngineMarkOne::class);
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -154,8 +159,8 @@ abstract class AbstractFactoryTest extends TestCase
     public function testCreateWithParams(): void
     {
         $factory = new Factory($this->createContainer());
-        $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
-        $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
+        $one = $factory->create(Car::class, [$factory->create(EngineMarkOne::class)]);
+        $two = $factory->create(Car::class, [$factory->create(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(Car::class, $one);
         $this->assertInstanceOf(Car::class, $two);
@@ -166,8 +171,8 @@ abstract class AbstractFactoryTest extends TestCase
     public function testCreateWithNamedParams(): void
     {
         $factory = new Factory($this->createContainer());
-        $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
-        $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
+        $one = $factory->create(Car::class, ['engine' => $factory->create(EngineMarkOne::class)]);
+        $two = $factory->create(Car::class, ['engine' => $factory->create(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(Car::class, $one);
         $this->assertInstanceOf(Car::class, $two);

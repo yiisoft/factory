@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory;
 
-use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
@@ -13,7 +12,7 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
  * but will fall back to manual instantiation
  * if the container cannot provide a required dependency.
  */
-interface FactoryInterface extends ContainerInterface
+interface FactoryInterface
 {
     /**
      * Creates a new object using the given configuration and constructor arguments.
@@ -59,4 +58,17 @@ interface FactoryInterface extends ContainerInterface
      * @throws InvalidConfigException if the configuration is invalid.
      */
     public function create($config, array $params = []);
+
+    /**
+     * Returns true if the factory has definition for the given identifier.
+     * Returns false otherwise.
+     *
+     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
+     * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
+     *
+     * @param string $id class name, interface name or alias name
+     *
+     * @return bool
+     */
+    public function has($id);
 }

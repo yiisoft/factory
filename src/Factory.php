@@ -14,14 +14,11 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
 class Factory implements FactoryInterface
 {
     /**
-     * @var ContainerInterface parent container
-     */
-    private ?ContainerInterface $container = null;
-
-    /**
      * @var DefinitionInterface[] object definitions indexed by their types
      */
     private array $definitions = [];
+
+    private Wrapper $wrapper;
 
     /**
      * Factory constructor.
@@ -33,7 +30,7 @@ class Factory implements FactoryInterface
      */
     public function __construct(ContainerInterface $container = null, array $definitions = [])
     {
-        $this->container = $container;
+        $this->wrapper = new Wrapper($this, $container);
         $this->setMultiple($definitions);
     }
 
@@ -44,11 +41,7 @@ class Factory implements FactoryInterface
             $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
         }
 
-        if ($definition instanceof ArrayDefinition) {
-            return $definition->resolve($this->container ?? $this);
-        }
-
-        return $definition->resolve($this);
+        return $this->wrapper->resolve($definition);
     }
 
     private function merge(DefinitionInterface $one, DefinitionInterface $two): DefinitionInterface
@@ -56,28 +49,11 @@ class Factory implements FactoryInterface
         return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 
-    public function get($id)
-    {
-        $definition = $this->getDefinition($id);
-        if ($definition instanceof ArrayDefinition) {
-            return $definition->resolve($this->container ?? $this);
-        }
-
-        return $definition->resolve($this);
-    }
-
     public function getDefinition($id): DefinitionInterface
     {
-        if ($this->has($id)) {
-            return $this->definitions[$id];
-        }
+        $definition = $this->has($id) ? $this->definitions[$id] : $id;
 
-        // XXX out of nowhere solution, without it infinite loop
-        if (\is_string($id)) {
-            return new ArrayDefinition($id);
-        }
-
-        return Normalizer::normalize($id);
+        return Normalizer::normalize($definition, $id);
     }
 
     /**
@@ -89,7 +65,8 @@ class Factory implements FactoryInterface
      */
     public function set(string $id, $definition): void
     {
-        $this->definitions[$id] = Normalizer::normalize($definition, $id);
+        Normalizer::validate($definition);
+        $this->definitions[$id] = $definition;
     }
 
     /**
@@ -104,12 +81,6 @@ class Factory implements FactoryInterface
         }
     }
 
-    /**
-     * Returns a value indicating whether the container has the definition of the specified name.
-     * @param string $id class name, interface name or alias name
-     * @return bool whether the container is able to provide instance of class specified.
-     * @see set()
-     */
     public function has($id): bool
     {
         return isset($this->definitions[$id]);

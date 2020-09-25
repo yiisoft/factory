@@ -5,24 +5,26 @@ declare(strict_types=1);
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Factory;
+use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
+use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\OptionalInterfaceDependency;
+use Yiisoft\Factory\Wrapper;
 
 class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
 
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(\DateTime::class);
@@ -44,7 +46,7 @@ class DefinitionExtractorTest extends TestCase
     public function testResolveCarConstructor(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(Car::class);
 
@@ -57,7 +59,7 @@ class DefinitionExtractorTest extends TestCase
     public function testResolveGearBoxConstructor(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(GearBox::class);
         $this->assertCount(1, $dependencies);
@@ -67,7 +69,7 @@ class DefinitionExtractorTest extends TestCase
     public function testOptionalInterfaceDependency(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
@@ -76,7 +78,7 @@ class DefinitionExtractorTest extends TestCase
     public function testNullableInterfaceDependency(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
@@ -86,7 +88,7 @@ class DefinitionExtractorTest extends TestCase
     public function testOptionalConcreteDependency(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
@@ -95,10 +97,15 @@ class DefinitionExtractorTest extends TestCase
     public function testNullableConcreteDependency(): void
     {
         $resolver = new DefinitionExtractor();
-        $container = new Factory();
+        $container = $this->getContainer();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
+    }
+
+    private function getContainer(): ContainerInterface
+    {
+        return new Wrapper(new Factory());
     }
 }
