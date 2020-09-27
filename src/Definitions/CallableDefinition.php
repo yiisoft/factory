@@ -31,7 +31,7 @@ class CallableDefinition implements DefinitionInterface
     private function getInjector(ContainerInterface $container): Injector
     {
         $id = spl_object_hash($container);
-        if (array_key_exists($id, self::$injectors)) {
+        if (!array_key_exists($id, self::$injectors)) {
             self::$injectors[$id] = new Injector($container);
         }
 
