@@ -9,6 +9,8 @@ use Yiisoft\Injector\Injector;
 
 class CallableDefinition implements DefinitionInterface
 {
+    private static array $injectors = [];
+
     private $method;
 
     public function __construct(callable $method)
@@ -20,9 +22,19 @@ class CallableDefinition implements DefinitionInterface
     {
         $callback = $this->method;
         if (class_exists(Injector::class)) {
-            return (new Injector($container))->invoke($callback);
+            return $this->getInjector($container)->invoke($callback);
         }
 
         return $callback($container);
+    }
+
+    private function getInjector(ContainerInterface $container): Injector
+    {
+        $id = spl_object_hash($container);
+        if (array_key_exists($id, self::$injectors)) {
+            self::$injectors[$id] = new Injector($container);
+        }
+
+        return self::$injectors[$id];
     }
 }
