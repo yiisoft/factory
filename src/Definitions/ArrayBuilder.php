@@ -7,6 +7,7 @@ namespace Yiisoft\Factory\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Builds object by ArrayDefinition.
@@ -21,21 +22,47 @@ class ArrayBuilder
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
         $parameters = $definition->getParams();
-
-        if (!empty($parameters)) {
-            $this->validateParameters($parameters);
-
-            foreach ($parameters as $index => $parameter) {
-                $this->injectParameter($dependencies, $index, DefinitionResolver::ensureResolvable($parameter));
-            }
-        }
-
+        $this->injectParameters($dependencies, $parameters);
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
         $object = new $class(...array_values($resolved));
+
         return $this->configure($container, $object, $definition->getConfig());
     }
 
-    private function validateParameters(array $parameters): void
+    private function injectParameters(array &$dependencies, array $parameters): void
+    {
+        $isInteger = $this->isIntegerIndexed($parameters);
+        $no = 0;
+        $usedParameters = [];
+        $isVariadic = false;
+        foreach ($dependencies as $key => &$value) {
+            if ($value instanceof ParameterDefinition && $value->getParameter()->isVariadic()) {
+                $isVariadic = true;
+            }
+            $index = $isInteger ? $no : $key;
+            if (array_key_exists($index, $parameters)) {
+                $value = DefinitionResolver::ensureResolvable($parameters[$index]);
+                $usedParameters[$index] = 1;
+            }
+            $no++;
+        }
+        if ($isVariadic) {
+            unset($value);
+            foreach ($parameters as $index => $value) {
+                if (!isset($usedParameters[$index])) {
+                    $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
+                }
+            }
+        } elseif (!$isInteger) {
+            foreach (array_keys($parameters) as $key) {
+                if (!isset($dependencies[$key])) {
+                    throw new InvalidConfigException('Unknown named parameter $' . $key);
+                }
+            }
+        }
+    }
+
+    private function isIntegerIndexed(array $parameters): bool
     {
         $hasStringParameter = false;
         $hasIntParameter = false;
@@ -57,24 +84,8 @@ class ArrayBuilder
                 'Parameters indexed by name and by position in the same array are not allowed.'
             );
         }
-    }
 
-    private function injectParameter(array &$dependencies, $index, $parameter): void
-    {
-        if (is_string($index)) {
-            $dependencies[$index] = $parameter;
-        } else {
-            reset($dependencies);
-            $dependencyIndex = 0;
-            while (current($dependencies)) {
-                if ($index === $dependencyIndex) {
-                    $dependencies[key($dependencies)] = $parameter;
-                    break;
-                }
-                next($dependencies);
-                $dependencyIndex++;
-            }
-        }
+        return $hasIntParameter;
     }
 
     /**
