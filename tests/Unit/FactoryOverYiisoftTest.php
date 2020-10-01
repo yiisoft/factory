@@ -24,7 +24,7 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
     {
         $container = $this->createContainer();
         $factory = new Factory($container, [
-            'factory' => [
+            'factoryObject' => [
                 '__class' => Factory::class,
                 '__construct()' => [
                     'parent'        => Reference::to(ContainerInterface::class),
@@ -32,27 +32,27 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
                 ],
             ],
         ]);
-        $one = $factory->create('factory');
-        $two = $factory->create('factory');
-        $this->assertNotSame($one, $two);
-        $this->assertNotSame($one, $factory);
-        $this->assertInstanceOf(Factory::class, $one);
-        $this->assertInstanceOf(Factory::class, $two);
+        $oneFactoryObject = $factory->create('factoryObject');
+        $otherFactoryObject = $factory->create('factoryObject');
+        $this->assertNotSame($oneFactoryObject, $otherFactoryObject);
+        $this->assertNotSame($oneFactoryObject, $factory);
+        $this->assertInstanceOf(Factory::class, $oneFactoryObject);
+        $this->assertInstanceOf(Factory::class, $otherFactoryObject);
     }
 
     public function testCreateFactoryImmutable(): void
     {
         $container = $this->createContainer();
         $factory = new Factory($container, [
-            'factory' => [
+            'immutableObject' => [
                 '__class' => Immutable::class,
                 'id()' => ['id-testMe'],
                 'fieldImmutable()' => ['testMe'],
             ]
         ]);
-        $one = $factory->create('factory');
-        $two = (new Immutable())->fieldImmutable('testMe');
-        $two->id('id-testMe');
-        $this->assertEquals($one, $two);
+        $oneImmutableObject = $factory->create('immutableObject');
+        $otherImmutableObject = (new Immutable())->fieldImmutable('testMe');
+        $otherImmutableObject->id('id-testMe');
+        $this->assertEquals($oneImmutableObject, $otherImmutableObject);
     }
 }
