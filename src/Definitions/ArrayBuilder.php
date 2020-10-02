@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
 
@@ -16,65 +17,82 @@ class ArrayBuilder
     private static ?DefinitionExtractor $extractor = null;
     private static array $dependencies = [];
 
+    /**
+     * @param ContainerInterface $container
+     * @param ArrayDefinition $definition
+     * @return object
+     * @throws NotInstantiableException
+     * @throws InvalidConfigException
+     */
     public function build(ContainerInterface $container, ArrayDefinition $definition)
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
         $parameters = $definition->getParams();
-
-        if (!empty($parameters)) {
-            $this->validateParameters($parameters);
-
-            foreach ($parameters as $index => $parameter) {
-                $this->injectParameter($dependencies, $index, DefinitionResolver::ensureResolvable($parameter));
-            }
-        }
-
+        $this->injectParameters($dependencies, $parameters);
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
         $object = new $class(...array_values($resolved));
+
         return $this->configure($container, $object, $definition->getConfig());
     }
 
-    private function validateParameters(array $parameters): void
+    /**
+     * @param array $dependencies
+     * @param array $parameters
+     * @throws InvalidConfigException
+     */
+    private function injectParameters(array &$dependencies, array $parameters): void
     {
-        $hasStringParameter = false;
-        $hasIntParameter = false;
-        foreach ($parameters as $index => $parameter) {
-            if (is_string($index)) {
-                $hasStringParameter = true;
-                if ($hasIntParameter) {
-                    break;
-                }
-            } else {
-                $hasIntParameter = true;
-                if ($hasStringParameter) {
-                    break;
+        $isIntegerIndexed = $this->isIntegerIndexed($parameters);
+        $dependencyIndex = 0;
+        $usedParameters = [];
+        $isVariadic = false;
+        foreach ($dependencies as $key => &$value) {
+            if ($value instanceof ParameterDefinition && $value->getParameter()->isVariadic()) {
+                $isVariadic = true;
+            }
+            $index = $isIntegerIndexed ? $dependencyIndex : $key;
+            if (array_key_exists($index, $parameters)) {
+                $value = DefinitionResolver::ensureResolvable($parameters[$index]);
+                $usedParameters[$index] = 1;
+            }
+            $dependencyIndex++;
+        }
+        unset($value);
+        if ($isVariadic) {
+            foreach ($parameters as $index => $value) {
+                if (!isset($usedParameters[$index])) {
+                    $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
                 }
             }
-        }
-        if ($hasIntParameter && $hasStringParameter) {
-            throw new \InvalidArgumentException(
-                'Parameters indexed by name and by position in the same array are not allowed.'
-            );
         }
     }
 
-    private function injectParameter(array &$dependencies, $index, $parameter): void
+    private function isIntegerIndexed(array $parameters): bool
     {
-        if (is_string($index)) {
-            $dependencies[$index] = $parameter;
-        } else {
-            reset($dependencies);
-            $dependencyIndex = 0;
-            while (current($dependencies)) {
-                if ($index === $dependencyIndex) {
-                    $dependencies[key($dependencies)] = $parameter;
+        $hasStringIndex = false;
+        $hasIntegerIndex = false;
+
+        foreach ($parameters as $index => $parameter) {
+            if (is_string($index)) {
+                $hasStringIndex = true;
+                if ($hasIntegerIndex) {
                     break;
                 }
-                next($dependencies);
-                $dependencyIndex++;
+            } else {
+                $hasIntegerIndex = true;
+                if ($hasStringIndex) {
+                    break;
+                }
             }
         }
+        if ($hasIntegerIndex && $hasStringIndex) {
+            throw new InvalidConfigException(
+                'Parameters indexed both by name and by position are not allowed in the same array.'
+            );
+        }
+
+        return $hasIntegerIndex;
     }
 
     /**

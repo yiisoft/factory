@@ -33,6 +33,30 @@ class ClassDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container)
     {
+        if (strpos($this->class, '|') !== false) {
+            $types = explode('|', $this->class);
+
+            $error = null;
+
+            foreach ($types as $type) {
+                try {
+                    $result = $container->get($type);
+                    if (!$result instanceof $type) {
+                        throw new InvalidConfigException('Container returned incorrect type for service ' . $type);
+                    }
+                    return $result;
+                } catch (\Throwable $t) {
+                    $error = $t;
+                }
+            }
+
+            if ($this->optional) {
+                return null;
+            }
+
+            throw $error;
+        }
+
         try {
             $result = $container->get($this->class);
         } catch (\Throwable $t) {

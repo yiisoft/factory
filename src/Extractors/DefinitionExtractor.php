@@ -6,8 +6,7 @@ namespace Yiisoft\Factory\Extractors;
 
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\ClassDefinition;
-use Yiisoft\Factory\Definitions\InvalidDefinition;
-use Yiisoft\Factory\Definitions\ValueDefinition;
+use Yiisoft\Factory\Definitions\ParameterDefinition;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 /**
@@ -45,10 +44,16 @@ class DefinitionExtractor implements ExtractorInterface
     private function fromParameter(\ReflectionParameter $parameter): DefinitionInterface
     {
         $type = $parameter->getType();
-        $hasDefault = $parameter->isOptional() || $parameter->isDefaultValueAvailable() || (isset($type) && $type->allowsNull());
 
-        if (!$hasDefault && $type === null) {
-            return new InvalidDefinition();
+        // PHP 8 union type is used as type hint
+        if ($type instanceof \ReflectionUnionType) {
+            $types = [];
+            foreach ($type->getTypes() as $unionType) {
+                if (!$unionType->isBuiltin()) {
+                    $types[] = $unionType->getName();
+                }
+            }
+            return new ClassDefinition(implode('|', $types), $type->allowsNull());
         }
 
         // Our parameter has a class type hint
@@ -57,7 +62,8 @@ class DefinitionExtractor implements ExtractorInterface
         }
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
-        return new ValueDefinition(
+        return new ParameterDefinition(
+            $parameter,
             $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
             $type !== null ? $type->getName() : null
         );
