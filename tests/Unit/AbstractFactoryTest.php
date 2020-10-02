@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -179,7 +180,7 @@ abstract class AbstractFactoryTest extends TestCase
     {
         $factory = new Factory($this->createContainer());
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigException::class);
         $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
     }
 

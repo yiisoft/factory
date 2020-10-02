@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Builds object by ArrayDefinition.
@@ -17,6 +17,13 @@ class ArrayBuilder
     private static ?DefinitionExtractor $extractor = null;
     private static array $dependencies = [];
 
+    /**
+     * @param ContainerInterface $container
+     * @param ArrayDefinition $definition
+     * @return object
+     * @throws NotInstantiableException
+     * @throws InvalidConfigException
+     */
     public function build(ContainerInterface $container, ArrayDefinition $definition)
     {
         $class = $definition->getClass();
@@ -29,25 +36,30 @@ class ArrayBuilder
         return $this->configure($container, $object, $definition->getConfig());
     }
 
+    /**
+     * @param array $dependencies
+     * @param array $parameters
+     * @throws InvalidConfigException
+     */
     private function injectParameters(array &$dependencies, array $parameters): void
     {
-        $isInteger = $this->isIntegerIndexed($parameters);
-        $no = 0;
+        $isIntegerIndexed = $this->isIntegerIndexed($parameters);
+        $dependencyIndex = 0;
         $usedParameters = [];
         $isVariadic = false;
         foreach ($dependencies as $key => &$value) {
             if ($value instanceof ParameterDefinition && $value->getParameter()->isVariadic()) {
                 $isVariadic = true;
             }
-            $index = $isInteger ? $no : $key;
+            $index = $isIntegerIndexed ? $dependencyIndex : $key;
             if (array_key_exists($index, $parameters)) {
                 $value = DefinitionResolver::ensureResolvable($parameters[$index]);
                 $usedParameters[$index] = 1;
             }
-            $no++;
+            $dependencyIndex++;
         }
+        unset($value);
         if ($isVariadic) {
-            unset($value);
             foreach ($parameters as $index => $value) {
                 if (!isset($usedParameters[$index])) {
                     $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
@@ -58,28 +70,29 @@ class ArrayBuilder
 
     private function isIntegerIndexed(array $parameters): bool
     {
-        $hasStringParameter = false;
-        $hasIntParameter = false;
+        $hasStringIndex = false;
+        $hasIntegerIndex = false;
+
         foreach ($parameters as $index => $parameter) {
             if (is_string($index)) {
-                $hasStringParameter = true;
-                if ($hasIntParameter) {
+                $hasStringIndex = true;
+                if ($hasIntegerIndex) {
                     break;
                 }
             } else {
-                $hasIntParameter = true;
-                if ($hasStringParameter) {
+                $hasIntegerIndex = true;
+                if ($hasStringIndex) {
                     break;
                 }
             }
         }
-        if ($hasIntParameter && $hasStringParameter) {
-            throw new \InvalidArgumentException(
-                'Parameters indexed by name and by position in the same array are not allowed.'
+        if ($hasIntegerIndex && $hasStringIndex) {
+            throw new InvalidConfigException(
+                'Parameters indexed both by name and by position are not allowed in the same array.'
             );
         }
 
-        return $hasIntParameter;
+        return $hasIntegerIndex;
     }
 
     /**
