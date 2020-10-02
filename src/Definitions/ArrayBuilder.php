@@ -53,12 +53,6 @@ class ArrayBuilder
                     $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
                 }
             }
-        } elseif (!$isInteger) {
-            foreach (array_keys($parameters) as $key) {
-                if (!isset($dependencies[$key])) {
-                    throw new InvalidConfigException('Unknown named parameter $' . $key);
-                }
-            }
         }
     }
 
