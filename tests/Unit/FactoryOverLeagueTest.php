@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Unit;
 
-use Psr\Container\ContainerInterface;
 use League\Container\Container;
-use Yiisoft\Factory\Factory;
+use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Factory;
 
 /**
  * Test the Factory over League Container.
