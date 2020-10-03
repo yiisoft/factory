@@ -33,28 +33,8 @@ class ClassDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container)
     {
-        if (strpos($this->class, '|') !== false) {
-            $types = explode('|', $this->class);
-
-            $error = null;
-
-            foreach ($types as $type) {
-                try {
-                    $result = $container->get($type);
-                    if (!$result instanceof $type) {
-                        throw new InvalidConfigException('Container returned incorrect type for service ' . $type);
-                    }
-                    return $result;
-                } catch (\Throwable $t) {
-                    $error = $t;
-                }
-            }
-
-            if ($this->optional) {
-                return null;
-            }
-
-            throw $error;
+        if ($this->isUnionType()) {
+            return $this->resolveUnionType($container);
         }
 
         try {
@@ -70,5 +50,40 @@ class ClassDefinition implements DefinitionInterface
             throw new InvalidConfigException('Container returned incorrect type for service ' . $this->class);
         }
         return $result;
+    }
+
+    /**
+     * @param ContainerInterface $container
+     * @return mixed
+     * @throws \Throwable
+     */
+    private function resolveUnionType(ContainerInterface $container)
+    {
+        $types = explode('|', $this->class);
+
+        $error = null;
+
+        foreach ($types as $type) {
+            try {
+                $result = $container->get($type);
+                if (!$result instanceof $type) {
+                    throw new InvalidConfigException('Container returned incorrect type for service ' . $type);
+                }
+                return $result;
+            } catch (\Throwable $t) {
+                $error = $t;
+            }
+        }
+
+        if ($this->optional) {
+            return null;
+        }
+
+        throw $error;
+    }
+
+    private function isUnionType(): bool
+    {
+        return strpos($this->class, '|') !== false;
     }
 }
