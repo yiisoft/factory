@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Extractors;
 
-use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\ClassDefinition;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\ParameterDefinition;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
