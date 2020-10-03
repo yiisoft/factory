@@ -6,8 +6,8 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Di\Container;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Immutable;
 
 /**
