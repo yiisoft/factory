@@ -44,7 +44,17 @@ class DefinitionExtractor implements ExtractorInterface
     private function fromParameter(\ReflectionParameter $parameter): DefinitionInterface
     {
         $type = $parameter->getType();
-        $hasDefault = $parameter->isOptional() || $parameter->isDefaultValueAvailable() || (isset($type) && $type->allowsNull());
+
+        // PHP 8 union type is used as type hint
+        if ($type instanceof \ReflectionUnionType) {
+            $types = [];
+            foreach ($type->getTypes() as $unionType) {
+                if (!$unionType->isBuiltin()) {
+                    $types[] = $unionType->getName();
+                }
+            }
+            return new ClassDefinition(implode('|', $types), $type->allowsNull());
+        }
 
         // Our parameter has a class type hint
         if ($type !== null && !$type->isBuiltin()) {
