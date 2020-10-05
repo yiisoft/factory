@@ -6,8 +6,8 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Di\Container;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Immutable;
 
 /**
@@ -27,7 +27,7 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
             'factoryObject' => [
                 '__class' => Factory::class,
                 '__construct()' => [
-                    'parent'        => Reference::to(ContainerInterface::class),
+                    'container'     => Reference::to(ContainerInterface::class),
                     'definitions'   => [],
                 ],
             ],
