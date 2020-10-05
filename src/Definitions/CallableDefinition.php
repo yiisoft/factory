@@ -18,11 +18,6 @@ class CallableDefinition implements DefinitionInterface
 
     public function resolve(ContainerInterface $container)
     {
-        $callback = $this->method;
-        if ($container->has(Injector::class)) {
-            return $container->get(Injector::class)->invoke($callback);
-        }
-
-        return $callback($container);
+        return $container->get(Injector::class)->invoke($this->method);
     }
 }
