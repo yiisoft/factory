@@ -12,7 +12,7 @@ use Psr\Container\ContainerExceptionInterface;
  */
 class NotInstantiableException extends \Exception implements ContainerExceptionInterface
 {
-    public function __construct($class, $message = null, $code = 0, \Exception $previous = null)
+    public function __construct(string $class, string $message = null, int $code = 0, \Exception $previous = null)
     {
         if ($message === null) {
             $message = "Can not instantiate $class.";

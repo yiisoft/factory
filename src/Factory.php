@@ -66,6 +66,9 @@ class Factory implements FactoryInterface
         return $definition->resolve($this);
     }
 
+    /**
+     * @param mixed $id
+     */
     public function getDefinition($id): DefinitionInterface
     {
         if ($this->has($id)) {

@@ -21,8 +21,8 @@
     },
     "require-dev": {
         "infection/infection": "^0.16.3",
+        "vimeo/psalm": "^3.16",
         "league/container": "^3.2",
-        "phan/phan": "^3.0",
         "phpunit/phpunit": "^9.3",
         "yiisoft/injector": "^1.0@dev",
         "yiisoft/di": "^3.0@dev"

@@ -16,6 +16,9 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  */
 class DefinitionExtractor implements ExtractorInterface
 {
+    /**
+     * @param class-string $class
+     */
     public function fromClassName(string $class): array
     {
         $reflectionClass = new \ReflectionClass($class);
