@@ -62,7 +62,7 @@ class Normalizer
             return Reference::to($definition);
         }
 
-        if (\is_callable($definition)) {
+        if (\is_callable($definition, true)) {
             return new CallableDefinition($definition);
         }
 
