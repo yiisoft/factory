@@ -87,16 +87,6 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
-    public function testCreateClassWithGivenContructorParams(): void
-    {
-        $factory = new Factory($this->createContainer());
-        $one = $factory->create(EngineMarkOne::class, [42]);
-        $two = $factory->create(EngineMarkOne::class, ['number' => 43]);
-        $this->assertNotSame($one, $two);
-        $this->assertSame(42, $one->getNumber());
-        $this->assertSame(43, $two->getNumber());
-    }
-
     /**
      * Configuration specified in {@see Factory::create()} should be merged with configuration stored in a factory.
      */
@@ -186,6 +176,19 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
     }
 
+    public function testCreateWithCallableValuesInParams(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $object = $factory->create(TwoParametersDependency::class, [
+            'firstParameter' => 'date',
+            'secondParameter' => 'time',
+        ]);
+
+        $this->assertInstanceOf(TwoParametersDependency::class, $object);
+        $this->assertSame('date', $object->getFirstParameter());
+        $this->assertSame('time', $object->getSecondParameter());
+    }
+
     public function testCreateWithInvalidParams(): void
     {
         $factory = new Factory($this->createContainer());
@@ -202,19 +205,6 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('param1', $object->getFirstParameter());
         $this->assertSame('param2', $object->getSecondParameter());
-    }
-
-    public function testCreateWithValuesSameNamedFunction(): void
-    {
-        $factory = new Factory($this->createContainer());
-        $object = $factory->create(TwoParametersDependency::class, [
-            'firstParameter' => 'date',
-            'secondParameter' => 'time',
-        ]);
-
-        $this->assertInstanceOf(TwoParametersDependency::class, $object);
-        $this->assertSame('date', $object->getFirstParameter());
-        $this->assertSame('time', $object->getSecondParameter());
     }
 
     /**
