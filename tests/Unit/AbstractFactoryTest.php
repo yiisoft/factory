@@ -204,6 +204,19 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertSame('param2', $object->getSecondParameter());
     }
 
+    public function testCreateWithValuesSameNamedFunction(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $object = $factory->create(TwoParametersDependency::class, [
+            'firstParameter' => 'date',
+            'secondParameter' => 'time',
+        ]);
+
+        $this->assertInstanceOf(TwoParametersDependency::class, $object);
+        $this->assertSame('date', $object->getFirstParameter());
+        $this->assertSame('time', $object->getSecondParameter());
+    }
+
     /**
      * In case class to be created has dependencies, these are looked for in DI container.
      */
