@@ -46,7 +46,7 @@ class DefinitionResolver
         if ($value instanceof DefinitionInterface || is_array($value)) {
             return $value;
         }
-        if (is_callable($value)) {
+        if ($value instanceof \Closure) {
             return new CallableDefinition($value);
         }
 
