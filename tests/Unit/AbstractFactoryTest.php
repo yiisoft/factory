@@ -75,9 +75,9 @@ abstract class AbstractFactoryTest extends TestCase
     }
 
     /**
-     * If class name is used as ID, factory should try creating such class.
+     * If class name is used as ID, factory must try create given class.
      */
-    public function testCreateAClassIfNotDefinedInConfig(): void
+    public function testCreateClassNotDefinedInConfig(): void
     {
         $factory = new Factory($this->createContainer());
         $one = $factory->create(EngineMarkOne::class);
@@ -174,6 +174,19 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(Car::class, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
         $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithCallableValuesInParams(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $object = $factory->create(TwoParametersDependency::class, [
+            'firstParameter' => 'date',
+            'secondParameter' => 'time',
+        ]);
+
+        $this->assertInstanceOf(TwoParametersDependency::class, $object);
+        $this->assertSame('date', $object->getFirstParameter());
+        $this->assertSame('time', $object->getSecondParameter());
     }
 
     public function testCreateWithInvalidParams(): void
