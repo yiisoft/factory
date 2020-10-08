@@ -75,9 +75,9 @@ abstract class AbstractFactoryTest extends TestCase
     }
 
     /**
-     * If class name is used as ID, factory should try creating such class.
+     * If class name is used as ID, factory must try create given class.
      */
-    public function testCreateAClassIfNotDefinedInConfig(): void
+    public function testCreateClassNotDefinedInConfig(): void
     {
         $factory = new Factory($this->createContainer());
         $one = $factory->create(EngineMarkOne::class);
@@ -85,6 +85,16 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    public function testCreateClassWithGivenContructorParams(): void
+    {
+        $factory = new Factory($this->createContainer());
+        $one = $factory->create(EngineMarkOne::class, [42]);
+        $two = $factory->create(EngineMarkOne::class, ['number' => 43]);
+        $this->assertNotSame($one, $two);
+        $this->assertSame(42, $one->getNumber());
+        $this->assertSame(43, $two->getNumber());
     }
 
     /**
