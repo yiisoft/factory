@@ -16,10 +16,13 @@ class ArrayDefinition implements DefinitionInterface
     private const CLASS_KEY = '__class';
     private const PARAMS_KEY = '__construct()';
 
-    private static ?ArrayBuilder $builder = null;
+    /**
+     * @var class-string
+     */
     private string $class;
     private array $params;
     private array $config;
+    private static ?ArrayBuilder $builder = null;
 
     public function __construct(string $class, array $params = [], array $config = [])
     {
@@ -31,6 +34,9 @@ class ArrayDefinition implements DefinitionInterface
         $this->config = $config;
     }
 
+    /**
+     * @return class-string
+     */
     public function getClass(): string
     {
         return $this->class;
@@ -57,7 +63,7 @@ class ArrayDefinition implements DefinitionInterface
             throw new NotInstantiableException(var_export($config, true));
         }
 
-        return new static($class, $params, $config);
+        return new self($class, $params, $config);
     }
 
     public function resolve(ContainerInterface $container)
@@ -76,7 +82,7 @@ class ArrayDefinition implements DefinitionInterface
 
     public function merge(self $other): self
     {
-        return new static(
+        return new self(
             $other->class,
             $this->mergeParameters($this->params, $other->params),
             array_merge($this->config, $other->config)

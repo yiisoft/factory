@@ -23,9 +23,9 @@ use Psr\Container\ContainerInterface;
  */
 class Reference implements ReferenceInterface
 {
-    private $id;
+    private string $id;
 
-    private function __construct($id)
+    private function __construct(string $id)
     {
         $this->id = $id;
     }
@@ -35,11 +35,6 @@ class Reference implements ReferenceInterface
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return ReferenceInterface
-     */
     public static function to($id): ReferenceInterface
     {
         if (!\is_string($id)) {

@@ -51,7 +51,7 @@ class Factory implements FactoryInterface
         return $definition->resolve($this);
     }
 
-    private function merge(DefinitionInterface $one, DefinitionInterface $two): DefinitionInterface
+    private function merge(DefinitionInterface $one, ArrayDefinition $two): DefinitionInterface
     {
         return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }

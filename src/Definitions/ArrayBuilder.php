@@ -97,7 +97,7 @@ class ArrayBuilder
 
     /**
      * Returns the dependencies of the specified class.
-     * @param string $class class name, interface name or alias name
+     * @param class-string $class class name, interface name or alias name
      * @return DefinitionInterface[] the dependencies of the specified class.
      * @throws NotInstantiableException
      * @internal
