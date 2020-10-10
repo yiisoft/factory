@@ -6,7 +6,6 @@ namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 /**
  * Builds object by array config
@@ -24,11 +23,13 @@ class ArrayDefinition implements DefinitionInterface
     private array $config;
     private static ?ArrayBuilder $builder = null;
 
+    /**
+     * @param class-string $class
+     * @param array $params
+     * @param array $config
+     */
     public function __construct(string $class, array $params = [], array $config = [])
     {
-        if (empty($class)) {
-            throw new InvalidConfigException('class name not given');
-        }
         $this->class  = $class;
         $this->params = $params;
         $this->config = $config;
@@ -60,7 +61,7 @@ class ArrayDefinition implements DefinitionInterface
         unset($config[self::CLASS_KEY], $config[self::PARAMS_KEY]);
 
         if (empty($class)) {
-            throw new NotInstantiableException(var_export($config, true));
+            throw new InvalidConfigException('Invalid definition: empty string');
         }
 
         return new self($class, $params, $config);
