@@ -61,7 +61,7 @@ class ArrayDefinition implements DefinitionInterface
         unset($config[self::CLASS_KEY], $config[self::PARAMS_KEY]);
 
         if (empty($class)) {
-            throw new InvalidConfigException('Invalid definition: empty string');
+            throw new InvalidConfigException('Invalid definition: empty class name.');
         }
 
         return new self($class, $params, $config);
