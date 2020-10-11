@@ -39,7 +39,7 @@ class Reference implements ReferenceInterface
     public static function to($id): ReferenceInterface
     {
         if (!\is_string($id)) {
-            throw new InvalidConfigException('Reference id must be string');
+            throw new InvalidConfigException('Reference id must be string.');
         }
         return new self($id);
     }
