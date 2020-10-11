@@ -57,7 +57,7 @@ class Normalizer
 
         if (\is_string($definition)) {
             if (empty($definition)) {
-                throw new InvalidConfigException('Invalid definition: empty string');
+                throw new InvalidConfigException('Invalid definition: empty string.');
             }
             if ($id === $definition || (!empty($params) && class_exists($definition))) {
                 return ArrayDefinition::fromArray($definition, $params);
