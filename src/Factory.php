@@ -51,7 +51,7 @@ class Factory implements FactoryInterface
         return $definition->resolve($this);
     }
 
-    private function merge(DefinitionInterface $one, DefinitionInterface $two): DefinitionInterface
+    private function merge(DefinitionInterface $one, ArrayDefinition $two): DefinitionInterface
     {
         return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
@@ -66,15 +66,18 @@ class Factory implements FactoryInterface
         return $definition->resolve($this);
     }
 
+    /**
+     * @param mixed $id
+     */
     public function getDefinition($id): DefinitionInterface
     {
         if ($this->has($id)) {
             return $this->definitions[$id];
         }
 
-        // XXX out of nowhere solution, without it infinite loop
+        // prevent infinite loop when Reference definition points to string but not to a class
         if (\is_string($id)) {
-            return new ArrayDefinition($id);
+            return ArrayDefinition::fromArray($id);
         }
 
         return Normalizer::normalize($id);

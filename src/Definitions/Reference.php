@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
  * Class Reference allows us to define a dependency to a service in the container in another service definition.
@@ -23,9 +24,9 @@ use Psr\Container\ContainerInterface;
  */
 class Reference implements ReferenceInterface
 {
-    private $id;
+    private string $id;
 
-    private function __construct($id)
+    private function __construct(string $id)
     {
         $this->id = $id;
     }
@@ -35,15 +36,10 @@ class Reference implements ReferenceInterface
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return ReferenceInterface
-     */
     public static function to($id): ReferenceInterface
     {
         if (!\is_string($id)) {
-            throw new \RuntimeException('$id should be string.');
+            throw new InvalidConfigException('Reference id must be string.');
         }
         return new self($id);
     }

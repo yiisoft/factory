@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Tests\Unit\Definitions;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 
 /**
@@ -21,7 +22,7 @@ class ReferenceTest extends TestCase
 
     public function testInvalid(): void
     {
-        $this->expectErrorMessage('$id should be string.');
+        $this->expectException(InvalidConfigException::class);
         Reference::to(['__class' => EngineInterface::class]);
     }
 }

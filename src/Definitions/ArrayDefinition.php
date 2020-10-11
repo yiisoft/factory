@@ -6,7 +6,6 @@ namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 /**
  * Builds object by array config
@@ -16,21 +15,29 @@ class ArrayDefinition implements DefinitionInterface
     private const CLASS_KEY = '__class';
     private const PARAMS_KEY = '__construct()';
 
-    private static ?ArrayBuilder $builder = null;
+    /**
+     * @var class-string
+     */
     private string $class;
     private array $params;
     private array $config;
+    private static ?ArrayBuilder $builder = null;
 
+    /**
+     * @param class-string $class
+     * @param array $params
+     * @param array $config
+     */
     public function __construct(string $class, array $params = [], array $config = [])
     {
-        if (empty($class)) {
-            throw new InvalidConfigException('class name not given');
-        }
         $this->class  = $class;
         $this->params = $params;
         $this->config = $config;
     }
 
+    /**
+     * @return class-string
+     */
     public function getClass(): string
     {
         return $this->class;
@@ -54,10 +61,10 @@ class ArrayDefinition implements DefinitionInterface
         unset($config[self::CLASS_KEY], $config[self::PARAMS_KEY]);
 
         if (empty($class)) {
-            throw new NotInstantiableException(var_export($config, true));
+            throw new InvalidConfigException('Invalid definition: empty class name.');
         }
 
-        return new static($class, $params, $config);
+        return new self($class, $params, $config);
     }
 
     public function resolve(ContainerInterface $container)
@@ -76,7 +83,7 @@ class ArrayDefinition implements DefinitionInterface
 
     public function merge(self $other): self
     {
-        return new static(
+        return new self(
             $other->class,
             $this->mergeParameters($this->params, $other->params),
             array_merge($this->config, $other->config)

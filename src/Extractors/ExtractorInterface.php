@@ -13,7 +13,7 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
 interface ExtractorInterface
 {
     /**
-     * @param string $class
+     * @param class-string $class
      * @return DefinitionInterface[] An array of direct dependencies of $class.
      * @throws NotInstantiableException If the class is not instantiable this MUST throw a NotInstantiableException
      */

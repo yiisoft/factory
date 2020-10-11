@@ -16,6 +16,9 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  */
 class DefinitionExtractor implements ExtractorInterface
 {
+    /**
+     * @param class-string $class
+     */
     public function fromClassName(string $class): array
     {
         $reflectionClass = new \ReflectionClass($class);
@@ -46,6 +49,7 @@ class DefinitionExtractor implements ExtractorInterface
         $type = $parameter->getType();
 
         // PHP 8 union type is used as type hint
+        /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
         if ($type instanceof \ReflectionUnionType) {
             $types = [];
             foreach ($type->getTypes() as $unionType) {

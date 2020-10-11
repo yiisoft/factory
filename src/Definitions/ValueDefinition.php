@@ -9,17 +9,24 @@ use Yiisoft\Factory\FactoryInterface;
 
 class ValueDefinition implements DefinitionInterface
 {
+    /**
+     * @var mixed $value
+     */
     private $value;
 
     private ?string $type;
 
+    /**
+     * @param mixed $value
+     * @param string $type
+     */
     public function __construct($value, string $type = null)
     {
         $this->value = $value;
         $this->type = $type;
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -31,16 +38,5 @@ class ValueDefinition implements DefinitionInterface
         }
 
         return $this->value;
-    }
-
-    /**
-     * This is used to detect circular reference.
-     * If a concrete reference is guaranteed to never be part of such a circle
-     * (for example because it references a simple value) NULL should be returned
-     * @return string|null A string uniquely identifying a service in the container
-     */
-    public function getId(): ?string
-    {
-        return null;
     }
 }

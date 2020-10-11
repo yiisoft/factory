@@ -29,6 +29,9 @@ class DynamicReference implements ReferenceInterface
 {
     private DefinitionInterface $definition;
 
+    /**
+     * @param mixed $definition
+     */
     private function __construct($definition)
     {
         $this->definition = Normalizer::normalize($definition);

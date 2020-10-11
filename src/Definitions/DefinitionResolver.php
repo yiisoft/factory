@@ -41,6 +41,10 @@ class DefinitionResolver
         return $definition;
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     public static function ensureResolvable($value)
     {
         if ($value instanceof DefinitionInterface || is_array($value)) {
