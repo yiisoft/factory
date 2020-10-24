@@ -32,8 +32,9 @@ class ArrayBuilder
         $this->injectParameters($dependencies, $parameters);
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
         $object = new $class(...array_values($resolved));
+        $config = DefinitionResolver::resolveArray($container, $definition->getConfig());
 
-        return $this->configure($container, $object, $definition->getConfig());
+        return $this->configure($container, $object, $config);
     }
 
     /**
@@ -139,9 +140,6 @@ class ArrayBuilder
                 }
             } else {
                 // property
-                if ($arguments instanceof DefinitionInterface) {
-                    $arguments = $arguments->resolve($container);
-                }
                 $object->$action = $arguments;
             }
         }
