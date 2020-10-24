@@ -59,11 +59,3 @@ The code is statically analyzed with [Psalm](https://psalm.dev/). To run static 
 ./vendor/bin/psalm
 ```
 
-## Unit testing
-
-The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
-
-```php
-./vendor/bin/phpunit
-```
-
