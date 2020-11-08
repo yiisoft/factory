@@ -10,6 +10,9 @@ jobs:
   mutation:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
+    env:
+      COMPOSER_ROOT_VERSION: "dev-master"
+
     runs-on: ${{ matrix.os }}
 
     strategy:
