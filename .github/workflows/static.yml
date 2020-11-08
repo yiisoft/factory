@@ -10,7 +10,6 @@ jobs:
 
     env:
       COMPOSER_ROOT_VERSION: "dev-master"
-      extensions: ast
 
     runs-on: ${{ matrix.os }}
 
@@ -30,7 +29,6 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          extensions: ${{ env.extensions }}
           tools: composer:v2, cs2pr
           coverage: none
 
