@@ -30,7 +30,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     public function __construct(string $class, array $params = [], array $config = [])
     {
-        $this->class  = $class;
+        $this->class = $class;
         $this->params = $params;
         $this->config = $config;
     }
@@ -55,7 +55,7 @@ class ArrayDefinition implements DefinitionInterface
 
     public static function fromArray(string $class = null, array $params = [], array $config = []): self
     {
-        $class  = $config[self::CLASS_KEY] ?? $class;
+        $class = $config[self::CLASS_KEY] ?? $class;
         $params = $config[self::PARAMS_KEY] ?? $params;
 
         unset($config[self::CLASS_KEY], $config[self::PARAMS_KEY]);

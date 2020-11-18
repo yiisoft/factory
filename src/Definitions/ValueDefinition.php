@@ -10,7 +10,7 @@ use Yiisoft\Factory\FactoryInterface;
 class ValueDefinition implements DefinitionInterface
 {
     /**
-     * @var mixed $value
+     * @var mixed
      */
     private $value;
 

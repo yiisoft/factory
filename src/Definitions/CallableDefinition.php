@@ -11,7 +11,7 @@ use Yiisoft\Injector\Injector;
 class CallableDefinition implements DefinitionInterface
 {
     /**
-     * @var callable $method
+     * @var callable
      */
     private $method;
 
@@ -31,7 +31,7 @@ class CallableDefinition implements DefinitionInterface
     }
 
     /**
-     * @param callable|array $callable
+     * @param array|callable $callable
      * @param ContainerInterface $container
      */
     private function prepareCallable($callable, ContainerInterface $container): callable

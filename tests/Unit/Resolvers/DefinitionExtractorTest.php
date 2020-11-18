@@ -35,10 +35,10 @@ class DefinitionExtractorTest extends TestCase
         if (PHP_VERSION_ID >= 80000) {
             $this->assertEquals('now', $dependencies['datetime']->resolve($container));
         } else {
-            $this->assertEquals(null, $dependencies['time']->resolve($container));
+            $this->assertNull($dependencies['time']->resolve($container));
         }
 
-        $this->assertEquals(null, $dependencies['timezone']->resolve($container));
+        $this->assertNull($dependencies['timezone']->resolve($container));
     }
 
     public function testResolveCarConstructor(): void
@@ -71,8 +71,9 @@ class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['engine']->resolve($container));
+        $this->assertNull($dependencies['engine']->resolve($container));
     }
+
     public function testNullableInterfaceDependency(): void
     {
         $resolver = new DefinitionExtractor();
@@ -80,7 +81,7 @@ class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['engine']->resolve($container));
+        $this->assertNull($dependencies['engine']->resolve($container));
     }
 
     public function testOptionalConcreteDependency(): void
@@ -90,8 +91,9 @@ class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['car']->resolve($container));
+        $this->assertNull($dependencies['car']->resolve($container));
     }
+
     public function testNullableConcreteDependency(): void
     {
         $resolver = new DefinitionExtractor();
@@ -99,6 +101,6 @@ class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);
         $this->assertCount(1, $dependencies);
-        $this->assertEquals(null, $dependencies['car']->resolve($container));
+        $this->assertNull($dependencies['car']->resolve($container));
     }
 }
