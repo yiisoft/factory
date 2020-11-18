@@ -10,7 +10,8 @@ finder:
         - resources
         - views
         - public
-        - tests/Support/UnionCar.php
+    not-name:
+        - UnionCar.php
 
 enabled:
     - alpha_ordered_imports
