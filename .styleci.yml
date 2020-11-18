@@ -1,4 +1,5 @@
 preset: psr12
+risky: true
 
 version: 8
 
@@ -86,4 +87,3 @@ enabled:
     - trailing_comma_in_multiline_array
     - unalign_double_arrow
     - unalign_equals
-    - psr4
