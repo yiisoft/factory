@@ -11,10 +11,6 @@ build:
             environment:
                 php: 7.4.12
 
-            dependencies:
-                override:
-                    - COMPOSER_ROOT_VERSION=dev-master composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
-
             tests:
                 override:
                     - php-scrutinizer-run
@@ -26,7 +22,7 @@ build:
             dependencies:
                 override:
                     - composer self-update
-                    - COMPOSER_ROOT_VERSION=dev-master composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+                    - composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
             tests:
                 override:
@@ -36,3 +32,5 @@ build:
                         coverage:
                             file: coverage.xml
                             format: php-clover
+
+
