@@ -11,6 +11,9 @@ build:
             environment:
                 php: 7.4.12
 
+                variables:
+                    COMPOSER_ROOT_VERSION: 'dev-master'
+
             tests:
                 override:
                     - php-scrutinizer-run
@@ -18,6 +21,9 @@ build:
         tests-and-coverage:
             environment:
                 php: 7.4.12
+
+                variables:
+                    COMPOSER_ROOT_VERSION: 'dev-master'
 
             dependencies:
                 override:
