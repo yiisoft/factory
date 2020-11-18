@@ -8,22 +8,22 @@ filter:
 build:
     nodes:
         analysis:
-            variables:
-                COMPOSER_ROOT_VERSION: 'dev-master'
-
             environment:
                 php: 7.4.12
+
+                variables:
+                    COMPOSER_ROOT_VERSION: 'dev-master'
 
             tests:
                 override:
                     - php-scrutinizer-run
 
         tests-and-coverage:
-            variables:
-                COMPOSER_ROOT_VERSION: 'dev-master'
-
             environment:
                 php: 7.4.12
+
+                variables:
+                    COMPOSER_ROOT_VERSION: 'dev-master'
 
             dependencies:
                 override:
