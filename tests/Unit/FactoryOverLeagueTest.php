@@ -36,8 +36,8 @@ class FactoryOverLeagueTest extends AbstractFactoryTest
             'factory' => [
                 '__class' => Factory::class,
                 '__construct()' => [
-                    'container'     => Reference::to(ContainerInterface::class),
-                    'definitions'   => [],
+                    'container' => Reference::to(ContainerInterface::class),
+                    'definitions' => [],
                 ],
             ],
         ]);

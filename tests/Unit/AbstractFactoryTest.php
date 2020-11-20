@@ -120,7 +120,7 @@ abstract class AbstractFactoryTest extends TestCase
 
         $instance = $factory->create([
             '__class' => EngineMarkOne::class,
-            'setNumber()' => [43]
+            'setNumber()' => [43],
         ]);
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertEquals(43, $instance->getNumber());

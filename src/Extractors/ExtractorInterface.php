@@ -14,13 +14,16 @@ interface ExtractorInterface
 {
     /**
      * @param class-string $class
-     * @return DefinitionInterface[] An array of direct dependencies of $class.
+     *
      * @throws NotInstantiableException If the class is not instantiable this MUST throw a NotInstantiableException
+     *
+     * @return DefinitionInterface[] An array of direct dependencies of $class.
      */
     public function fromClassName(string $class): array;
 
     /**
      * @param callable $callable
+     *
      * @return DefinitionInterface[] An array of direct dependencies of the callable.
      */
     public function fromCallable(callable $callable): array;

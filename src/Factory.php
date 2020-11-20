@@ -28,6 +28,7 @@ class Factory implements FactoryInterface
      *
      * @param array $definitions
      * @param ContainerInterface $container
+     *
      * @throws InvalidConfigException
      * @throws NotInstantiableException
      */
@@ -85,9 +86,12 @@ class Factory implements FactoryInterface
 
     /**
      * Sets a definition to the factory.
+     *
      * @param string $id
      * @param mixed $definition
+     *
      * @throws InvalidConfigException
+     *
      * @see `Normalizer::normalize()`
      */
     public function set(string $id, $definition): void
@@ -97,7 +101,9 @@ class Factory implements FactoryInterface
 
     /**
      * Sets multiple definitions at once.
+     *
      * @param array $definitions definitions indexed by their ids
+     *
      * @throws InvalidConfigException
      */
     public function setMultiple(array $definitions): void
@@ -109,8 +115,11 @@ class Factory implements FactoryInterface
 
     /**
      * Returns a value indicating whether the container has the definition of the specified name.
+     *
      * @param string $id class name, interface name or alias name
+     *
      * @return bool whether the container is able to provide instance of class specified.
+     *
      * @see set()
      */
     public function has($id): bool

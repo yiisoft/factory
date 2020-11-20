@@ -44,7 +44,7 @@ interface FactoryInterface extends ContainerInterface
      * Using [[Container|dependency injection container]], this method can also identify
      * dependent objects, instantiate them and inject them into the newly created object.
      *
-     * @param string|array|callable $config the object configuration.
+     * @param array|callable|string $config the object configuration.
      * This can be specified in one of the following forms:
      *
      * - a string: representing the class name of the object to be created
@@ -53,10 +53,11 @@ interface FactoryInterface extends ContainerInterface
      * - a PHP callable: either an anonymous function or an array representing
      *   a class method (`[$class or $object, $method]`).
      *   The callable should return a new instance of the object being created.
-     *
      * @param array $params the constructor parameters
-     * @return object the created object
+     *
      * @throws InvalidConfigException if the configuration is invalid.
+     *
+     * @return object the created object
      */
     public function create($config, array $params = []);
 }
