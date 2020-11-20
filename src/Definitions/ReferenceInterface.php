@@ -9,5 +9,5 @@ interface ReferenceInterface extends DefinitionInterface
     /**
      * @param mixed $id
      */
-    public static function to($id): ReferenceInterface;
+    public static function to($id): self;
 }

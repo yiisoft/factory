@@ -10,8 +10,10 @@ class DefinitionResolver
 {
     /**
      * Resolves dependencies by replacing them with the actual object instances.
+     *
      * @param ContainerInterface $container
      * @param DefinitionInterface[] $dependencies the dependencies
+     *
      * @return array the resolved dependencies
      */
     public static function resolveArray(ContainerInterface $container, array $dependencies): array
@@ -26,8 +28,10 @@ class DefinitionResolver
 
     /**
      * This function resolves a definition recursively, checking for loops.
+     *
      * @param ContainerInterface $container
      * @param mixed $definition
+     *
      * @return mixed
      */
     public static function resolve(ContainerInterface $container, $definition)
@@ -45,6 +49,7 @@ class DefinitionResolver
 
     /**
      * @param mixed $value
+     *
      * @return mixed
      */
     public static function ensureResolvable($value)

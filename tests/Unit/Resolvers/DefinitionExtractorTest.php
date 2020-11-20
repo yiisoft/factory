@@ -73,6 +73,7 @@ class DefinitionExtractorTest extends TestCase
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['engine']->resolve($container));
     }
+
     public function testNullableInterfaceDependency(): void
     {
         $resolver = new DefinitionExtractor();
@@ -92,6 +93,7 @@ class DefinitionExtractorTest extends TestCase
         $this->assertCount(1, $dependencies);
         $this->assertEquals(null, $dependencies['car']->resolve($container));
     }
+
     public function testNullableConcreteDependency(): void
     {
         $resolver = new DefinitionExtractor();

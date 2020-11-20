@@ -20,9 +20,11 @@ class ArrayBuilder
     /**
      * @param ContainerInterface $container
      * @param ArrayDefinition $definition
-     * @return object
+     *
      * @throws NotInstantiableException
      * @throws InvalidConfigException
+     *
+     * @return object
      */
     public function build(ContainerInterface $container, ArrayDefinition $definition)
     {
@@ -40,6 +42,7 @@ class ArrayBuilder
     /**
      * @param array $dependencies
      * @param array $parameters
+     *
      * @throws InvalidConfigException
      */
     private function injectParameters(array &$dependencies, array $parameters): void
@@ -98,9 +101,13 @@ class ArrayBuilder
 
     /**
      * Returns the dependencies of the specified class.
+     *
      * @param class-string $class class name, interface name or alias name
-     * @return DefinitionInterface[] the dependencies of the specified class.
+     *
      * @throws NotInstantiableException
+     *
+     * @return DefinitionInterface[] the dependencies of the specified class.
+     *
      * @internal
      */
     private function getDependencies(string $class): array
@@ -124,9 +131,11 @@ class ArrayBuilder
 
     /**
      * Configures an object with the given configuration.
+     *
      * @param ContainerInterface $container
      * @param object $object the object to be configured
      * @param iterable $config property values and methods to call
+     *
      * @return object the object itself
      */
     private function configure(ContainerInterface $container, $object, iterable $config)

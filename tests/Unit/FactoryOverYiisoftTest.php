@@ -27,8 +27,8 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
             'factoryObject' => [
                 '__class' => Factory::class,
                 '__construct()' => [
-                    'container'     => Reference::to(ContainerInterface::class),
-                    'definitions'   => [],
+                    'container' => Reference::to(ContainerInterface::class),
+                    'definitions' => [],
                 ],
             ],
         ]);
@@ -48,7 +48,7 @@ class FactoryOverYiisoftTest extends AbstractFactoryTest
                 '__class' => Immutable::class,
                 'id()' => ['id-testMe'],
                 'fieldImmutable()' => ['testMe'],
-            ]
+            ],
         ]);
         $oneImmutableObject = $factory->create('immutableObject');
         $otherImmutableObject = (new Immutable())->fieldImmutable('testMe');
