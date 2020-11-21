@@ -47,6 +47,7 @@ class Normalizer
      * @param mixed $definition
      * @param string $id
      * @param array $params
+     *
      * @throws InvalidConfigException
      */
     public static function normalize($definition, string $id = null, array $params = []): DefinitionInterface
@@ -82,10 +83,13 @@ class Normalizer
 
     /**
      * Validates defintion for corectness.
+     *
      * @param mixed $definition @see normalize()
      * @param bool $id
-     * @return bool
+     *
      * @throws InvalidConfigException
+     *
+     * @return bool
      */
     public static function validate($definition, bool $throw = true): bool
     {

@@ -17,6 +17,7 @@ class ClassDefinition implements DefinitionInterface
 
     /**
      * Constructor.
+     *
      * @param string $class the class name
      * @param bool $optional if null should be returned instead of throwing an exception
      */
@@ -54,8 +55,10 @@ class ClassDefinition implements DefinitionInterface
 
     /**
      * @param ContainerInterface $container
-     * @return mixed
+     *
      * @throws \Throwable
+     *
+     * @return mixed
      */
     private function resolveUnionType(ContainerInterface $container)
     {
