@@ -54,7 +54,12 @@ class DefinitionExtractor implements ExtractorInterface
             $types = [];
             foreach ($type->getTypes() as $unionType) {
                 if (!$unionType->isBuiltin()) {
-                    $types[] = $unionType->getName();
+                    $typeName = $unionType->getName();
+                    if ($typeName === 'self') {
+                        $typeName = $parameter->getDeclaringClass()->getName();
+                    }
+
+                    $types[] = $typeName;
                 }
             }
             return new ClassDefinition(implode('|', $types), $type->allowsNull());
@@ -62,7 +67,12 @@ class DefinitionExtractor implements ExtractorInterface
 
         // Our parameter has a class type hint
         if ($type !== null && !$type->isBuiltin()) {
-            return new ClassDefinition($type->getName(), $type->allowsNull());
+            $typeName = $type->getName();
+            if ($typeName === 'self') {
+                $typeName = $parameter->getDeclaringClass()->getName();
+            }
+
+            return new ClassDefinition($typeName, $type->allowsNull());
         }
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
