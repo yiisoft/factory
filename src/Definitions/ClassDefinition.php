@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use function gettype;
 
 /**
  * Reference points to a class name in the container
@@ -48,7 +49,8 @@ class ClassDefinition implements DefinitionInterface
         }
 
         if (!$result instanceof $this->class) {
-            throw new InvalidConfigException('Container returned incorrect type for service ' . $this->class);
+            $actualType = gettype($this->class);
+            throw new InvalidConfigException("Container returned incorrect type \"$actualType\" for service \"$this->class\".");
         }
         return $result;
     }
@@ -70,7 +72,8 @@ class ClassDefinition implements DefinitionInterface
             try {
                 $result = $container->get($type);
                 if (!$result instanceof $type) {
-                    throw new InvalidConfigException('Container returned incorrect type for service ' . $type);
+                    $actualType = gettype($this->class);
+                    throw new InvalidConfigException("Container returned incorrect type \"$actualType\" for service \"$this->class\".");
                 }
                 return $result;
             } catch (\Throwable $t) {
