@@ -11,6 +11,9 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
  */
 class Normalizer
 {
+    public const TAGS = '__tags';
+    public const DEFINITION = '__definition';
+
     /**
      * Definition may be defined multiple ways.
      * Interface name as string:
@@ -79,6 +82,17 @@ class Normalizer
         }
 
         throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
+    }
+
+    public static function parse($definition): array
+    {
+        if (!is_array($definition)) {
+            return [$definition, []];
+        }
+        $tags = (array)($definition[self::TAGS] ?? []);
+        unset($definition[self::TAGS]);
+
+        return [$definition[self::DEFINITION] ?? $definition, $tags];
     }
 
     /**
