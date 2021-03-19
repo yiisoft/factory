@@ -54,6 +54,7 @@ class DefinitionExtractor implements ExtractorInterface
     {
         /**
          * @psalm-suppress UndefinedClass
+         *
          * @var ReflectionNamedType|ReflectionUnionType|null $type
          */
         $type = $parameter->getType();
