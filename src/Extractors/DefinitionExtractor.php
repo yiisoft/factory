@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Extractors;
 
+use Closure;
 use ReflectionClass;
+use ReflectionFunction;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\ParameterDefinition;
@@ -45,18 +50,25 @@ class DefinitionExtractor implements ExtractorInterface
     /**
      * @suppress PhanUndeclaredMethod
      */
-    private function fromParameter(\ReflectionParameter $parameter): DefinitionInterface
+    private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
     {
+        /**
+         * @psalm-suppress UndefinedClass
+         * @var ReflectionNamedType|ReflectionUnionType|null $type
+         */
         $type = $parameter->getType();
 
         // PHP 8 union type is used as type hint
         /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
-        if ($type instanceof \ReflectionUnionType) {
+        if ($type instanceof ReflectionUnionType) {
             $types = [];
             foreach ($type->getTypes() as $unionType) {
                 if (!$unionType->isBuiltin()) {
                     $typeName = $unionType->getName();
                     if ($typeName === 'self') {
+                        // If type name is "self", it means that called class and
+                        // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
+                        /** @psalm-suppress PossiblyNullReference */
                         $typeName = $parameter->getDeclaringClass()->getName();
                     }
 
@@ -70,6 +82,9 @@ class DefinitionExtractor implements ExtractorInterface
         if ($type !== null && !$type->isBuiltin()) {
             $typeName = $type->getName();
             if ($typeName === 'self') {
+                // If type name is "self", it means that called class and
+                // $parameter->getDeclaringClass() returned instance of `ReflectionClass`.
+                /** @psalm-suppress PossiblyNullReference */
                 $typeName = $parameter->getDeclaringClass()->getName();
             }
 
@@ -86,6 +101,6 @@ class DefinitionExtractor implements ExtractorInterface
 
     public function fromCallable(callable $callable): array
     {
-        return $this->fromFunction(new \ReflectionFunction(\Closure::fromCallable($callable)));
+        return $this->fromFunction(new ReflectionFunction(Closure::fromCallable($callable)));
     }
 }
