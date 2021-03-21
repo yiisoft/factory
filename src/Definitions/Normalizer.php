@@ -6,6 +6,11 @@ namespace Yiisoft\Factory\Definitions;
 
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
+use function is_array;
+use function is_callable;
+use function is_object;
+use function is_string;
+
 /**
  * Class Definition represents a definition in a container
  */
@@ -59,7 +64,7 @@ class Normalizer
             return $definition;
         }
 
-        if (\is_string($definition)) {
+        if (is_string($definition)) {
             if (empty($definition)) {
                 throw new InvalidConfigException('Invalid definition: empty string.');
             }
@@ -69,21 +74,24 @@ class Normalizer
             return Reference::to($definition);
         }
 
-        if (\is_callable($definition, true)) {
+        if (is_callable($definition, true)) {
             return new CallableDefinition($definition);
         }
 
-        if (\is_array($definition)) {
+        if (is_array($definition)) {
             return ArrayDefinition::fromArray($id, [], $definition);
         }
 
-        if (\is_object($definition)) {
+        if (is_object($definition)) {
             return new ValueDefinition($definition);
         }
 
         throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
     }
 
+    /**
+     * @param mixed $definition
+     */
     public static function parse($definition): array
     {
         if (!is_array($definition)) {
@@ -111,19 +119,19 @@ class Normalizer
             return true;
         }
 
-        if (\is_string($definition) && !empty($definition)) {
+        if (is_string($definition) && !empty($definition)) {
             return true;
         }
 
-        if (\is_callable($definition)) {
+        if (is_callable($definition)) {
             return true;
         }
 
-        if (\is_array($definition)) {
+        if (is_array($definition)) {
             return true;
         }
 
-        if (\is_object($definition)) {
+        if (is_object($definition)) {
             return true;
         }
 
