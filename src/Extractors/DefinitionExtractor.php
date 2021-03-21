@@ -22,9 +22,6 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  */
 class DefinitionExtractor implements ExtractorInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function fromClassName(string $class): array
     {
         $reflectionClass = new ReflectionClass($class);
@@ -35,9 +32,6 @@ class DefinitionExtractor implements ExtractorInterface
         return $constructor === null ? [] : $this->fromFunction($constructor);
     }
 
-    /**
-     * @suppress PhanUndeclaredMethod
-     */
     private function fromFunction(\ReflectionFunctionAbstract $reflectionFunction): array
     {
         $result = [];
@@ -47,9 +41,6 @@ class DefinitionExtractor implements ExtractorInterface
         return $result;
     }
 
-    /**
-     * @suppress PhanUndeclaredMethod
-     */
     private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
     {
         /**
