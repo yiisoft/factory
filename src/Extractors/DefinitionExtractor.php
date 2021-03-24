@@ -79,7 +79,11 @@ class DefinitionExtractor implements ExtractorInterface
                     $types[] = $typeName;
                 }
             }
-            return new ClassDefinition(implode('|', $types), $type->allowsNull());
+
+            /** @var bool */
+            $allowsNull = $type->allowsNull();
+
+            return new ClassDefinition(implode('|', $types), $allowsNull);
         }
 
         // Our parameter has a class type hint
