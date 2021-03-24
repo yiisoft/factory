@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
+use Throwable;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
+
 use function gettype;
 
 /**
@@ -40,8 +42,9 @@ class ClassDefinition implements DefinitionInterface
         }
 
         try {
+            /** @var mixed */
             $result = $container->get($this->class);
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             if ($this->optional) {
                 return null;
             }
@@ -50,15 +53,15 @@ class ClassDefinition implements DefinitionInterface
 
         if (!$result instanceof $this->class) {
             $actualType = gettype($this->class);
-            throw new InvalidConfigException("Container returned incorrect type \"$actualType\" for service \"$this->class\".");
+            throw new InvalidConfigException(
+                "Container returned incorrect type \"$actualType\" for service \"$this->class\"."
+            );
         }
         return $result;
     }
 
     /**
-     * @param ContainerInterface $container
-     *
-     * @throws \Throwable
+     * @throws Throwable
      *
      * @return mixed
      */
@@ -70,13 +73,16 @@ class ClassDefinition implements DefinitionInterface
 
         foreach ($types as $type) {
             try {
+                /** @var mixed */
                 $result = $container->get($type);
                 if (!$result instanceof $type) {
                     $actualType = gettype($this->class);
-                    throw new InvalidConfigException("Container returned incorrect type \"$actualType\" for service \"$this->class\".");
+                    throw new InvalidConfigException(
+                        "Container returned incorrect type \"$actualType\" for service \"$this->class\"."
+                    );
                 }
                 return $result;
-            } catch (\Throwable $t) {
+            } catch (Throwable $t) {
                 $error = $t;
             }
         }

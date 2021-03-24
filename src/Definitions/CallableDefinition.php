@@ -8,6 +8,9 @@ use Psr\Container\ContainerInterface;
 use ReflectionMethod;
 use Yiisoft\Injector\Injector;
 
+use function is_array;
+use function is_object;
+
 class CallableDefinition implements DefinitionInterface
 {
     /**
@@ -15,10 +18,7 @@ class CallableDefinition implements DefinitionInterface
      */
     private $method;
 
-    /**
-     * @param callable $method
-     */
-    public function __construct($method)
+    public function __construct(callable $method)
     {
         $this->method = $method;
     }
@@ -27,18 +27,18 @@ class CallableDefinition implements DefinitionInterface
     {
         $callable = $this->prepareCallable($this->method, $container);
 
-        return $container->get(Injector::class)->invoke($callable);
+        /** @var Injector $injector */
+        $injector = $container->get(Injector::class);
+
+        return $injector->invoke($callable);
     }
 
-    /**
-     * @param array|callable $callable
-     * @param ContainerInterface $container
-     */
-    private function prepareCallable($callable, ContainerInterface $container): callable
+    private function prepareCallable(callable $callable, ContainerInterface $container): callable
     {
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);
             if (!$reflection->isStatic()) {
+                /** @var mixed */
                 $callable[0] = $container->get($callable[0]);
             }
         }

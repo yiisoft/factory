@@ -7,6 +7,8 @@ namespace Yiisoft\Factory\Definitions;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\FactoryInterface;
 
+use function is_object;
+
 class ValueDefinition implements DefinitionInterface
 {
     /**
@@ -18,7 +20,6 @@ class ValueDefinition implements DefinitionInterface
 
     /**
      * @param mixed $value
-     * @param string $type
      */
     public function __construct($value, string $type = null)
     {

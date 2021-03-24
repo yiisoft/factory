@@ -22,8 +22,6 @@ interface ExtractorInterface
     public function fromClassName(string $class): array;
 
     /**
-     * @param callable $callable
-     *
      * @return DefinitionInterface[] An array of direct dependencies of the callable.
      */
     public function fromCallable(callable $callable): array;

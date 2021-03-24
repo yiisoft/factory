@@ -9,39 +9,42 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
 
+use function array_key_exists;
+use function call_user_func_array;
+use function is_string;
+
 /**
  * Builds object by ArrayDefinition.
  */
 class ArrayBuilder
 {
     private static ?DefinitionExtractor $extractor = null;
+
+    /**
+     * @psalm-var array<string, array<string, DefinitionInterface>>
+     */
     private static array $dependencies = [];
 
     /**
-     * @param ContainerInterface $container
-     * @param ArrayDefinition $definition
-     *
      * @throws NotInstantiableException
      * @throws InvalidConfigException
-     *
-     * @return object
      */
-    public function build(ContainerInterface $container, ArrayDefinition $definition)
+    public function build(ContainerInterface $container, ArrayDefinition $definition): object
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
         $parameters = $definition->getParams();
         $this->injectParameters($dependencies, $parameters);
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
+        /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
         $config = DefinitionResolver::resolveArray($container, $definition->getConfig());
 
-        return $this->configure($container, $object, $config);
+        return $this->configure($object, $config);
     }
 
     /**
-     * @param array $dependencies
-     * @param array $parameters
+     * @psalm-param array<string, DefinitionInterface> $dependencies
      *
      * @throws InvalidConfigException
      */
@@ -64,12 +67,14 @@ class ArrayBuilder
         }
         unset($value);
         if ($isVariadic) {
+            /** @var mixed $value */
             foreach ($parameters as $index => $value) {
                 if (!isset($usedParameters[$index])) {
                     $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
                 }
             }
         }
+        /** @psalm-var array<string, DefinitionInterface> $dependencies */
     }
 
     private function isIntegerIndexed(array $parameters): bool
@@ -77,6 +82,7 @@ class ArrayBuilder
         $hasStringIndex = false;
         $hasIntegerIndex = false;
 
+        /** @var mixed $parameter */
         foreach ($parameters as $index => $parameter) {
             if (is_string($index)) {
                 $hasStringIndex = true;
@@ -106,9 +112,8 @@ class ArrayBuilder
      *
      * @throws NotInstantiableException
      *
-     * @return DefinitionInterface[] the dependencies of the specified class.
-     *
-     * @internal
+     * @return DefinitionInterface[] The dependencies of the specified class.
+     * @psalm-return array<string, DefinitionInterface>
      */
     private function getDependencies(string $class): array
     {
@@ -132,19 +137,23 @@ class ArrayBuilder
     /**
      * Configures an object with the given configuration.
      *
-     * @param ContainerInterface $container
-     * @param object $object the object to be configured
-     * @param iterable $config property values and methods to call
+     * @param object $object The object to be configured.
+     * @param array $config Property values and methods to call.
      *
-     * @return object the object itself
+     * @psalm-param array<string,mixed> $config
+     *
+     * @return object The object itself.
      */
-    private function configure(ContainerInterface $container, $object, iterable $config)
+    private function configure(object $object, array $config): object
     {
+        /** @var mixed $arguments */
         foreach ($config as $action => $arguments) {
             if (substr($action, -2) === '()') {
                 // method call
-                $setter = \call_user_func_array([$object, substr($action, 0, -2)], $arguments);
+                /** @var mixed */
+                $setter = call_user_func_array([$object, substr($action, 0, -2)], $arguments);
                 if ($setter instanceof $object) {
+                    /** @var object */
                     $object = $setter;
                 }
             } else {

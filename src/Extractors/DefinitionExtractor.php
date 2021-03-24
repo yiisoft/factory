@@ -7,6 +7,7 @@ namespace Yiisoft\Factory\Extractors;
 use Closure;
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -22,6 +23,12 @@ use Yiisoft\Factory\Exceptions\NotInstantiableException;
  */
 class DefinitionExtractor implements ExtractorInterface
 {
+    /**
+     * @psalm-param class-string $class
+     *
+     * @return DefinitionInterface[]
+     * @psalm-return array<string, DefinitionInterface>
+     */
     public function fromClassName(string $class): array
     {
         $reflectionClass = new ReflectionClass($class);
@@ -32,7 +39,11 @@ class DefinitionExtractor implements ExtractorInterface
         return $constructor === null ? [] : $this->fromFunction($constructor);
     }
 
-    private function fromFunction(\ReflectionFunctionAbstract $reflectionFunction): array
+    /**
+     * @return DefinitionInterface[]
+     * @psalm-return array<string, DefinitionInterface>
+     */
+    private function fromFunction(ReflectionFunctionAbstract $reflectionFunction): array
     {
         $result = [];
         foreach ($reflectionFunction->getParameters() as $parameter) {
@@ -54,6 +65,7 @@ class DefinitionExtractor implements ExtractorInterface
         /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
         if ($type instanceof ReflectionUnionType) {
             $types = [];
+            /** @var ReflectionNamedType $unionType */
             foreach ($type->getTypes() as $unionType) {
                 if (!$unionType->isBuiltin()) {
                     $typeName = $unionType->getName();
@@ -91,6 +103,10 @@ class DefinitionExtractor implements ExtractorInterface
         );
     }
 
+    /**
+     * @return DefinitionInterface[]
+     * @psalm-return array<string, DefinitionInterface>
+     */
     public function fromCallable(callable $callable): array
     {
         return $this->fromFunction(new ReflectionFunction(Closure::fromCallable($callable)));
