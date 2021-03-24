@@ -57,7 +57,7 @@ class DefinitionResolver
     /**
      * @param mixed $value
      *
-     * @return array|DefinitionInterface|CallableDefinition|ValueDefinition
+     * @return array|CallableDefinition|DefinitionInterface|ValueDefinition
      */
     public static function ensureResolvable($value)
     {
