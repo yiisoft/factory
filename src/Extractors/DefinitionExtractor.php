@@ -80,10 +80,8 @@ class DefinitionExtractor implements ExtractorInterface
                 }
             }
 
-            /** @var bool */
-            $allowsNull = $type->allowsNull();
-
-            return new ClassDefinition(implode('|', $types), $allowsNull);
+            /** @psalm-suppress MixedArgument */
+            return new ClassDefinition(implode('|', $types), $type->allowsNull());
         }
 
         // Our parameter has a class type hint

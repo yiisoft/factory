@@ -27,10 +27,8 @@ class CallableDefinition implements DefinitionInterface
     {
         $callable = $this->prepareCallable($this->method, $container);
 
-        /** @var Injector $injector */
-        $injector = $container->get(Injector::class);
-
-        return $injector->invoke($callable);
+        /** @psalm-suppress MixedMethodCall */
+        return $container->get(Injector::class)->invoke($callable);
     }
 
     private function prepareCallable(callable $callable, ContainerInterface $container): callable
