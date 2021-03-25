@@ -22,6 +22,7 @@ class Factory implements FactoryInterface
 
     /**
      * @var DefinitionInterface[] object definitions indexed by their types
+     * @psalm-var array<string, DefinitionInterface>
      */
     private array $definitions = [];
 
