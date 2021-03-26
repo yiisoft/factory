@@ -11,23 +11,25 @@ use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
+use function is_string;
+
 class Factory implements FactoryInterface
 {
     /**
-     * @var ContainerInterface parent container
+     * @var ContainerInterface|null Parent container.
      */
     private ?ContainerInterface $container = null;
 
     /**
      * @var DefinitionInterface[] object definitions indexed by their types
+     * @psalm-var array<string, DefinitionInterface>
      */
     private array $definitions = [];
 
     /**
      * Factory constructor.
      *
-     * @param array $definitions
-     * @param ContainerInterface $container
+     * @psalm-param array<string, mixed> $definitions
      *
      * @throws InvalidConfigException
      * @throws NotInstantiableException
@@ -57,6 +59,11 @@ class Factory implements FactoryInterface
         return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 
+    /**
+     * @param mixed $id
+     *
+     * @return mixed|object
+     */
     public function get($id)
     {
         $definition = $this->getDefinition($id);
@@ -69,16 +76,15 @@ class Factory implements FactoryInterface
 
     /**
      * @param mixed $id
+     *
+     * @throws InvalidConfigException
      */
     public function getDefinition($id): DefinitionInterface
     {
-        if ($this->has($id)) {
-            return $this->definitions[$id];
-        }
-
-        // prevent infinite loop when Reference definition points to string but not to a class
-        if (\is_string($id)) {
-            return ArrayDefinition::fromArray($id);
+        if (is_string($id)) {
+            // prevent infinite loop when Reference definition points to string but not to a class
+            /** @psalm-suppress ArgumentTypeCoercion */
+            return $this->definitions[$id] ?? ArrayDefinition::fromArray($id);
         }
 
         return Normalizer::normalize($id);
@@ -87,7 +93,6 @@ class Factory implements FactoryInterface
     /**
      * Sets a definition to the factory.
      *
-     * @param string $id
      * @param mixed $definition
      *
      * @throws InvalidConfigException
@@ -104,10 +109,13 @@ class Factory implements FactoryInterface
      *
      * @param array $definitions definitions indexed by their ids
      *
+     * @psalm-param array<string, mixed> $definitions
+     *
      * @throws InvalidConfigException
      */
     public function setMultiple(array $definitions): void
     {
+        /** @var mixed $definition */
         foreach ($definitions as $id => $definition) {
             $this->set($id, $definition);
         }

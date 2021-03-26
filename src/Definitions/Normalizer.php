@@ -53,8 +53,6 @@ class Normalizer
      * ```
      *
      * @param mixed $definition
-     * @param string $id
-     * @param array $params
      *
      * @throws InvalidConfigException
      */
@@ -69,6 +67,7 @@ class Normalizer
                 throw new InvalidConfigException('Invalid definition: empty string.');
             }
             if ($id === $definition || (!empty($params) && class_exists($definition))) {
+                /** @psalm-var class-string $definition */
                 return ArrayDefinition::fromArray($definition, $params);
             }
             return Reference::to($definition);
@@ -79,6 +78,10 @@ class Normalizer
         }
 
         if (is_array($definition)) {
+            /**
+             * @psalm-var class-string $id
+             * @psalm-var array<string,mixed> $definition
+             */
             return ArrayDefinition::fromArray($id, [], $definition);
         }
 
@@ -106,12 +109,9 @@ class Normalizer
     /**
      * Validates defintion for corectness.
      *
-     * @param mixed $definition @see normalize()
-     * @param bool $id
+     * @param mixed $definition {@see normalize()}
      *
      * @throws InvalidConfigException
-     *
-     * @return bool
      */
     public static function validate($definition, bool $throw = true): bool
     {

@@ -6,20 +6,26 @@ namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
 
+use function is_array;
+use function is_callable;
+use function is_string;
+
 class DefinitionResolver
 {
     /**
      * Resolves dependencies by replacing them with the actual object instances.
      *
-     * @param ContainerInterface $container
-     * @param DefinitionInterface[] $dependencies the dependencies
+     * @param array<string,mixed> $dependencies The dependencies.
      *
-     * @return array the resolved dependencies
+     * @return array The resolved dependencies.
+     * @psalm-return array<string,mixed>
      */
     public static function resolveArray(ContainerInterface $container, array $dependencies): array
     {
         $result = [];
+        /** @var mixed $definition */
         foreach ($dependencies as $key => $definition) {
+            /** @var mixed */
             $result[$key] = self::resolve($container, $definition);
         }
 
@@ -29,7 +35,6 @@ class DefinitionResolver
     /**
      * This function resolves a definition recursively, checking for loops.
      *
-     * @param ContainerInterface $container
      * @param mixed $definition
      *
      * @return mixed
@@ -37,10 +42,12 @@ class DefinitionResolver
     public static function resolve(ContainerInterface $container, $definition)
     {
         if ($definition instanceof DefinitionInterface) {
+            /** @var mixed $definition */
             $definition = $definition->resolve($container);
         } elseif (!is_string($definition) && !is_array($definition) && is_callable($definition, true)) {
             return (new CallableDefinition($definition))->resolve($container);
         } elseif (is_array($definition)) {
+            /** @psalm-var array<string,mixed> $definition */
             return self::resolveArray($container, $definition);
         }
 
@@ -50,7 +57,7 @@ class DefinitionResolver
     /**
      * @param mixed $value
      *
-     * @return mixed
+     * @return array|CallableDefinition|DefinitionInterface|ValueDefinition
      */
     public static function ensureResolvable($value)
     {

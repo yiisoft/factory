@@ -11,9 +11,7 @@ class ParameterDefinition extends ValueDefinition
     private ReflectionParameter $parameter;
 
     /**
-     * @param ReflectionParameter $parameter
      * @param mixed $value
-     * @param string $type
      */
     public function __construct(ReflectionParameter $parameter, $value, string $type = null)
     {

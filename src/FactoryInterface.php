@@ -57,7 +57,7 @@ interface FactoryInterface extends ContainerInterface
      *
      * @throws InvalidConfigException if the configuration is invalid.
      *
-     * @return object the created object
+     * @return mixed|object the created object
      */
     public function create($config, array $params = []);
 }

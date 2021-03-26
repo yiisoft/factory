@@ -16,17 +16,21 @@ class ArrayDefinition implements DefinitionInterface
     private const PARAMS_KEY = '__construct()';
 
     /**
-     * @var class-string
+     * @psalm-var class-string
      */
     private string $class;
     private array $params;
+
+    /**
+     * @psalm-var array<string,mixed>
+     */
     private array $config;
     private static ?ArrayBuilder $builder = null;
 
     /**
      * @param class-string $class
-     * @param array $params
-     * @param array $config
+     *
+     * @psalm-param array<string,mixed> $config
      */
     public function __construct(string $class, array $params = [], array $config = [])
     {
@@ -48,14 +52,24 @@ class ArrayDefinition implements DefinitionInterface
         return $this->params;
     }
 
+    /**
+     * @psalm-return array<string,mixed>
+     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    public static function fromArray(string $class = null, array $params = [], array $config = []): self
+    /**
+     * @psalm-param class-string|null $class
+     * @psalm-param array<string,mixed> $config
+     */
+    public static function fromArray(?string $class, array $params = [], array $config = []): self
     {
+        /** @psalm-var class-string|null */
         $class = $config[self::CLASS_KEY] ?? $class;
+
+        /** @psalm-var array */
         $params = $config[self::PARAMS_KEY] ?? $params;
 
         unset($config[self::CLASS_KEY], $config[self::PARAMS_KEY]);
@@ -92,7 +106,9 @@ class ArrayDefinition implements DefinitionInterface
 
     private function mergeParameters(array $selfParameters, array $otherParameters): array
     {
+        /** @var mixed $param */
         foreach ($otherParameters as $index => $param) {
+            /** @var mixed */
             $selfParameters[$index] = $otherParameters[$index];
         }
 

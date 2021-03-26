@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-use Yiisoft\Di\Tests\Support\ColorInterface;
-
 class Car
 {
-    public ColorInterface $color;
+    public ?ColorInterface $color = null;
     private EngineInterface $engine;
 
     public function __construct(EngineInterface $engine)
@@ -24,5 +22,16 @@ class Car
     public function getEngineName(): string
     {
         return $this->engine->getName();
+    }
+
+    public function setColor(ColorInterface $color): self
+    {
+        $this->color = $color;
+        return $this;
+    }
+
+    public function getColor(): ?ColorInterface
+    {
+        return $this->color;
     }
 }
