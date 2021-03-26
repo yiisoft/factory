@@ -11,6 +11,7 @@ use Yiisoft\Factory\Tests\Support\CarFactory;
 use Yiisoft\Factory\Tests\Support\ColorInterface;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Injector\Injector;
+use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class CallableDefinitionTest extends TestCase
@@ -19,13 +20,18 @@ final class CallableDefinitionTest extends TestCase
     {
         $definition = new CallableDefinition([CarFactory::class, 'createWithColor']);
 
-        $injector = new Injector(new SimpleContainer([
-            ColorInterface::class => new ColorPink(),
-        ]));
-        $container = new SimpleContainer([
-            CarFactory::class => new CarFactory(),
-            Injector::class => $injector,
-        ]);
+        $container = new SimpleContainer(
+            [
+                CarFactory::class => new CarFactory(),
+                ColorInterface::class => new ColorPink(),
+            ],
+            static function (string $id) use (&$container) {
+                if ($id === Injector::class) {
+                    return new Injector($container);
+                }
+                throw new NotFoundException($id);
+            }
+        );
 
         /** @var Car $car */
         $car = $definition->resolve($container);
