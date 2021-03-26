@@ -14,13 +14,13 @@ use function is_object;
 class CallableDefinition implements DefinitionInterface
 {
     /**
-     * @var callable|array
+     * @var array|callable
      * @psalm-var callable|array{0:class-string,1:string}
      */
     private $method;
 
     /**
-     * @param callable|array $method
+     * @param array|callable $method
      *
      * @psalm-param callable|array{0:class-string,1:string} $method
      */
@@ -38,7 +38,7 @@ class CallableDefinition implements DefinitionInterface
     }
 
     /**
-     * @param callable|array $callable
+     * @param array|callable $callable
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
