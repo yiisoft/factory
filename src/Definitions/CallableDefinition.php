@@ -14,11 +14,17 @@ use function is_object;
 class CallableDefinition implements DefinitionInterface
 {
     /**
-     * @var callable
+     * @var callable|array
+     * @psalm-var callable|array{0:class-string,1:string}
      */
     private $method;
 
-    public function __construct(callable $method)
+    /**
+     * @param callable|array $method
+     *
+     * @psalm-param callable|array{0:class-string,1:string} $method
+     */
+    public function __construct($method)
     {
         $this->method = $method;
     }
@@ -31,7 +37,12 @@ class CallableDefinition implements DefinitionInterface
         return $container->get(Injector::class)->invoke($callable);
     }
 
-    private function prepareCallable(callable $callable, ContainerInterface $container): callable
+    /**
+     * @param callable|array $callable
+     *
+     * @psalm-param callable|array{0:class-string,1:string} $callable
+     */
+    private function prepareCallable($callable, ContainerInterface $container): callable
     {
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);
