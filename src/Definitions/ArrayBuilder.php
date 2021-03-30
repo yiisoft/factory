@@ -82,8 +82,7 @@ class ArrayBuilder
         $hasStringIndex = false;
         $hasIntegerIndex = false;
 
-        /** @var mixed $parameter */
-        foreach ($parameters as $index => $parameter) {
+        foreach ($parameters as $index => $_parameter) {
             if (is_string($index)) {
                 $hasStringIndex = true;
                 if ($hasIntegerIndex) {

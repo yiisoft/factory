@@ -69,8 +69,6 @@ class ClassDefinition implements DefinitionInterface
     {
         $types = explode('|', $this->class);
 
-        $error = null;
-
         foreach ($types as $type) {
             try {
                 /** @var mixed */
