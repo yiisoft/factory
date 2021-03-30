@@ -21,11 +21,11 @@
         "yiisoft/injector": "^1.0"
     },
     "require-dev": {
-        "league/container": "^3.2",
+        "league/container": "^3.3",
         "phpunit/phpunit": "^9.5",
         "roave/infection-static-analysis-plugin": "^1.7",
         "spatie/phpunit-watcher": "^1.23",
-        "vimeo/psalm": "^4.6",
+        "vimeo/psalm": "^4.7",
         "yiisoft/di": "^3.0@dev",
         "yiisoft/test-support": "^1.3"
     },
