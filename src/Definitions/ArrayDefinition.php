@@ -106,8 +106,7 @@ class ArrayDefinition implements DefinitionInterface
 
     private function mergeParameters(array $selfParameters, array $otherParameters): array
     {
-        /** @var mixed $param */
-        foreach ($otherParameters as $index => $param) {
+        foreach ($otherParameters as $index => $_param) {
             /** @var mixed */
             $selfParameters[$index] = $otherParameters[$index];
         }
