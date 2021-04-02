@@ -8,24 +8,23 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exceptions\NotFoundException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
+use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
-/**
- * General tests for factory.
- * To be extended for specific containers.
- */
-abstract class AbstractFactoryTest extends TestCase
+final class FactoryTest extends TestCase
 {
-    abstract public function createContainer(array $definitions = []): ContainerInterface;
-
     public function testCanCreateByAlias(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             'engine' => EngineMarkOne::class,
         ]);
         $one = $factory->create('engine');
@@ -37,7 +36,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCanCreateByInterfaceAsStringDefinition(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             EngineInterface::class => EngineMarkOne::class,
         ]);
         $one = $factory->create(EngineInterface::class);
@@ -49,7 +50,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCanCreateByInterfaceAsReferenceDefinition(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             EngineInterface::class => EngineMarkOne::class,
         ]);
         $one = $factory->create(Reference::to(EngineInterface::class));
@@ -65,7 +68,9 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testObjectIsCloned(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             'engine' => new EngineMarkOne(),
         ]);
         $one = $factory->create('engine');
@@ -79,7 +84,9 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testCreateClassNotDefinedInConfig(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
         $one = $factory->create(EngineMarkOne::class);
         $two = $factory->create(EngineMarkOne::class);
         $this->assertNotSame($one, $two);
@@ -92,7 +99,9 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testMergeFactoryConfig(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             EngineMarkOne::class => [
                 '__class' => EngineMarkOne::class,
                 'setNumber()' => [42],
@@ -111,7 +120,9 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testOverrideFactoryConfig(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             EngineMarkOne::class => [
                 '__class' => EngineMarkOne::class,
                 'setNumber()' => [42],
@@ -128,7 +139,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testGetByAlias(): void
     {
-        $factory = new Factory($this->createContainer(), [
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container, [
             'engine' => EngineMarkOne::class,
         ]);
         $one = $factory->get('engine');
@@ -140,7 +153,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testTrivialDefinition(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
         $factory->set(EngineMarkOne::class, EngineMarkOne::class);
         $one = $factory->get(EngineMarkOne::class);
         $two = $factory->get(EngineMarkOne::class);
@@ -154,7 +169,9 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testCreateWithParams(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
         $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
@@ -166,7 +183,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCreateWithNamedParams(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
         $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
@@ -178,7 +197,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCreateWithCallableValuesInParams(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
         $object = $factory->create(TwoParametersDependency::class, [
             'firstParameter' => 'date',
             'secondParameter' => 'time',
@@ -191,7 +212,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCreateWithInvalidParams(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
 
         $this->expectException(InvalidConfigException::class);
         $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
@@ -199,7 +222,9 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCreateWithRandomOrderedParams(): void
     {
-        $factory = new Factory($this->createContainer());
+        $container = new SimpleContainer();
+
+        $factory = new Factory($container);
         $object = $factory->create(TwoParametersDependency::class, [1 => 'param2', 0 => 'param1']);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
@@ -212,9 +237,10 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testResolveDependenciesUsingContainer(): void
     {
-        $container = $this->createContainer([
+        $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
         ]);
+
         $factory = new Factory($container);
         $one = $factory->create(Car::class);
         $two = $factory->create(Car::class);
@@ -231,12 +257,17 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testDoNotFallbackToContainer(): void
     {
-        $container = $this->createContainer([
-            EngineMarkOne::class => [
-                '__class' => EngineMarkOne::class,
-                'setNumber()' => [42],
-            ],
-        ]);
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) {
+                if ($id === EngineMarkOne::class) {
+                    $engine = new EngineMarkOne();
+                    $engine->setNumber(42);
+                    return $engine;
+                }
+                throw new NotFoundException($id);
+            }
+        );
 
         $factory = new Factory($container);
 
@@ -250,9 +281,16 @@ abstract class AbstractFactoryTest extends TestCase
      */
     public function testDoNotResolveDependenciesFromFactory(): void
     {
-        $container = $this->createContainer([
-            EngineInterface::class => new EngineMarkOne(),
-        ]);
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) {
+                if ($id === EngineInterface::class) {
+                    return new EngineMarkOne();
+                }
+                throw new NotFoundException($id);
+            }
+        );
+
         $factory = new Factory($container, [
             EngineInterface::class => [
                 '__class' => EngineMarkOne::class,
@@ -265,5 +303,49 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
 
         $this->assertEquals(0, $instance->getEngine()->getNumber());
+    }
+
+    public function testCreateFactory(): void
+    {
+        $container = new SimpleContainer(
+            [],
+            static function (string $id) use (&$container) {
+                if ($id === ContainerInterface::class) {
+                    return $container;
+                }
+                throw new NotFoundException($id);
+            }
+        );
+
+        $factory = new Factory($container, [
+            'factoryObject' => [
+                '__class' => Factory::class,
+                '__construct()' => [
+                    'container' => Reference::to(ContainerInterface::class),
+                    'definitions' => [],
+                ],
+            ],
+        ]);
+        $oneFactoryObject = $factory->create('factoryObject');
+        $otherFactoryObject = $factory->create('factoryObject');
+        $this->assertNotSame($oneFactoryObject, $otherFactoryObject);
+        $this->assertNotSame($oneFactoryObject, $factory);
+        $this->assertInstanceOf(Factory::class, $oneFactoryObject);
+        $this->assertInstanceOf(Factory::class, $otherFactoryObject);
+    }
+
+    public function testCreateFactoryImmutable(): void
+    {
+        $factory = new Factory(new SimpleContainer(), [
+            'immutableObject' => [
+                '__class' => Immutable::class,
+                'id()' => ['id-testMe'],
+                'fieldImmutable()' => ['testMe'],
+            ],
+        ]);
+        $oneImmutableObject = $factory->create('immutableObject');
+        $otherImmutableObject = (new Immutable())->fieldImmutable('testMe');
+        $otherImmutableObject->id('id-testMe');
+        $this->assertEquals($oneImmutableObject, $otherImmutableObject);
     }
 }
