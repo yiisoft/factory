@@ -10,7 +10,6 @@ use Yiisoft\Factory\Definitions\DynamicReference;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Injector\Injector;
-use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 class DynamicReferenceTest extends TestCase
