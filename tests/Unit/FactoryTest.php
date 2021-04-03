@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotFoundException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
@@ -23,12 +22,11 @@ final class FactoryTest extends TestCase
     public function testCanCreateByAlias(): void
     {
         $container = new SimpleContainer();
+        $factory = new Factory($container, ['engine' => EngineMarkOne::class]);
 
-        $factory = new Factory($container, [
-            'engine' => EngineMarkOne::class,
-        ]);
         $one = $factory->create('engine');
         $two = $factory->create('engine');
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -37,12 +35,11 @@ final class FactoryTest extends TestCase
     public function testCanCreateByInterfaceAsStringDefinition(): void
     {
         $container = new SimpleContainer();
+        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
 
-        $factory = new Factory($container, [
-            EngineInterface::class => EngineMarkOne::class,
-        ]);
         $one = $factory->create(EngineInterface::class);
         $two = $factory->create(EngineInterface::class);
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -51,12 +48,11 @@ final class FactoryTest extends TestCase
     public function testCanCreateByInterfaceAsReferenceDefinition(): void
     {
         $container = new SimpleContainer();
+        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
 
-        $factory = new Factory($container, [
-            EngineInterface::class => EngineMarkOne::class,
-        ]);
         $one = $factory->create(Reference::to(EngineInterface::class));
         $two = $factory->create(Reference::to(EngineInterface::class));
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -69,12 +65,11 @@ final class FactoryTest extends TestCase
     public function testObjectIsCloned(): void
     {
         $container = new SimpleContainer();
+        $factory = new Factory($container, ['engine' => new EngineMarkOne()]);
 
-        $factory = new Factory($container, [
-            'engine' => new EngineMarkOne(),
-        ]);
         $one = $factory->create('engine');
         $two = $factory->create('engine');
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
@@ -85,10 +80,11 @@ final class FactoryTest extends TestCase
     public function testCreateClassNotDefinedInConfig(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
+
         $one = $factory->create(EngineMarkOne::class);
         $two = $factory->create(EngineMarkOne::class);
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -100,7 +96,6 @@ final class FactoryTest extends TestCase
     public function testMergeFactoryConfig(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container, [
             EngineMarkOne::class => [
                 '__class' => EngineMarkOne::class,
@@ -111,6 +106,7 @@ final class FactoryTest extends TestCase
         $instance = $factory->create([
             '__class' => EngineMarkOne::class,
         ]);
+
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertEquals(42, $instance->getNumber());
     }
@@ -121,7 +117,6 @@ final class FactoryTest extends TestCase
     public function testOverrideFactoryConfig(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container, [
             EngineMarkOne::class => [
                 '__class' => EngineMarkOne::class,
@@ -133,6 +128,7 @@ final class FactoryTest extends TestCase
             '__class' => EngineMarkOne::class,
             'setNumber()' => [43],
         ]);
+
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertEquals(43, $instance->getNumber());
     }
@@ -140,12 +136,13 @@ final class FactoryTest extends TestCase
     public function testGetByAlias(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container, [
             'engine' => EngineMarkOne::class,
         ]);
+
         $one = $factory->get('engine');
         $two = $factory->get('engine');
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -154,11 +151,12 @@ final class FactoryTest extends TestCase
     public function testTrivialDefinition(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
         $factory->set(EngineMarkOne::class, EngineMarkOne::class);
+
         $one = $factory->get(EngineMarkOne::class);
         $two = $factory->get(EngineMarkOne::class);
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
         $this->assertInstanceOf(EngineMarkOne::class, $two);
@@ -170,10 +168,11 @@ final class FactoryTest extends TestCase
     public function testCreateWithParams(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
+
         $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(Car::class, $one);
         $this->assertInstanceOf(Car::class, $two);
@@ -184,10 +183,11 @@ final class FactoryTest extends TestCase
     public function testCreateWithNamedParams(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
+
         $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
+
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(Car::class, $one);
         $this->assertInstanceOf(Car::class, $two);
@@ -198,8 +198,8 @@ final class FactoryTest extends TestCase
     public function testCreateWithCallableValuesInParams(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
+
         $object = $factory->create(TwoParametersDependency::class, [
             'firstParameter' => 'date',
             'secondParameter' => 'time',
@@ -213,18 +213,18 @@ final class FactoryTest extends TestCase
     public function testCreateWithInvalidParams(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
 
         $this->expectException(InvalidConfigException::class);
+
         $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
     }
 
     public function testCreateWithRandomOrderedParams(): void
     {
         $container = new SimpleContainer();
-
         $factory = new Factory($container);
+
         $object = $factory->create(TwoParametersDependency::class, [1 => 'param2', 0 => 'param1']);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
@@ -237,17 +237,19 @@ final class FactoryTest extends TestCase
      */
     public function testResolveDependenciesUsingContainer(): void
     {
-        $container = new SimpleContainer([
-            EngineInterface::class => new EngineMarkOne(),
-        ]);
-
+        $origin = new EngineMarkOne();
+        $container = new SimpleContainer([EngineInterface::class => $origin]);
         $factory = new Factory($container);
+
         $one = $factory->create(Car::class);
         $two = $factory->create(Car::class);
+
         $this->assertInstanceOf(Car::class, $one);
         $this->assertInstanceOf(Car::class, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $two->getEngine());
         $this->assertNotSame($one, $two);
+        $this->assertNotSame($origin, $one);
+        $this->assertNotSame($origin, $two);
         $this->assertSame($one->getEngine(), $two->getEngine());
     }
 
@@ -257,23 +259,16 @@ final class FactoryTest extends TestCase
      */
     public function testDoNotFallbackToContainer(): void
     {
-        $container = new SimpleContainer(
-            [],
-            static function (string $id) {
-                if ($id === EngineMarkOne::class) {
-                    $engine = new EngineMarkOne();
-                    $engine->setNumber(42);
-                    return $engine;
-                }
-                throw new NotFoundException($id);
-            }
-        );
-
+        $engine = new EngineMarkOne();
+        $engine->setNumber(42);
+        $container = new SimpleContainer([EngineMarkOne::class => $engine]);
         $factory = new Factory($container);
 
         $instance = $factory->create(EngineMarkOne::class);
+
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertNotEquals(42, $instance->getNumber());
+        $this->assertNotSame($engine, $instance);
     }
 
     /**
@@ -281,16 +276,7 @@ final class FactoryTest extends TestCase
      */
     public function testDoNotResolveDependenciesFromFactory(): void
     {
-        $container = new SimpleContainer(
-            [],
-            static function (string $id) {
-                if ($id === EngineInterface::class) {
-                    return new EngineMarkOne();
-                }
-                throw new NotFoundException($id);
-            }
-        );
-
+        $container = new SimpleContainer([EngineInterface::class => new EngineMarkOne()]);
         $factory = new Factory($container, [
             EngineInterface::class => [
                 '__class' => EngineMarkOne::class,
@@ -299,24 +285,15 @@ final class FactoryTest extends TestCase
         ]);
 
         $instance = $factory->create(Car::class);
+
         $this->assertInstanceOf(Car::class, $instance);
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
-
         $this->assertEquals(0, $instance->getEngine()->getNumber());
     }
 
     public function testCreateFactory(): void
     {
-        $container = new SimpleContainer(
-            [],
-            static function (string $id) use (&$container) {
-                if ($id === ContainerInterface::class) {
-                    return $container;
-                }
-                throw new NotFoundException($id);
-            }
-        );
-
+        $container = new SimpleContainer([ContainerInterface::class => &$container]);
         $factory = new Factory($container, [
             'factoryObject' => [
                 '__class' => Factory::class,
@@ -326,8 +303,10 @@ final class FactoryTest extends TestCase
                 ],
             ],
         ]);
+
         $oneFactoryObject = $factory->create('factoryObject');
         $otherFactoryObject = $factory->create('factoryObject');
+
         $this->assertNotSame($oneFactoryObject, $otherFactoryObject);
         $this->assertNotSame($oneFactoryObject, $factory);
         $this->assertInstanceOf(Factory::class, $oneFactoryObject);
@@ -343,9 +322,11 @@ final class FactoryTest extends TestCase
                 'fieldImmutable()' => ['testMe'],
             ],
         ]);
+
         $oneImmutableObject = $factory->create('immutableObject');
         $otherImmutableObject = (new Immutable())->fieldImmutable('testMe');
         $otherImmutableObject->id('id-testMe');
+
         $this->assertEquals($oneImmutableObject, $otherImmutableObject);
     }
 }
