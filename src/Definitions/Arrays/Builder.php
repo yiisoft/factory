@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definitions\Arrays;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
+use Yiisoft\Factory\Definitions\DefinitionResolver;
+use Yiisoft\Factory\Definitions\ParameterDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
@@ -16,7 +19,7 @@ use function is_string;
 /**
  * Builds object by ArrayDefinition.
  */
-final class ArrayBuilder
+final class Builder
 {
     private static ?self $instance = null;
     private static ?DefinitionExtractor $extractor = null;
@@ -56,7 +59,7 @@ final class ArrayBuilder
         $object = new $class(...array_values($resolved));
 
         /** @psalm-var array<string,array> $calls */
-        $calls = DefinitionResolver::resolveArray($container, $definition->getCalls());
+        $calls = DefinitionResolver::resolveArray($container, $definition->getCallMethods());
         foreach ($calls as $method => $arguments) {
             /** @var mixed */
             $setter = call_user_func_array([$object, $method], $arguments);
@@ -66,7 +69,7 @@ final class ArrayBuilder
             }
         }
 
-        $properties = DefinitionResolver::resolveArray($container, $definition->getProperties());
+        $properties = DefinitionResolver::resolveArray($container, $definition->getSetProperties());
         /** @var mixed $value */
         foreach ($properties as $property => $value) {
             $object->$property = $value;

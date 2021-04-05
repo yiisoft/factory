@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definitions\Arrays;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
@@ -19,11 +20,6 @@ use function is_string;
  */
 class ArrayDefinition implements DefinitionInterface
 {
-    private const CLASS_KEY = 'class';
-    private const CONSTRUCTOR_PARAMETERS_KEY = 'constructor';
-    private const CALLS_KEY = 'calls';
-    private const PROPERTIES_KEY = 'properties';
-
     /**
      * @psalm-var class-string
      */
@@ -44,8 +40,8 @@ class ArrayDefinition implements DefinitionInterface
      * @psalm-param array{
      *   class: class-string,
      *   constructor?: array,
-     *   calls?: array,
-     *   properties?: array,
+     *   callMethods?: array,
+     *   setProperties?: array,
      * } $config
      *
      * @throws InvalidConfigException
@@ -63,12 +59,12 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setClass(array $config): void
     {
-        if (!array_key_exists(self::CLASS_KEY, $config)) {
+        if (!array_key_exists(Key::CLASS_NAME, $config)) {
             throw new InvalidConfigException('Invalid definition: don\'t set class name.');
         }
 
         /** @var mixed */
-        $class = $config[self::CLASS_KEY];
+        $class = $config[Key::CLASS_NAME];
 
         if (!is_string($class)) {
             throw new InvalidConfigException('Invalid definition: invalid class name.');
@@ -90,7 +86,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setConstructorParameters(array $config): void
     {
-        $parameters = $config[self::CONSTRUCTOR_PARAMETERS_KEY] ?? [];
+        $parameters = $config[Key::CONSTRUCTOR_PARAMETERS] ?? [];
 
         if (!is_array($parameters)) {
             throw new InvalidConfigException('Invalid definition: incorrect constructor parameters.');
@@ -104,7 +100,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setCalls(array $config): void
     {
-        $items = $config[self::CALLS_KEY] ?? [];
+        $items = $config[Key::CALL_METHODS] ?? [];
 
         if (!is_array($items)) {
             throw new InvalidConfigException('Invalid definition: incorrect calls.');
@@ -136,7 +132,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setProperties(array $config): void
     {
-        $properties = $config[self::PROPERTIES_KEY] ?? [];
+        $properties = $config[Key::SET_PROPERTIES] ?? [];
 
         if (!is_array($properties)) {
             throw new InvalidConfigException('Invalid definition: incorrect properties.');
@@ -169,7 +165,7 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @psalm-return array<string, array>
      */
-    public function getCalls(): array
+    public function getCallMethods(): array
     {
         return $this->calls;
     }
@@ -177,7 +173,7 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @psalm-return array<string, mixed>
      */
-    public function getProperties(): array
+    public function getSetProperties(): array
     {
         return $this->properties;
     }
@@ -188,23 +184,23 @@ class ArrayDefinition implements DefinitionInterface
      */
     public function resolve(ContainerInterface $container): object
     {
-        return ArrayBuilder::getInstance()->build($container, $this);
+        return Builder::getInstance()->build($container, $this);
     }
 
     public function merge(self $other): self
     {
-        $calls = $this->getCalls();
-        foreach ($other->getCalls() as $method => $parameters) {
-            $calls[$method] = isset($calls[$method])
-                ? $this->mergeParameters($calls[$method], $parameters)
+        $callMethods = $this->getCallMethods();
+        foreach ($other->getCallMethods() as $method => $parameters) {
+            $callMethods[$method] = isset($callMethods[$method])
+                ? $this->mergeParameters($callMethods[$method], $parameters)
                 : $parameters;
         }
 
         return new self([
-            self::CLASS_KEY => $other->getClass(),
-            self::CONSTRUCTOR_PARAMETERS_KEY => $this->mergeParameters($this->getConstructorParameters(), $other->getConstructorParameters()),
-            self::CALLS_KEY => $calls,
-            self::PROPERTIES_KEY => array_merge($this->getProperties(), $other->getProperties()),
+            Key::CLASS_NAME => $other->getClass(),
+            Key::CONSTRUCTOR_PARAMETERS => $this->mergeParameters($this->getConstructorParameters(), $other->getConstructorParameters()),
+            Key::CALL_METHODS => $callMethods,
+            Key::SET_PROPERTIES => array_merge($this->getSetProperties(), $other->getSetProperties()),
         ]);
     }
 

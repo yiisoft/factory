@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\ArrayDefinition;
+use Yiisoft\Factory\Definitions\Arrays\ArrayDefinition;
+use Yiisoft\Factory\Definitions\Arrays\Key;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
@@ -84,7 +85,7 @@ class Factory implements FactoryInterface
         if (is_string($id)) {
             // prevent infinite loop when Reference definition points to string but not to a class
             /** @psalm-suppress ArgumentTypeCoercion */
-            return $this->definitions[$id] ?? new ArrayDefinition(['class' => $id]);
+            return $this->definitions[$id] ?? new ArrayDefinition([Key::CLASS_NAME => $id]);
         }
 
         return Normalizer::normalize($id);

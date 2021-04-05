@@ -99,7 +99,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory($container, [
             EngineMarkOne::class => [
                 'class' => EngineMarkOne::class,
-                'calls' => [
+                'callMethods' => [
                     'setNumber' => [42],
                 ],
             ],
@@ -122,7 +122,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory($container, [
             EngineMarkOne::class => [
                 'class' => EngineMarkOne::class,
-                'calls' => [
+                'callMethods' => [
                     'setNumber' => [42],
                 ],
             ],
@@ -130,7 +130,7 @@ final class FactoryTest extends TestCase
 
         $instance = $factory->create([
             'class' => EngineMarkOne::class,
-            'calls' => [
+            'callMethods' => [
                 'setNumber' => [43],
             ],
         ]);
@@ -286,7 +286,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory($container, [
             EngineInterface::class => [
                 'class' => EngineMarkOne::class,
-                'calls' => [
+                'callMethods' => [
                     'setNumber' => [42],
                 ],
             ],
@@ -326,7 +326,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(new SimpleContainer(), [
             'immutableObject' => [
                 'class' => Immutable::class,
-                'calls' => [
+                'callMethods' => [
                     'id' => ['id-testMe'],
                     'fieldImmutable' => ['testMe'],
                 ],
