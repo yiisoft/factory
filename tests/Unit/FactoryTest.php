@@ -98,13 +98,15 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer();
         $factory = new Factory($container, [
             EngineMarkOne::class => [
-                '__class' => EngineMarkOne::class,
-                'setNumber()' => [42],
+                'class' => EngineMarkOne::class,
+                'calls' => [
+                    'setNumber' => [42],
+                ],
             ],
         ]);
 
         $instance = $factory->create([
-            '__class' => EngineMarkOne::class,
+            'class' => EngineMarkOne::class,
         ]);
 
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
@@ -119,14 +121,18 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer();
         $factory = new Factory($container, [
             EngineMarkOne::class => [
-                '__class' => EngineMarkOne::class,
-                'setNumber()' => [42],
+                'class' => EngineMarkOne::class,
+                'calls' => [
+                    'setNumber' => [42],
+                ],
             ],
         ]);
 
         $instance = $factory->create([
-            '__class' => EngineMarkOne::class,
-            'setNumber()' => [43],
+            'class' => EngineMarkOne::class,
+            'calls' => [
+                'setNumber' => [43],
+            ],
         ]);
 
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
@@ -279,8 +285,10 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer([EngineInterface::class => new EngineMarkOne()]);
         $factory = new Factory($container, [
             EngineInterface::class => [
-                '__class' => EngineMarkOne::class,
-                'setNumber()' => [42],
+                'class' => EngineMarkOne::class,
+                'calls' => [
+                    'setNumber' => [42],
+                ],
             ],
         ]);
 
@@ -296,8 +304,8 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer([ContainerInterface::class => &$container]);
         $factory = new Factory($container, [
             'factoryObject' => [
-                '__class' => Factory::class,
-                '__construct()' => [
+                'class' => Factory::class,
+                'constructor' => [
                     'container' => Reference::to(ContainerInterface::class),
                     'definitions' => [],
                 ],
@@ -317,9 +325,11 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory(new SimpleContainer(), [
             'immutableObject' => [
-                '__class' => Immutable::class,
-                'id()' => ['id-testMe'],
-                'fieldImmutable()' => ['testMe'],
+                'class' => Immutable::class,
+                'calls' => [
+                    'id' => ['id-testMe'],
+                    'fieldImmutable' => ['testMe'],
+                ],
             ],
         ]);
 

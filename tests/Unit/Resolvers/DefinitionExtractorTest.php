@@ -7,7 +7,7 @@ namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definitions\ClassDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -50,7 +50,7 @@ class DefinitionExtractorTest extends TestCase
 
         $this->assertCount(1, $dependencies);
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
-        $this->expectException(NotInstantiableException::class);
+        $this->expectException(InvalidConfigException::class);
         $dependencies['engine']->resolve($container);
     }
 

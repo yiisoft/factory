@@ -16,14 +16,28 @@ use function is_string;
 /**
  * Builds object by ArrayDefinition.
  */
-class ArrayBuilder
+final class ArrayBuilder
 {
+    private static ?self $instance = null;
     private static ?DefinitionExtractor $extractor = null;
 
     /**
      * @psalm-var array<string, array<string, DefinitionInterface>>
      */
     private static array $dependencies = [];
+
+    private function __construct()
+    {
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
 
     /**
      * @throws NotInstantiableException
@@ -33,14 +47,32 @@ class ArrayBuilder
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
-        $parameters = $definition->getParams();
-        $this->injectParameters($dependencies, $parameters);
+        $constructorParameters = $definition->getConstructorParameters();
+        $this->injectParameters($dependencies, $constructorParameters);
+
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
+
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
-        $config = DefinitionResolver::resolveArray($container, $definition->getConfig());
 
-        return $this->configure($object, $config);
+        /** @psalm-var array<string,array> $calls */
+        $calls = DefinitionResolver::resolveArray($container, $definition->getCalls());
+        foreach ($calls as $method => $arguments) {
+            /** @var mixed */
+            $setter = call_user_func_array([$object, $method], $arguments);
+            if ($setter instanceof $object) {
+                /** @var object */
+                $object = $setter;
+            }
+        }
+
+        $properties = DefinitionResolver::resolveArray($container, $definition->getProperties());
+        /** @var mixed $value */
+        foreach ($properties as $property => $value) {
+            $object->$property = $value;
+        }
+
+        return $object;
     }
 
     /**
@@ -107,7 +139,7 @@ class ArrayBuilder
     /**
      * Returns the dependencies of the specified class.
      *
-     * @param class-string $class class name, interface name or alias name
+     * @param class-string $class Class name or interface name.
      *
      * @throws NotInstantiableException
      *
@@ -131,36 +163,5 @@ class ArrayBuilder
         }
 
         return static::$extractor;
-    }
-
-    /**
-     * Configures an object with the given configuration.
-     *
-     * @param object $object The object to be configured.
-     * @param array $config Property values and methods to call.
-     *
-     * @psalm-param array<string,mixed> $config
-     *
-     * @return object The object itself.
-     */
-    private function configure(object $object, array $config): object
-    {
-        /** @var mixed $arguments */
-        foreach ($config as $action => $arguments) {
-            if (substr($action, -2) === '()') {
-                // method call
-                /** @var mixed */
-                $setter = call_user_func_array([$object, substr($action, 0, -2)], $arguments);
-                if ($setter instanceof $object) {
-                    /** @var object */
-                    $object = $setter;
-                }
-            } else {
-                // property
-                $object->$action = $arguments;
-            }
-        }
-
-        return $object;
     }
 }

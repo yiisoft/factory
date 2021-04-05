@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Definitions;
 
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
+use function array_key_exists;
 use function is_array;
 use function is_callable;
 use function is_object;
@@ -68,7 +69,10 @@ class Normalizer
             }
             if ($id === $definition || (!empty($params) && class_exists($definition))) {
                 /** @psalm-var class-string $definition */
-                return ArrayDefinition::fromArray($definition, $params);
+                return new ArrayDefinition([
+                    'class' => $definition,
+                    'constructor' => $params,
+                ]);
             }
             return Reference::to($definition);
         }
@@ -78,11 +82,12 @@ class Normalizer
         }
 
         if (is_array($definition)) {
-            /**
-             * @psalm-var class-string $id
-             * @psalm-var array<string,mixed> $definition
-             */
-            return ArrayDefinition::fromArray($id, [], $definition);
+            $config = $definition;
+            if (!array_key_exists('class', $config)) {
+                $config['class'] = $id;
+            }
+            /** @psalm-suppress ArgumentTypeCoercion */
+            return new ArrayDefinition($config);
         }
 
         if (is_object($definition)) {

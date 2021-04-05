@@ -84,7 +84,7 @@ class Factory implements FactoryInterface
         if (is_string($id)) {
             // prevent infinite loop when Reference definition points to string but not to a class
             /** @psalm-suppress ArgumentTypeCoercion */
-            return $this->definitions[$id] ?? ArrayDefinition::fromArray($id);
+            return $this->definitions[$id] ?? new ArrayDefinition(['class' => $id]);
         }
 
         return Normalizer::normalize($id);

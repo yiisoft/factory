@@ -61,7 +61,7 @@ class DynamicReferenceTest extends TestCase
     public function testFullDefinition(): void
     {
         $ref = DynamicReference::to([
-            '__class' => EngineMarkOne::class,
+            'class' => EngineMarkOne::class,
         ]);
         $this->assertInstanceOf(EngineMarkOne::class, $ref->resolve($this->createContainer()));
     }
