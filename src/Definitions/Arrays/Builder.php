@@ -160,11 +160,11 @@ final class Builder
 
     private function getExtractor(): DefinitionExtractor
     {
-        if (static::$extractor === null) {
+        if (self::$extractor === null) {
             // For now use hard coded extractor.
-            static::$extractor = new DefinitionExtractor();
+            self::$extractor = new DefinitionExtractor();
         }
 
-        return static::$extractor;
+        return self::$extractor;
     }
 }
