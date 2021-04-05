@@ -29,12 +29,12 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @psalm-var array<string, array>
      */
-    private array $calls;
+    private array $callMethods;
 
     /**
      * @psalm-var array<string, mixed>
      */
-    private array $properties;
+    private array $setProperties;
 
     /**
      * @psalm-param array{
@@ -51,7 +51,7 @@ class ArrayDefinition implements DefinitionInterface
         $this->setClass($config);
         $this->setConstructorParameters($config);
         $this->setCalls($config);
-        $this->setProperties($config);
+        $this->setSetProperties($config);
     }
 
     /**
@@ -103,10 +103,10 @@ class ArrayDefinition implements DefinitionInterface
         $items = $config[Key::CALL_METHODS] ?? [];
 
         if (!is_array($items)) {
-            throw new InvalidConfigException('Invalid definition: incorrect calls.');
+            throw new InvalidConfigException('Invalid definition: incorrect call methods.');
         }
 
-        $calls = [];
+        $callMethods = [];
         foreach ($items as $key => $value) {
             if (is_int($key)) {
                 if (!is_string($value)) {
@@ -115,22 +115,22 @@ class ArrayDefinition implements DefinitionInterface
                 if ($value === '') {
                     throw new InvalidConfigException('Invalid definition: empty call method.');
                 }
-                $calls[$value] = [];
+                $callMethods[$value] = [];
             } else {
                 if (!is_array($value)) {
                     throw new InvalidConfigException('Invalid definition: incorrect call parameters.');
                 }
-                $calls[$key] = $value;
+                $callMethods[$key] = $value;
             }
         }
 
-        $this->calls = $calls;
+        $this->callMethods = $callMethods;
     }
 
     /**
      * @throws InvalidConfigException
      */
-    private function setProperties(array $config): void
+    private function setSetProperties(array $config): void
     {
         $properties = $config[Key::SET_PROPERTIES] ?? [];
 
@@ -146,7 +146,7 @@ class ArrayDefinition implements DefinitionInterface
 
         /** @psalm-var array<string,mixed> $properties */
 
-        $this->properties = $properties;
+        $this->setProperties = $properties;
     }
 
     /**
@@ -167,7 +167,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     public function getCallMethods(): array
     {
-        return $this->calls;
+        return $this->callMethods;
     }
 
     /**
@@ -175,7 +175,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     public function getSetProperties(): array
     {
-        return $this->properties;
+        return $this->setProperties;
     }
 
     /**
