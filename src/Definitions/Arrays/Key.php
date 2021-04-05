@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definitions\Arrays;
 
-/**
- * @internal
- */
 final class Key
 {
     public const CLASS_NAME = 'class';
