@@ -6,7 +6,6 @@ namespace Yiisoft\Factory\Exceptions;
 
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;
-use Throwable;
 
 /**
  * NotFoundException is thrown when no definition or class was found in the container for a given ID.
