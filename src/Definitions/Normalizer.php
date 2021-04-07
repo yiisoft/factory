@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definitions;
 
 use Yiisoft\Factory\Definitions\Arrays\ArrayDefinition;
-use Yiisoft\Factory\Definitions\Arrays\Key;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 use function array_key_exists;
@@ -72,8 +71,8 @@ class Normalizer
             if ($id === $definition || (!empty($params) && class_exists($definition))) {
                 /** @psalm-var class-string $definition */
                 return new ArrayDefinition([
-                    Key::CLASS_NAME => $definition,
-                    Key::CONSTRUCTOR => $params,
+                    ArrayDefinition::CLASS_NAME => $definition,
+                    ArrayDefinition::CONSTRUCTOR => $params,
                 ]);
             }
             return Reference::to($definition);
@@ -85,8 +84,8 @@ class Normalizer
 
         if (is_array($definition)) {
             $config = $definition;
-            if (!array_key_exists(Key::CLASS_NAME, $config)) {
-                $config[Key::CLASS_NAME] = $id;
+            if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
+                $config[ArrayDefinition::CLASS_NAME] = $id;
             }
             /** @psalm-suppress ArgumentTypeCoercion */
             return new ArrayDefinition($config);

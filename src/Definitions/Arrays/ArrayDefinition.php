@@ -23,6 +23,11 @@ use function is_string;
  */
 class ArrayDefinition implements DefinitionInterface
 {
+    public const CLASS_NAME = 'class';
+    public const CONSTRUCTOR = 'constructor';
+    public const CALL_METHODS = 'callMethods';
+    public const SET_PROPERTIES = 'setProperties';
+    
     /**
      * @psalm-var class-string
      */
@@ -62,12 +67,12 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setClass(array $config): void
     {
-        if (!array_key_exists(Key::CLASS_NAME, $config)) {
+        if (!array_key_exists(self::CLASS_NAME, $config)) {
             throw new InvalidConfigException('Invalid definition: no class name specified.');
         }
 
         /** @var mixed */
-        $class = $config[Key::CLASS_NAME];
+        $class = $config[self::CLASS_NAME];
 
         if (!is_string($class)) {
             throw new InvalidConfigException(sprintf('Invalid definition: invalid class name "%s".', (string)$class));
@@ -89,7 +94,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setConstructorParameters(array $config): void
     {
-        $parameters = $config[Key::CONSTRUCTOR] ?? [];
+        $parameters = $config[self::CONSTRUCTOR] ?? [];
 
         if (!is_array($parameters)) {
             throw new InvalidConfigException(
@@ -108,7 +113,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setCalls(array $config): void
     {
-        $items = $config[Key::CALL_METHODS] ?? [];
+        $items = $config[self::CALL_METHODS] ?? [];
 
         if (!is_array($items)) {
             throw new InvalidConfigException(
@@ -146,7 +151,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setSetProperties(array $config): void
     {
-        $properties = $config[Key::SET_PROPERTIES] ?? [];
+        $properties = $config[self::SET_PROPERTIES] ?? [];
 
         if (!is_array($properties)) {
             throw new InvalidConfigException(
@@ -215,13 +220,13 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         return new self([
-            Key::CLASS_NAME => $other->getClass(),
-            Key::CONSTRUCTOR => $this->mergeParameters(
+            self::CLASS_NAME => $other->getClass(),
+            self::CONSTRUCTOR => $this->mergeParameters(
                 $this->getConstructorParameters(),
                 $other->getConstructorParameters()
             ),
-            Key::CALL_METHODS => $callMethods,
-            Key::SET_PROPERTIES => array_merge($this->getSetProperties(), $other->getSetProperties()),
+            self::CALL_METHODS => $callMethods,
+            self::SET_PROPERTIES => array_merge($this->getSetProperties(), $other->getSetProperties()),
         ]);
     }
 
