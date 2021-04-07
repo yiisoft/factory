@@ -62,9 +62,9 @@ class Factory implements FactoryInterface
     /**
      * @param string $id
      *
-     * @return mixed|object
-     *
      * @throws NotInstantiableException
+     *
+     * @return mixed|object
      */
     public function get($id)
     {
