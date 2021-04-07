@@ -89,7 +89,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setConstructorParameters(array $config): void
     {
-        $parameters = $config[Key::CONSTRUCTOR_PARAMETERS] ?? [];
+        $parameters = $config[Key::CONSTRUCTOR] ?? [];
 
         if (!is_array($parameters)) {
             throw new InvalidConfigException(
@@ -210,7 +210,7 @@ class ArrayDefinition implements DefinitionInterface
 
         return new self([
             Key::CLASS_NAME => $other->getClass(),
-            Key::CONSTRUCTOR_PARAMETERS => $this->mergeParameters(
+            Key::CONSTRUCTOR => $this->mergeParameters(
                 $this->getConstructorParameters(),
                 $other->getConstructorParameters()
             ),

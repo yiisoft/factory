@@ -73,7 +73,7 @@ class Normalizer
                 /** @psalm-var class-string $definition */
                 return new ArrayDefinition([
                     Key::CLASS_NAME => $definition,
-                    Key::CONSTRUCTOR_PARAMETERS => $params,
+                    Key::CONSTRUCTOR => $params,
                 ]);
             }
             return Reference::to($definition);
