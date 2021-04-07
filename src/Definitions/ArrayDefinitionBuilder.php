@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions\Arrays;
+namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Definitions\DefinitionResolver;
-use Yiisoft\Factory\Definitions\ParameterDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
@@ -19,7 +16,7 @@ use function is_string;
 /**
  * @internal Builds object by ArrayDefinition.
  */
-final class Builder
+final class ArrayDefinitionBuilder
 {
     private static ?self $instance = null;
     private static ?DefinitionExtractor $extractor = null;

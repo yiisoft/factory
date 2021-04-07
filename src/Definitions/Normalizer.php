@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definitions;
 
-use Yiisoft\Factory\Definitions\Arrays\ArrayDefinition;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 use function array_key_exists;

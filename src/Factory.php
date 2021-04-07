@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\Arrays\ArrayDefinition;
+use Yiisoft\Factory\Definitions\ArrayDefinition;
 use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Definitions\Normalizer;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;

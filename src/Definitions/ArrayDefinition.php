@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions\Arrays;
+namespace Yiisoft\Factory\Definitions;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
@@ -27,7 +26,7 @@ class ArrayDefinition implements DefinitionInterface
     public const CONSTRUCTOR = 'constructor';
     public const CALL_METHODS = 'callMethods';
     public const SET_PROPERTIES = 'setProperties';
-    
+
     /**
      * @psalm-var class-string
      */
@@ -207,7 +206,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     public function resolve(ContainerInterface $container): object
     {
-        return Builder::getInstance()->build($container, $this);
+        return ArrayDefinitionBuilder::getInstance()->build($container, $this);
     }
 
     public function merge(self $other): self
