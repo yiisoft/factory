@@ -130,7 +130,9 @@ class ArrayDefinition implements DefinitionInterface
                 $callMethods[$value] = [];
             } else {
                 if (!is_array($value)) {
-                    throw new InvalidConfigException('Invalid definition: incorrect call parameters.');
+                    throw new InvalidConfigException(
+                        sprintf('Invalid definition: incorrect method parameters. Expected array, got %s.', $this->getType($value))
+                    );
                 }
                 $callMethods[$key] = $value;
             }
@@ -147,12 +149,16 @@ class ArrayDefinition implements DefinitionInterface
         $properties = $config[Key::SET_PROPERTIES] ?? [];
 
         if (!is_array($properties)) {
-            throw new InvalidConfigException('Invalid definition: incorrect properties.');
+            throw new InvalidConfigException(
+                sprintf('Invalid definition: incorrect set properties. Expected array, got %s.', $this->getType($properties))
+            );
         }
 
         foreach ($properties as $key => $_value) {
             if (!is_string($key)) {
-                throw new InvalidConfigException('Invalid definition: incorrect property name.');
+                throw new InvalidConfigException(
+                    sprintf('Invalid definition: expected property name, got %s', $this->getType($key))
+                );
             }
         }
 
