@@ -60,13 +60,20 @@ class Factory implements FactoryInterface
     }
 
     /**
-     * @param mixed $id
+     * @param string $id
      *
      * @return mixed|object
+     *
+     * @throws NotInstantiableException
      */
     public function get($id)
     {
-        $definition = $this->getDefinition($id);
+        try {
+            $definition = $this->getDefinition($id);
+        } catch (InvalidConfigException $e) {
+            throw new NotInstantiableException($id);
+        }
+
         if ($definition instanceof ArrayDefinition) {
             return $definition->resolve($this->container ?? $this);
         }
