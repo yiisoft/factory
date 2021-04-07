@@ -60,14 +60,14 @@ class ArrayDefinition implements DefinitionInterface
     private function setClass(array $config): void
     {
         if (!array_key_exists(Key::CLASS_NAME, $config)) {
-            throw new InvalidConfigException('Invalid definition: don\'t set class name.');
+            throw new InvalidConfigException('Invalid definition: no class name specified.');
         }
 
         /** @var mixed */
         $class = $config[Key::CLASS_NAME];
 
         if (!is_string($class)) {
-            throw new InvalidConfigException('Invalid definition: invalid class name.');
+            throw new InvalidConfigException(sprintf('Invalid definition: invalid class name "%s".', (string)$class));
         }
 
         if ($class === '') {
@@ -75,7 +75,7 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         if (!class_exists($class)) {
-            throw new InvalidConfigException('Invalid definition: not exists class.');
+            throw new InvalidConfigException(sprintf('Invalid definition: class "%s" does not exist.', $class));
         }
 
         $this->class = $class;
