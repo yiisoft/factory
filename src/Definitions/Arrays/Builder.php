@@ -17,7 +17,7 @@ use function call_user_func_array;
 use function is_string;
 
 /**
- * Builds object by ArrayDefinition.
+ * @internal Builds object by ArrayDefinition.
  */
 final class Builder
 {
