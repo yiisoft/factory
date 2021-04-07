@@ -11,8 +11,11 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 
 use function array_key_exists;
+use function get_class;
+use function gettype;
 use function is_array;
 use function is_int;
+use function is_object;
 use function is_string;
 
 /**
@@ -89,7 +92,12 @@ class ArrayDefinition implements DefinitionInterface
         $parameters = $config[Key::CONSTRUCTOR_PARAMETERS] ?? [];
 
         if (!is_array($parameters)) {
-            throw new InvalidConfigException('Invalid definition: incorrect constructor parameters.');
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: incorrect constructor parameters. Expected array, got %s.',
+                    $this->getType($parameters)
+                )
+            );
         }
 
         $this->constructorParameters = $parameters;
@@ -103,17 +111,21 @@ class ArrayDefinition implements DefinitionInterface
         $items = $config[Key::CALL_METHODS] ?? [];
 
         if (!is_array($items)) {
-            throw new InvalidConfigException('Invalid definition: incorrect call methods.');
+            throw new InvalidConfigException(
+                sprintf('Invalid definition: incorrect call methods. Expected array, got %s.', $this->getType($items))
+            );
         }
 
         $callMethods = [];
         foreach ($items as $key => $value) {
             if (is_int($key)) {
                 if (!is_string($value)) {
-                    throw new InvalidConfigException('Invalid definition: incorrect call method.');
+                    throw new InvalidConfigException(
+                        sprintf('Invalid definition: expected method name, got %s', $this->getType($value))
+                    );
                 }
                 if ($value === '') {
-                    throw new InvalidConfigException('Invalid definition: empty call method.');
+                    throw new InvalidConfigException('Invalid definition: expected method name, got empty string.');
                 }
                 $callMethods[$value] = [];
             } else {
@@ -198,7 +210,10 @@ class ArrayDefinition implements DefinitionInterface
 
         return new self([
             Key::CLASS_NAME => $other->getClass(),
-            Key::CONSTRUCTOR_PARAMETERS => $this->mergeParameters($this->getConstructorParameters(), $other->getConstructorParameters()),
+            Key::CONSTRUCTOR_PARAMETERS => $this->mergeParameters(
+                $this->getConstructorParameters(),
+                $other->getConstructorParameters()
+            ),
             Key::CALL_METHODS => $callMethods,
             Key::SET_PROPERTIES => array_merge($this->getSetProperties(), $other->getSetProperties()),
         ]);
@@ -212,5 +227,13 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         return $selfParameters;
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function getType($value): string
+    {
+        return is_object($value) ? get_class($value) : gettype($value);
     }
 }
