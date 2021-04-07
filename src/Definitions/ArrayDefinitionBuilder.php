@@ -55,6 +55,12 @@ final class ArrayDefinitionBuilder
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
 
+        $properties = DefinitionResolver::resolveArray($container, $definition->getSetProperties());
+        /** @var mixed $value */
+        foreach ($properties as $property => $value) {
+            $object->$property = $value;
+        }
+
         /** @psalm-var array<string,array> $calls */
         $calls = DefinitionResolver::resolveArray($container, $definition->getCallMethods());
         foreach ($calls as $method => $arguments) {
@@ -64,12 +70,6 @@ final class ArrayDefinitionBuilder
                 /** @var object */
                 $object = $setter;
             }
-        }
-
-        $properties = DefinitionResolver::resolveArray($container, $definition->getSetProperties());
-        /** @var mixed $value */
-        foreach ($properties as $property => $value) {
-            $object->$property = $value;
         }
 
         return $object;
