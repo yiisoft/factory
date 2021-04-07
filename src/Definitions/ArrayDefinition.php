@@ -116,7 +116,7 @@ class ArrayDefinition implements DefinitionInterface
 
         if (!is_array($items)) {
             throw new InvalidConfigException(
-                sprintf('Invalid definition: incorrect call methods. Expected array, got %s.', $this->getType($items))
+                sprintf('Invalid definition: incorrect method calls. Expected array, got %s.', $this->getType($items))
             );
         }
 
@@ -154,7 +154,7 @@ class ArrayDefinition implements DefinitionInterface
 
         if (!is_array($properties)) {
             throw new InvalidConfigException(
-                sprintf('Invalid definition: incorrect set properties. Expected array, got %s.', $this->getType($properties))
+                sprintf('Invalid definition: incorrect properties to set. Expected array, got %s.', $this->getType($properties))
             );
         }
 
@@ -231,9 +231,9 @@ class ArrayDefinition implements DefinitionInterface
 
     private function mergeParameters(array $selfParameters, array $otherParameters): array
     {
-        foreach ($otherParameters as $index => $_param) {
+        foreach ($otherParameters as $index => $parameter) {
             /** @var mixed */
-            $selfParameters[$index] = $otherParameters[$index];
+            $selfParameters[$index] = $parameter;
         }
 
         return $selfParameters;
