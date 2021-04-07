@@ -27,7 +27,7 @@ class ArrayDefinition implements DefinitionInterface
     public const CONSTRUCTOR = 'constructor';
     public const CALL_METHODS = 'callMethods';
     public const SET_PROPERTIES = 'setProperties';
-    
+
     /**
      * @psalm-var class-string
      */
