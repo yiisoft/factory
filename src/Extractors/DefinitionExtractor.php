@@ -98,11 +98,18 @@ class DefinitionExtractor implements ExtractorInterface
         }
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
-        return new ParameterDefinition(
+        $definition = new ParameterDefinition(
             $parameter,
-            $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
             $type !== null ? $type->getName() : null
         );
+
+        if ($parameter->isDefaultValueAvailable()) {
+            $definition->setValue($parameter->getDefaultValue());
+        } elseif (!$parameter->isVariadic()) {
+            $definition->setValue(null);
+        }
+
+        return $definition;
     }
 
     /**

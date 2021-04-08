@@ -25,6 +25,10 @@ class DefinitionResolver
         $result = [];
         /** @var mixed $definition */
         foreach ($dependencies as $key => $definition) {
+            if ($definition instanceof ParameterDefinition && !$definition->hasValue()) {
+                continue;
+            }
+
             /** @var mixed */
             $result[$key] = self::resolve($container, $definition);
         }
