@@ -57,7 +57,7 @@ class ArrayDefinition implements DefinitionInterface
     {
         $this->setClass($config);
         $this->setConstructorParameters($config);
-        $this->setCalls($config);
+        $this->setCallMethods($config);
         $this->setSetProperties($config);
     }
 
@@ -110,7 +110,7 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    private function setCalls(array $config): void
+    private function setCallMethods(array $config): void
     {
         $items = $config[self::CALL_METHODS] ?? [];
 
@@ -125,7 +125,7 @@ class ArrayDefinition implements DefinitionInterface
             if (is_int($key)) {
                 if (!is_string($value)) {
                     throw new InvalidConfigException(
-                        sprintf('Invalid definition: expected method name, got %s', $this->getType($value))
+                        sprintf('Invalid definition: expected method name, got %s.', $this->getType($value))
                     );
                 }
                 if ($value === '') {
@@ -161,7 +161,7 @@ class ArrayDefinition implements DefinitionInterface
         foreach ($properties as $key => $_value) {
             if (!is_string($key)) {
                 throw new InvalidConfigException(
-                    sprintf('Invalid definition: expected property name, got %s', $this->getType($key))
+                    sprintf('Invalid definition: expected property name, got %s.', $this->getType($key))
                 );
             }
         }
@@ -231,6 +231,7 @@ class ArrayDefinition implements DefinitionInterface
 
     private function mergeParameters(array $selfParameters, array $otherParameters): array
     {
+        /** @var mixed $parameter */
         foreach ($otherParameters as $index => $parameter) {
             /** @var mixed */
             $selfParameters[$index] = $parameter;
