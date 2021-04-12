@@ -234,4 +234,25 @@ final class ArrayDefinitionTest extends TestCase
             $methodCalls
         ));
     }
+
+    public function testErrorOnMethodTypo(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: metadata "setId" is not allowed. Did you mean "setId()" or "@setId"?');
+
+        new ArrayDefinition([
+            'class' => Phone::class,
+            'setId' => [42],
+        ]);
+    }
+
+    public function testErrorOnPropertyTypo(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: metadata "dev" is not allowed. Did you mean "dev()" or "@dev"?');
+        new ArrayDefinition([
+            'class' => Phone::class,
+            'dev' => true,
+        ]);
+    }
 }

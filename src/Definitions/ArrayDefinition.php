@@ -71,7 +71,7 @@ class ArrayDefinition implements DefinitionInterface
                 // Not property = meta.
             } elseif (substr($key, 0, 1) !== '@') {
                 if (!in_array($key, $allowedMeta, true)) {
-                    throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed.', $key));
+                    throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
                 }
                 $this->meta[$key] = $value;
                 unset($config[$key]);
