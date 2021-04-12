@@ -54,7 +54,7 @@ class Normalizer
      *
      * @throws InvalidConfigException
      */
-    public static function normalize($definition, string $id = null, array $constructorArguments = []): DefinitionInterface
+    public static function normalize($definition, string $id = null, array $constructorArguments = [], array $allowedMeta = []): DefinitionInterface
     {
         if ($definition instanceof DefinitionInterface) {
             return $definition;
@@ -84,7 +84,7 @@ class Normalizer
                 $config[ArrayDefinition::CLASS_NAME] = $id;
             }
             /** @psalm-suppress ArgumentTypeCoercion */
-            return new ArrayDefinition($config);
+            return new ArrayDefinition($config, $allowedMeta);
         }
 
         if (is_object($definition)) {
