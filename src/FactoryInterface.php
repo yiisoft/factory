@@ -55,9 +55,9 @@ interface FactoryInterface extends ContainerInterface
      *   The callable should return a new instance of the object being created.
      * @param array $constructorArguments The constructor arguments.
      *
-     * @return mixed|object the created object
      *@throws InvalidConfigException if the configuration is invalid.
      *
+     * @return mixed|object the created object
      */
     public function create($config, array $constructorArguments = []);
 }
