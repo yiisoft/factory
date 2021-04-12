@@ -6,7 +6,7 @@ namespace Yiisoft\Factory\Tests\Unit\Definitions;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\DynamicReference;
+use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Injector\Injector;

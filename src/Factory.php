@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\ArrayDefinition;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Definitions\Normalizer;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Definition\Normalizer;
+use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 
 use function is_string;
 

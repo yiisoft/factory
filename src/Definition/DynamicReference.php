@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 

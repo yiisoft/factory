@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
-use Yiisoft\Factory\Extractors\DefinitionExtractor;
+use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Extractor\DefinitionExtractor;
 
 use function array_key_exists;
 use function call_user_func_array;

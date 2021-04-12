@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Exceptions\NotFoundException;
+use Yiisoft\Factory\Exception\NotFoundException;
 
 /**
  * An invalid dependency is created when a parameter has no type and no default value.

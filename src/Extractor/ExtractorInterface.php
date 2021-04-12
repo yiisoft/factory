@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Extractors;
+namespace Yiisoft\Factory\Extractor;
 
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
  * Interface ExtractorInterface

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Definitions;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Definitions\ArrayDefinition;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 

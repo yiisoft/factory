@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Extractors;
+namespace Yiisoft\Factory\Extractor;
 
 use Closure;
 use ReflectionClass;
@@ -11,10 +11,10 @@ use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use Yiisoft\Factory\Definitions\ClassDefinition;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Definitions\ParameterDefinition;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Definition\ClassDefinition;
+use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Definition\ParameterDefinition;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
  * Class DefinitionExtractor

@@ -6,8 +6,8 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\Reference;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;

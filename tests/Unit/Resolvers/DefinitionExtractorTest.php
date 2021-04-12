@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace YYiisoft\Factory\Tests\Unit\Resolvers;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Definitions\ClassDefinition;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
-use Yiisoft\Factory\Extractors\DefinitionExtractor;
+use Yiisoft\Factory\Definition\ClassDefinition;
+use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Extractor\DefinitionExtractor;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;

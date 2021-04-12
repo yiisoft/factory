@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 
 use function array_key_exists;
 use function is_array;
