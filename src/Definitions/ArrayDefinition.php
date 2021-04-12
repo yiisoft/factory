@@ -41,6 +41,9 @@ class ArrayDefinition implements DefinitionInterface
     private array $meta = [];
 
     /**
+     * @param array $config Container entry config.
+     * @param string[] $allowedMeta Allowed metadata keys.
+     *
      * @psalm-param array{
      *   class: class-string,
      *   constructor?: array,
