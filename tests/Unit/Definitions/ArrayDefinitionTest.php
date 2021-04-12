@@ -30,7 +30,6 @@ final class ArrayDefinitionTest extends TestCase
         return [
             [42, 'Invalid definition: invalid class name "42".'],
             ['', 'Invalid definition: empty class name.'],
-            ['NotExistsClass', 'Invalid definition: class "NotExistsClass" does not exist.'],
         ];
     }
 
@@ -41,7 +40,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        new ArrayDefinition([
+        $defintion = new ArrayDefinition([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
     }

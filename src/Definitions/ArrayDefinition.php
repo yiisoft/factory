@@ -79,10 +79,6 @@ class ArrayDefinition implements DefinitionInterface
             throw new InvalidConfigException('Invalid definition: empty class name.');
         }
 
-        if (!class_exists($class)) {
-            throw new InvalidConfigException(sprintf('Invalid definition: class "%s" does not exist.', $class));
-        }
-
         $this->class = $class;
     }
 
