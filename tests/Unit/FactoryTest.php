@@ -14,6 +14,7 @@ use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\Immutable;
+use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -328,5 +329,23 @@ final class FactoryTest extends TestCase
         $otherImmutableObject->id('id-testMe');
 
         $this->assertEquals($oneImmutableObject, $otherImmutableObject);
+    }
+
+    public function testCallsOrder(): void
+    {
+        $factory = new Factory(new SimpleContainer(), [
+            'recorder' => [
+                'class' => Recorder::class,
+                'first()' => [],
+                '@second' => null,
+                'third()' => [],
+                '@fourth' => null,
+            ],
+        ]);
+
+        /** @var Recorder $object */
+        $object = $factory->get('recorder');
+
+        $this->assertEquals(['Call first()', 'Set @second', 'Call third()', 'Set @fourth'], $object->getEvents());
     }
 }
