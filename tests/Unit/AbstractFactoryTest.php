@@ -99,7 +99,7 @@ abstract class AbstractFactoryTest extends TestCase
         ]);
         $factory = new Factory($container, [
             'factory' => [
-                '__class' => Factory::class,
+                'class' => Factory::class,
                 '__construct()' => [
                     'parent' => Reference::to(ContainerInterface::class),
                     'definitions' => [],
@@ -146,7 +146,7 @@ abstract class AbstractFactoryTest extends TestCase
         $container = $this->createContainer();
         $factory = new Factory($container, [
             EngineInterface::class => [
-                '__class' => EngineMarkOne::class,
+                'class' => EngineMarkOne::class,
                 'setNumber()' => [20],
             ],
         ]);
@@ -154,7 +154,7 @@ abstract class AbstractFactoryTest extends TestCase
             'setNumber()' => [30],
         ]);
         $engineTwo = $factory->create([
-            '__class' => new ArrayDefinition(EngineInterface::class),
+            'class' => new ArrayDefinition(EngineInterface::class),
             'setNumber()' => [40],
         ]);
         $this->assertEquals(30, $engineOne->getNumber());

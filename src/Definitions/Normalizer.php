@@ -46,9 +46,9 @@ class Normalizer
      *
      * ```php
      * $container->set('full_definition', [
-     *     '__class' => EngineMarkOne::class,
+     *     'class' => EngineMarkOne::class,
      *     '__construct()' => [42],
-     *     'argName' => 'value',
+     *     '@argName' => 'value',
      *     'setX()' => [42],
      * ]);
      * ```

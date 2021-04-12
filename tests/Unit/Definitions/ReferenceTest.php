@@ -23,6 +23,6 @@ class ReferenceTest extends TestCase
     public function testInvalid(): void
     {
         $this->expectException(InvalidConfigException::class);
-        Reference::to(['__class' => EngineInterface::class]);
+        Reference::to(['class' => EngineInterface::class]);
     }
 }

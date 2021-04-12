@@ -56,8 +56,6 @@ final class ArrayDefinitionBuilder
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
 
-
-
         $methodsAndProperties = DefinitionResolver::resolveArray($container, $definition->getMethodsAndProperties());
         /** @var mixed $arguments */
         foreach ($methodsAndProperties as $name => $arguments) {

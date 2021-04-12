@@ -17,8 +17,8 @@ use Psr\Container\ContainerInterface;
  *    Service1::class => [
  *        '__construct()' => [
  *            DynamicReference::to([
- *                '__class' => SomeClass::class,
- *                'someProp' => 15
+ *                'class' => SomeClass::class,
+ *                '@someProp' => 15
  *            ])
  *        ]
  *    ]

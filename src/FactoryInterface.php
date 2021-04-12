@@ -30,11 +30,13 @@ interface FactoryInterface extends ContainerInterface
      *
      * // create an object using a configuration array
      * $object = $factory->create([
-     *     '__class' => \Yiisoft\Db\Connection::class,
-     *     'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
-     *     'username' => 'root',
-     *     'password' => '',
-     *     'charset' => 'utf8',
+     *     'class' => \Yiisoft\Db\Connection\Connection::class,
+     *     '__construct()' => [
+     *         'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
+     *     ],
+     *     'setUsername()' => ['root'],
+     *     'setPassword()' => [''],
+     *     'setCharset()' => ['utf8'],
      * ]);
      *
      * // create an object with two constructor arguments
