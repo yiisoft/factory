@@ -121,15 +121,12 @@ final class FactoryTest extends TestCase
             EngineMarkOne::class => [
                 'class' => EngineMarkOne::class,
                 'setNumber()' => [42],
-
-
             ],
         ]);
 
         $instance = $factory->create([
             'class' => EngineMarkOne::class,
             'setNumber()' => [43],
-
         ]);
 
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
