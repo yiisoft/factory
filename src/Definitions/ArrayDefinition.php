@@ -23,9 +23,7 @@ use function is_string;
 class ArrayDefinition implements DefinitionInterface
 {
     public const CLASS_NAME = 'class';
-    public const CONSTRUCTOR = 'constructor';
-    public const SET_PROPERTIES = 'setProperties';
-    public const CALL_METHODS = 'callMethods';
+    public const CONSTRUCTOR = '__construct()';
 
     /**
      * @psalm-var class-string
@@ -112,7 +110,7 @@ class ArrayDefinition implements DefinitionInterface
      */
     private function setCallMethods(array $config): void
     {
-        $items = $config[self::CALL_METHODS] ?? [];
+        $items = $this->extractMethods($config);
 
         if (!is_array($items)) {
             throw new InvalidConfigException(
@@ -145,12 +143,25 @@ class ArrayDefinition implements DefinitionInterface
         $this->callMethods = $callMethods;
     }
 
+    private function extractMethods(array $config): array
+    {
+        $methods = [];
+
+        foreach ($config as $key => $value) {
+            if ($key !== self::CONSTRUCTOR && substr($key, -2) === '()') {
+                $methods[substr($key, 0, -2)] = $value;
+            }
+        }
+
+        return $methods;
+    }
+
     /**
      * @throws InvalidConfigException
      */
     private function setSetProperties(array $config): void
     {
-        $properties = $config[self::SET_PROPERTIES] ?? [];
+        $properties = $this->extractProperties($config);
 
         if (!is_array($properties)) {
             throw new InvalidConfigException(
@@ -169,6 +180,18 @@ class ArrayDefinition implements DefinitionInterface
         /** @psalm-var array<string,mixed> $properties */
 
         $this->setProperties = $properties;
+    }
+
+    private function extractProperties(array $config): array
+    {
+        $properties = [];
+        foreach ($config as $key => $value) {
+            if (substr($key, 0, 1) === '@') {
+                $properties[substr($key, 1)] = $value;
+            }
+        }
+
+        return $properties;
     }
 
     /**
@@ -217,16 +240,24 @@ class ArrayDefinition implements DefinitionInterface
                 ? $this->mergeParameters($callMethods[$method], $parameters)
                 : $parameters;
         }
+        $mergedMethods = [];
+        foreach ($callMethods as $key => $value) {
+            $mergedMethods[$key . '()'] = $value;
+        }
 
-        return new self([
+        $properties = array_merge($this->getSetProperties(), $other->getSetProperties());
+        $mergedProperties = [];
+        foreach ($properties as $key => $value) {
+            $mergedProperties['@' . $key] = $value;
+        }
+
+        return new self(array_merge([
             self::CLASS_NAME => $other->getClass(),
             self::CONSTRUCTOR => $this->mergeParameters(
                 $this->getConstructorParameters(),
                 $other->getConstructorParameters()
             ),
-            self::CALL_METHODS => $callMethods,
-            self::SET_PROPERTIES => array_merge($this->getSetProperties(), $other->getSetProperties()),
-        ]);
+        ], $mergedMethods, $mergedProperties));
     }
 
     private function mergeParameters(array $selfParameters, array $otherParameters): array

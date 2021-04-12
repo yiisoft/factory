@@ -119,8 +119,8 @@ final class ArrayDefinitionTest extends TestCase
     {
         return [
             [false, null, []],
-            [true, null, ['dev' => true]],
-            [true, 'Radar', ['dev' => true, 'codeName' => 'Radar']],
+            [true, null, ['@dev' => true]],
+            [true, 'Radar', ['@dev' => true, '@codeName' => 'Radar']],
         ];
     }
 
@@ -131,10 +131,8 @@ final class ArrayDefinitionTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $definition = new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::SET_PROPERTIES => $setProperties,
-        ]);
+        $definition = new ArrayDefinition(array_merge([
+            ArrayDefinition::CLASS_NAME => Phone::class,], $setProperties));
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -143,54 +141,33 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame($codeName, $phone->codeName);
     }
 
-    public function dataInvalidSetProperties(): array
-    {
-        return [
-            [42, 'Invalid definition: incorrect properties to set. Expected array, got integer.'],
-            [['dev' => true, 'Code'], 'Invalid definition: expected property name, got integer.'],
-        ];
-    }
-
-    /**
-     * @dataProvider dataInvalidSetProperties
-     */
-    public function testInvalidSetProperties($setProperties, string $message): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage($message);
-        new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::SET_PROPERTIES => $setProperties,
-        ]);
-    }
-
     public function dataCallMethods(): array
     {
         return [
             [null, [], []],
-            ['s43g23456', [], ['setId' => ['s43g23456']]],
-            ['777', [], ['setId777']],
+            ['s43g23456', [], ['setId()' => ['s43g23456']]],
+            ['777', [], ['setId777()' => []]],
             [
                 '777',
                 [['Browser', null]],
                 [
-                    'addApp' => ['Browser'],
-                    'setId777',
+                    'addApp()' => ['Browser'],
+                    'setId777()' => [],
                 ],
             ],
             [
                 '42',
                 [['Browser', '7']],
                 [
-                    'setId' => ['42'],
-                    'addApp' => ['Browser', '7'],
+                    'setId()' => ['42'],
+                    'addApp()' => ['Browser', '7'],
                 ],
             ],
             [
                 null,
                 [['Browser', '7']],
                 [
-                    'addApp' => ['name' => 'Browser', 'version' => '7'],
+                    'addApp()' => ['name' => 'Browser', 'version' => '7'],
                 ],
             ],
         ];
@@ -203,10 +180,10 @@ final class ArrayDefinitionTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $definition = new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::CALL_METHODS => $callMethods,
-        ]);
+        $definition = new ArrayDefinition(array_merge([
+            ArrayDefinition::CLASS_NAME => Phone::class,],
+            $callMethods
+        ));
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -221,13 +198,13 @@ final class ArrayDefinitionTest extends TestCase
 
         $author = 'Sergei';
         $country = 'Russia';
-        $definition = new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::CALL_METHODS => [
-                'withAuthor' => [$author],
-                'withCountry' => [$country],
-            ],
-        ]);
+        $definition = new ArrayDefinition(array_merge([
+                ArrayDefinition::CLASS_NAME => Phone::class,
+            ], [
+                'withAuthor()' => [$author],
+                'withCountry()' => [$country],
+            ])
+        );
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -239,10 +216,7 @@ final class ArrayDefinitionTest extends TestCase
     public function dataInvalidCallMethods(): array
     {
         return [
-            [42, 'Invalid definition: incorrect method calls. Expected array, got integer.'],
-            [[42], 'Invalid definition: expected method name, got integer.'],
-            [[''], 'Invalid definition: expected method name, got empty string.'],
-            [['addApp' => 'Browser'], 'Invalid definition: incorrect method parameters. Expected array, got string.'],
+            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method parameters. Expected array, got string.'],
         ];
     }
 
@@ -253,9 +227,8 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::CALL_METHODS => $callMethods,
-        ]);
+        new ArrayDefinition(array_merge([
+            ArrayDefinition::CLASS_NAME => Phone::class,],
+            $callMethods));
     }
 }
