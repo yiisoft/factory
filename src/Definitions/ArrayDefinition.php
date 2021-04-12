@@ -65,7 +65,7 @@ class ArrayDefinition implements DefinitionInterface
                         sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
                     );
                 }
-            // Not property = meta.
+                // Not property = meta.
             } elseif (substr($key, 0, 1) !== '@') {
                 if (!in_array($key, $allowedMeta, true)) {
                     throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed.', $key));
