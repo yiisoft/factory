@@ -56,20 +56,23 @@ final class ArrayDefinitionBuilder
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
 
-        $properties = DefinitionResolver::resolveArray($container, $definition->getSetProperties());
-        /** @var mixed $value */
-        foreach ($properties as $property => $value) {
-            $object->$property = $value;
-        }
 
-        /** @psalm-var array<string,array> $calls */
-        $calls = DefinitionResolver::resolveArray($container, $definition->getMethodCalls());
-        foreach ($calls as $method => $arguments) {
-            /** @var mixed */
-            $setter = call_user_func_array([$object, $method], $arguments);
-            if ($setter instanceof $object) {
-                /** @var object */
-                $object = $setter;
+
+        $methodsAndProperties = DefinitionResolver::resolveArray($container, $definition->getMethodsAndProperties());
+        /** @var mixed $arguments */
+        foreach ($methodsAndProperties as $name => $arguments) {
+            if (substr($name, -2) === '()') {
+                $methodName = substr($name, 0, -2);
+
+                /** @var mixed */
+                $setter = call_user_func_array([$object, $methodName], $arguments);
+                if ($setter instanceof $object) {
+                    /** @var object */
+                    $object = $setter;
+                }
+            } elseif (substr($name, 0, 1) === '@') {
+                $propertyName = substr($name, 1);
+                $object->$propertyName = $arguments;
             }
         }
 

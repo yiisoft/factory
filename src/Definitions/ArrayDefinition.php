@@ -13,7 +13,6 @@ use function array_key_exists;
 use function get_class;
 use function gettype;
 use function is_array;
-use function is_int;
 use function is_object;
 use function is_string;
 
@@ -32,14 +31,14 @@ class ArrayDefinition implements DefinitionInterface
     private array $constructorArguments;
 
     /**
-     * @psalm-var array<string, array>
+     * @psalm-var array<string, mixed|array>
      */
-    private array $callMethods;
+    private array $methodsAndProperties = [];
 
     /**
      * @psalm-var array<string, mixed>
      */
-    private array $setProperties;
+    private array $meta = [];
 
     /**
      * @psalm-param array{
@@ -51,12 +50,32 @@ class ArrayDefinition implements DefinitionInterface
      *
      * @throws InvalidConfigException
      */
-    public function __construct(array $config)
+    public function __construct(array $config, array $allowedMeta = [])
     {
         $this->setClass($config);
+        unset($config[self::CLASS_NAME]);
         $this->setConstructorArguments($config);
-        $this->setMethodCalls($config);
-        $this->setSetProperties($config);
+        unset($config[self::CONSTRUCTOR]);
+
+        foreach ($config as $key => $value) {
+            // Method.
+            if (substr($key, -2) === '()') {
+                if (!is_array($value)) {
+                    throw new InvalidConfigException(
+                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
+                    );
+                }
+            // Not property = meta.
+            } elseif (substr($key, 0, 1) !== '@') {
+                if (!in_array($key, $allowedMeta, true)) {
+                    throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed.', $key));
+                }
+                $this->meta[$key] = $value;
+                unset($config[$key]);
+            }
+        }
+
+        $this->methodsAndProperties = $config;
     }
 
     /**
@@ -102,95 +121,6 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @throws InvalidConfigException
-     */
-    private function setMethodCalls(array $config): void
-    {
-        $items = $this->extractMethods($config);
-
-        if (!is_array($items)) {
-            throw new InvalidConfigException(
-                sprintf('Invalid definition: incorrect method calls. Expected array, got %s.', $this->getType($items))
-            );
-        }
-
-        $callMethods = [];
-        foreach ($items as $key => $value) {
-            if (is_int($key)) {
-                if (!is_string($value)) {
-                    throw new InvalidConfigException(
-                        sprintf('Invalid definition: expected method name, got %s.', $this->getType($value))
-                    );
-                }
-                if ($value === '') {
-                    throw new InvalidConfigException('Invalid definition: expected method name, got empty string.');
-                }
-                $callMethods[$value] = [];
-            } else {
-                if (!is_array($value)) {
-                    throw new InvalidConfigException(
-                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
-                    );
-                }
-                $callMethods[$key] = $value;
-            }
-        }
-
-        $this->callMethods = $callMethods;
-    }
-
-    private function extractMethods(array $config): array
-    {
-        $methods = [];
-
-        foreach ($config as $key => $value) {
-            if ($key !== self::CONSTRUCTOR && substr($key, -2) === '()') {
-                $methods[substr($key, 0, -2)] = $value;
-            }
-        }
-
-        return $methods;
-    }
-
-    /**
-     * @throws InvalidConfigException
-     */
-    private function setSetProperties(array $config): void
-    {
-        $properties = $this->extractProperties($config);
-
-        if (!is_array($properties)) {
-            throw new InvalidConfigException(
-                sprintf('Invalid definition: incorrect properties to set. Expected array, got %s.', $this->getType($properties))
-            );
-        }
-
-        foreach ($properties as $key => $_value) {
-            if (!is_string($key)) {
-                throw new InvalidConfigException(
-                    sprintf('Invalid definition: expected property name, got %s.', $this->getType($key))
-                );
-            }
-        }
-
-        /** @psalm-var array<string,mixed> $properties */
-
-        $this->setProperties = $properties;
-    }
-
-    private function extractProperties(array $config): array
-    {
-        $properties = [];
-        foreach ($config as $key => $value) {
-            if (substr($key, 0, 1) === '@') {
-                $properties[substr($key, 1)] = $value;
-            }
-        }
-
-        return $properties;
-    }
-
-    /**
      * @psalm-return class-string
      */
     public function getClass(): string
@@ -203,20 +133,9 @@ class ArrayDefinition implements DefinitionInterface
         return $this->constructorArguments;
     }
 
-    /**
-     * @psalm-return array<string, array>
-     */
-    public function getMethodCalls(): array
+    public function getMethodsAndProperties(): array
     {
-        return $this->callMethods;
-    }
-
-    /**
-     * @psalm-return array<string, mixed>
-     */
-    public function getSetProperties(): array
-    {
-        return $this->setProperties;
+        return $this->methodsAndProperties;
     }
 
     /**
@@ -230,21 +149,12 @@ class ArrayDefinition implements DefinitionInterface
 
     public function merge(self $other): self
     {
-        $callMethods = $this->getMethodCalls();
-        foreach ($other->getMethodCalls() as $method => $arguments) {
-            $callMethods[$method] = isset($callMethods[$method])
-                ? $this->mergeArguments($callMethods[$method], $arguments)
-                : $arguments;
-        }
-        $mergedMethods = [];
-        foreach ($callMethods as $key => $value) {
-            $mergedMethods[$key . '()'] = $value;
-        }
+        $methodsAndProperties = $this->getMethodsAndProperties();
 
-        $properties = array_merge($this->getSetProperties(), $other->getSetProperties());
-        $mergedProperties = [];
-        foreach ($properties as $key => $value) {
-            $mergedProperties['@' . $key] = $value;
+        foreach ($other->getMethodsAndProperties() as $name => $arguments) {
+            $methodsAndProperties[$name] = isset($methodsAndProperties[$name])
+                ? $this->mergeArguments($methodsAndProperties[$name], $arguments)
+                : $arguments;
         }
 
         return new self(array_merge([
@@ -253,15 +163,15 @@ class ArrayDefinition implements DefinitionInterface
                 $this->getConstructorArguments(),
                 $other->getConstructorArguments()
             ),
-        ], $mergedMethods, $mergedProperties));
+        ], $methodsAndProperties));
     }
 
     private function mergeArguments(array $selfArguments, array $otherArguments): array
     {
         /** @var mixed $argument */
-        foreach ($otherArguments as $index => $argument) {
+        foreach ($otherArguments as $name => $argument) {
             /** @var mixed */
-            $selfArguments[$index] = $argument;
+            $selfArguments[$name] = $argument;
         }
 
         return $selfArguments;

@@ -281,7 +281,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory($container, [
             EngineInterface::class => [
                 'class' => EngineMarkOne::class,
-                'setNumber' => [42],
+                'setNumber()' => [42],
             ],
         ]);
 
