@@ -32,196 +32,196 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
-//    public function testCanCreateByInterfaceAsStringDefinition(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
-//
-//        $one = $factory->create(EngineInterface::class);
-//        $two = $factory->create(EngineInterface::class);
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one);
-//        $this->assertInstanceOf(EngineMarkOne::class, $two);
-//    }
-//
-//    public function testCanCreateByInterfaceAsReferenceDefinition(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
-//
-//        $one = $factory->create(Reference::to(EngineInterface::class));
-//        $two = $factory->create(Reference::to(EngineInterface::class));
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one);
-//        $this->assertInstanceOf(EngineMarkOne::class, $two);
-//    }
-//
-//    /**
-//     * Factory should always return new instance even if an object is set to it.
-//     * In this case it is being cloned.
-//     */
-//    public function testObjectIsCloned(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container, ['engine' => new EngineMarkOne()]);
-//
-//        $one = $factory->create('engine');
-//        $two = $factory->create('engine');
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $two);
-//    }
-//
-//    /**
-//     * If class name is used as ID, factory must try create given class.
-//     */
-//    public function testCreateClassNotDefinedInConfig(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container);
-//
-//        $one = $factory->create(EngineMarkOne::class);
-//        $two = $factory->create(EngineMarkOne::class);
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one);
-//        $this->assertInstanceOf(EngineMarkOne::class, $two);
-//    }
-//
-//    /**
-//     * Configuration specified in {@see Factory::create()} should be merged with configuration stored in a factory.
-//     */
-//    public function testMergeFactoryConfig(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container, [
-//            EngineMarkOne::class => [
-//                'class' => EngineMarkOne::class,
-//                'setNumber()' => [42],
-//            ],
-//        ]);
-//
-//        $instance = $factory->create([
-//            'class' => EngineMarkOne::class,
-//        ]);
-//
-//        $this->assertInstanceOf(EngineMarkOne::class, $instance);
-//        $this->assertEquals(42, $instance->getNumber());
-//    }
-//
-//    /**
-//     * Configuration specified in {@see Factory::create()} has more priority than configuration stored in a factory.
-//     */
-//    public function testOverrideFactoryConfig(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container, [
-//            EngineMarkOne::class => [
-//                'class' => EngineMarkOne::class,
-//                'setNumber()' => [42],
-//
-//
-//            ],
-//        ]);
-//
-//        $instance = $factory->create([
-//            'class' => EngineMarkOne::class,
-//            'setNumber()' => [43],
-//
-//        ]);
-//
-//        $this->assertInstanceOf(EngineMarkOne::class, $instance);
-//        $this->assertEquals(43, $instance->getNumber());
-//    }
-//
-//    public function testGetByAlias(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container, [
-//            'engine' => EngineMarkOne::class,
-//        ]);
-//
-//        $one = $factory->get('engine');
-//        $two = $factory->get('engine');
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one);
-//        $this->assertInstanceOf(EngineMarkOne::class, $two);
-//    }
-//
-//    public function testTrivialDefinition(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container);
-//        $factory->set(EngineMarkOne::class, EngineMarkOne::class);
-//
-//        $one = $factory->get(EngineMarkOne::class);
-//        $two = $factory->get(EngineMarkOne::class);
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one);
-//        $this->assertInstanceOf(EngineMarkOne::class, $two);
-//    }
-//
-//    /**
-//     * TODO: is it possible to remove second argument of {@see Factory::create()} and always pass definition instead?
-//     */
-//    public function testCreateWithParams(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container);
-//
-//        $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
-//        $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(Car::class, $one);
-//        $this->assertInstanceOf(Car::class, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
-//        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
-//    }
-//
-//    public function testCreateWithNamedParams(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container);
-//
-//        $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
-//        $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
-//
-//        $this->assertNotSame($one, $two);
-//        $this->assertInstanceOf(Car::class, $one);
-//        $this->assertInstanceOf(Car::class, $two);
-//        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
-//        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
-//    }
-//
-//    public function testCreateWithCallableValuesInParams(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container);
-//
-//        $object = $factory->create(TwoParametersDependency::class, [
-//            'firstParameter' => 'date',
-//            'secondParameter' => 'time',
-//        ]);
-//
-//        $this->assertInstanceOf(TwoParametersDependency::class, $object);
-//        $this->assertSame('date', $object->getFirstParameter());
-//        $this->assertSame('time', $object->getSecondParameter());
-//    }
-//
-//    public function testCreateWithInvalidParams(): void
-//    {
-//        $container = new SimpleContainer();
-//        $factory = new Factory($container);
-//
-//        $this->expectException(InvalidConfigException::class);
-//
-//        $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
-//    }
+    public function testCanCreateByInterfaceAsStringDefinition(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
+
+        $one = $factory->create(EngineInterface::class);
+        $two = $factory->create(EngineInterface::class);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    public function testCanCreateByInterfaceAsReferenceDefinition(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
+
+        $one = $factory->create(Reference::to(EngineInterface::class));
+        $two = $factory->create(Reference::to(EngineInterface::class));
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    /**
+     * Factory should always return new instance even if an object is set to it.
+     * In this case it is being cloned.
+     */
+    public function testObjectIsCloned(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, ['engine' => new EngineMarkOne()]);
+
+        $one = $factory->create('engine');
+        $two = $factory->create('engine');
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    /**
+     * If class name is used as ID, factory must try create given class.
+     */
+    public function testCreateClassNotDefinedInConfig(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $one = $factory->create(EngineMarkOne::class);
+        $two = $factory->create(EngineMarkOne::class);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    /**
+     * Configuration specified in {@see Factory::create()} should be merged with configuration stored in a factory.
+     */
+    public function testMergeFactoryConfig(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [
+            EngineMarkOne::class => [
+                'class' => EngineMarkOne::class,
+                'setNumber()' => [42],
+            ],
+        ]);
+
+        $instance = $factory->create([
+            'class' => EngineMarkOne::class,
+        ]);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $instance);
+        $this->assertEquals(42, $instance->getNumber());
+    }
+
+    /**
+     * Configuration specified in {@see Factory::create()} has more priority than configuration stored in a factory.
+     */
+    public function testOverrideFactoryConfig(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [
+            EngineMarkOne::class => [
+                'class' => EngineMarkOne::class,
+                'setNumber()' => [42],
+
+
+            ],
+        ]);
+
+        $instance = $factory->create([
+            'class' => EngineMarkOne::class,
+            'setNumber()' => [43],
+
+        ]);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $instance);
+        $this->assertEquals(43, $instance->getNumber());
+    }
+
+    public function testGetByAlias(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [
+            'engine' => EngineMarkOne::class,
+        ]);
+
+        $one = $factory->get('engine');
+        $two = $factory->get('engine');
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    public function testTrivialDefinition(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+        $factory->set(EngineMarkOne::class, EngineMarkOne::class);
+
+        $one = $factory->get(EngineMarkOne::class);
+        $two = $factory->get(EngineMarkOne::class);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one);
+        $this->assertInstanceOf(EngineMarkOne::class, $two);
+    }
+
+    /**
+     * TODO: is it possible to remove second argument of {@see Factory::create()} and always pass definition instead?
+     */
+    public function testCreateWithParams(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
+        $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(Car::class, $one);
+        $this->assertInstanceOf(Car::class, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
+        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithNamedParams(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
+        $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(Car::class, $one);
+        $this->assertInstanceOf(Car::class, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
+        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithCallableValuesInParams(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $object = $factory->create(TwoParametersDependency::class, [
+            'firstParameter' => 'date',
+            'secondParameter' => 'time',
+        ]);
+
+        $this->assertInstanceOf(TwoParametersDependency::class, $object);
+        $this->assertSame('date', $object->getFirstParameter());
+        $this->assertSame('time', $object->getSecondParameter());
+    }
+
+    public function testCreateWithInvalidParams(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $this->expectException(InvalidConfigException::class);
+
+        $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
+    }
 
     public function testCreateWithRandomOrderedParams(): void
     {
