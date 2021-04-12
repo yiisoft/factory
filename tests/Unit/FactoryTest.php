@@ -323,7 +323,6 @@ final class FactoryTest extends TestCase
                 'class' => Immutable::class,
                 'id()' => ['id-testMe'],
                 'fieldImmutable()' => ['testMe'],
-
             ],
         ]);
 

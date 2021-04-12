@@ -180,8 +180,9 @@ final class ArrayDefinitionTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $definition = new ArrayDefinition(array_merge([
-            ArrayDefinition::CLASS_NAME => Phone::class,],
+        $definition = new ArrayDefinition(array_merge(
+            [
+                ArrayDefinition::CLASS_NAME => Phone::class,],
             $callMethods
         ));
 
@@ -198,7 +199,8 @@ final class ArrayDefinitionTest extends TestCase
 
         $author = 'Sergei';
         $country = 'Russia';
-        $definition = new ArrayDefinition(array_merge([
+        $definition = new ArrayDefinition(
+            array_merge([
                 ArrayDefinition::CLASS_NAME => Phone::class,
             ], [
                 'withAuthor()' => [$author],
@@ -227,8 +229,10 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        new ArrayDefinition(array_merge([
-            ArrayDefinition::CLASS_NAME => Phone::class,],
-            $callMethods));
+        new ArrayDefinition(array_merge(
+            [
+                ArrayDefinition::CLASS_NAME => Phone::class,],
+            $callMethods
+        ));
     }
 }

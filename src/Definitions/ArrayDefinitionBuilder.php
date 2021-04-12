@@ -9,7 +9,6 @@ use Yiisoft\Factory\Exceptions\InvalidConfigException;
 use Yiisoft\Factory\Exceptions\NotInstantiableException;
 use Yiisoft\Factory\Extractors\DefinitionExtractor;
 
-use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use function array_key_exists;
 use function call_user_func_array;
 use function is_string;

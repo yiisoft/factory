@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
@@ -98,8 +101,8 @@ abstract class AbstractFactoryTest extends TestCase
             'factory' => [
                 '__class' => Factory::class,
                 '__construct()' => [
-                    'parent'        => Reference::to(ContainerInterface::class),
-                    'definitions'   => [],
+                    'parent' => Reference::to(ContainerInterface::class),
+                    'definitions' => [],
                 ],
             ],
         ]);
@@ -113,7 +116,7 @@ abstract class AbstractFactoryTest extends TestCase
 
     public function testCreateWithParams(): void
     {
-        $factory = new Factory(new Container);
+        $factory = new Factory(new Container());
         $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
         $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
         $this->assertNotSame($one, $two);
@@ -148,7 +151,7 @@ abstract class AbstractFactoryTest extends TestCase
             ],
         ]);
         $engineOne = $factory->create(EngineInterface::class, [
-                'setNumber()' => [30],
+            'setNumber()' => [30],
         ]);
         $engineTwo = $factory->create([
             '__class' => new ArrayDefinition(EngineInterface::class),
