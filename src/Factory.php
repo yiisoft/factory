@@ -40,9 +40,9 @@ class Factory implements FactoryInterface
         $this->setMultiple($definitions);
     }
 
-    public function create($config, array $params = [])
+    public function create($config, array $constructorArguments = [])
     {
-        $definition = Normalizer::normalize($config, null, $params);
+        $definition = Normalizer::normalize($config, null, $constructorArguments);
         if ($definition instanceof ArrayDefinition && $this->has($definition->getClass())) {
             $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
         }

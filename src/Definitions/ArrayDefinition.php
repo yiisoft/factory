@@ -29,7 +29,7 @@ class ArrayDefinition implements DefinitionInterface
      * @psalm-var class-string
      */
     private string $class;
-    private array $constructorParameters;
+    private array $constructorArguments;
 
     /**
      * @psalm-var array<string, array>
@@ -54,8 +54,8 @@ class ArrayDefinition implements DefinitionInterface
     public function __construct(array $config)
     {
         $this->setClass($config);
-        $this->setConstructorParameters($config);
-        $this->setCallMethods($config);
+        $this->setConstructorArguments($config);
+        $this->setMethodCalls($config);
         $this->setSetProperties($config);
     }
 
@@ -89,26 +89,26 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    private function setConstructorParameters(array $config): void
+    private function setConstructorArguments(array $config): void
     {
-        $parameters = $config[self::CONSTRUCTOR] ?? [];
+        $arguments = $config[self::CONSTRUCTOR] ?? [];
 
-        if (!is_array($parameters)) {
+        if (!is_array($arguments)) {
             throw new InvalidConfigException(
                 sprintf(
-                    'Invalid definition: incorrect constructor parameters. Expected array, got %s.',
-                    $this->getType($parameters)
+                    'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
+                    $this->getType($arguments)
                 )
             );
         }
 
-        $this->constructorParameters = $parameters;
+        $this->constructorArguments = $arguments;
     }
 
     /**
      * @throws InvalidConfigException
      */
-    private function setCallMethods(array $config): void
+    private function setMethodCalls(array $config): void
     {
         $items = $this->extractMethods($config);
 
@@ -133,7 +133,7 @@ class ArrayDefinition implements DefinitionInterface
             } else {
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
-                        sprintf('Invalid definition: incorrect method parameters. Expected array, got %s.', $this->getType($value))
+                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
                     );
                 }
                 $callMethods[$key] = $value;
@@ -202,15 +202,15 @@ class ArrayDefinition implements DefinitionInterface
         return $this->class;
     }
 
-    public function getConstructorParameters(): array
+    public function getConstructorArguments(): array
     {
-        return $this->constructorParameters;
+        return $this->constructorArguments;
     }
 
     /**
      * @psalm-return array<string, array>
      */
-    public function getCallMethods(): array
+    public function getMethodCalls(): array
     {
         return $this->callMethods;
     }
@@ -234,11 +234,11 @@ class ArrayDefinition implements DefinitionInterface
 
     public function merge(self $other): self
     {
-        $callMethods = $this->getCallMethods();
-        foreach ($other->getCallMethods() as $method => $parameters) {
+        $callMethods = $this->getMethodCalls();
+        foreach ($other->getMethodCalls() as $method => $arguments) {
             $callMethods[$method] = isset($callMethods[$method])
-                ? $this->mergeParameters($callMethods[$method], $parameters)
-                : $parameters;
+                ? $this->mergeArguments($callMethods[$method], $arguments)
+                : $arguments;
         }
         $mergedMethods = [];
         foreach ($callMethods as $key => $value) {
@@ -253,22 +253,22 @@ class ArrayDefinition implements DefinitionInterface
 
         return new self(array_merge([
             self::CLASS_NAME => $other->getClass(),
-            self::CONSTRUCTOR => $this->mergeParameters(
-                $this->getConstructorParameters(),
-                $other->getConstructorParameters()
+            self::CONSTRUCTOR => $this->mergeArguments(
+                $this->getConstructorArguments(),
+                $other->getConstructorArguments()
             ),
         ], $mergedMethods, $mergedProperties));
     }
 
-    private function mergeParameters(array $selfParameters, array $otherParameters): array
+    private function mergeArguments(array $selfArguments, array $otherArguments): array
     {
-        /** @var mixed $parameter */
-        foreach ($otherParameters as $index => $parameter) {
+        /** @var mixed $argument */
+        foreach ($otherArguments as $index => $argument) {
             /** @var mixed */
-            $selfParameters[$index] = $parameter;
+            $selfArguments[$index] = $argument;
         }
 
-        return $selfParameters;
+        return $selfArguments;
     }
 
     /**

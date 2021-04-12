@@ -47,9 +47,9 @@ final class ArrayDefinitionBuilder
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
-        $constructorParameters = $definition->getConstructorParameters();
+        $constructorArguments = $definition->getConstructorArguments();
 
-        $this->injectParameters($dependencies, $constructorParameters);
+        $this->injectArguments($dependencies, $constructorArguments);
 
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
 
@@ -63,7 +63,7 @@ final class ArrayDefinitionBuilder
         }
 
         /** @psalm-var array<string,array> $calls */
-        $calls = DefinitionResolver::resolveArray($container, $definition->getCallMethods());
+        $calls = DefinitionResolver::resolveArray($container, $definition->getMethodCalls());
         foreach ($calls as $method => $arguments) {
             /** @var mixed */
             $setter = call_user_func_array([$object, $method], $arguments);
@@ -81,28 +81,28 @@ final class ArrayDefinitionBuilder
      *
      * @throws InvalidConfigException
      */
-    private function injectParameters(array &$dependencies, array $parameters): void
+    private function injectArguments(array &$dependencies, array $arguments): void
     {
-        $isIntegerIndexed = $this->isIntegerIndexed($parameters);
+        $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
-        $usedParameters = [];
+        $usedArguments = [];
         $isVariadic = false;
         foreach ($dependencies as $key => &$value) {
             if ($value instanceof ParameterDefinition && $value->getParameter()->isVariadic()) {
                 $isVariadic = true;
             }
             $index = $isIntegerIndexed ? $dependencyIndex : $key;
-            if (array_key_exists($index, $parameters)) {
-                $value = DefinitionResolver::ensureResolvable($parameters[$index]);
-                $usedParameters[$index] = 1;
+            if (array_key_exists($index, $arguments)) {
+                $value = DefinitionResolver::ensureResolvable($arguments[$index]);
+                $usedArguments[$index] = 1;
             }
             $dependencyIndex++;
         }
         unset($value);
         if ($isVariadic) {
             /** @var mixed $value */
-            foreach ($parameters as $index => $value) {
-                if (!isset($usedParameters[$index])) {
+            foreach ($arguments as $index => $value) {
+                if (!isset($usedArguments[$index])) {
                     $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
                 }
             }
@@ -110,12 +110,12 @@ final class ArrayDefinitionBuilder
         /** @psalm-var array<string, DefinitionInterface> $dependencies */
     }
 
-    private function isIntegerIndexed(array $parameters): bool
+    private function isIntegerIndexed(array $arguments): bool
     {
         $hasStringIndex = false;
         $hasIntegerIndex = false;
 
-        foreach ($parameters as $index => $_parameter) {
+        foreach ($arguments as $index => $_argument) {
             if (is_string($index)) {
                 $hasStringIndex = true;
                 if ($hasIntegerIndex) {
@@ -130,7 +130,7 @@ final class ArrayDefinitionBuilder
         }
         if ($hasIntegerIndex && $hasStringIndex) {
             throw new InvalidConfigException(
-                'Parameters indexed both by name and by position are not allowed in the same array.'
+                'Arguments indexed both by name and by position are not allowed in the same array.'
             );
         }
 

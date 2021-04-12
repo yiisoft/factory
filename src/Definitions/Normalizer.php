@@ -57,7 +57,7 @@ class Normalizer
      *
      * @throws InvalidConfigException
      */
-    public static function normalize($definition, string $id = null, array $params = []): DefinitionInterface
+    public static function normalize($definition, string $id = null, array $constructorArguments = []): DefinitionInterface
     {
         if ($definition instanceof DefinitionInterface) {
             return $definition;
@@ -67,11 +67,11 @@ class Normalizer
             if (empty($definition)) {
                 throw new InvalidConfigException('Invalid definition: empty string.');
             }
-            if ($id === $definition || (!empty($params) && class_exists($definition))) {
+            if ($id === $definition || (!empty($constructorArguments) && class_exists($definition))) {
                 /** @psalm-var class-string $definition */
                 return new ArrayDefinition([
                     ArrayDefinition::CLASS_NAME => $definition,
-                    ArrayDefinition::CONSTRUCTOR => $params,
+                    ArrayDefinition::CONSTRUCTOR => $constructorArguments,
                 ]);
             }
             return Reference::to($definition);
@@ -112,7 +112,7 @@ class Normalizer
     }
 
     /**
-     * Validates defintion for corectness.
+     * Validates definition for correctness.
      *
      * @param mixed $definition {@see normalize()}
      *

@@ -67,13 +67,13 @@ final class ArrayDefinitionTest extends TestCase
     /**
      * @dataProvider dataConstructor
      */
-    public function testConstrutor(?string $name, ?string $version, array $constructorParameters): void
+    public function testConstructor(?string $name, ?string $version, array $constructorArguments): void
     {
         $container = new SimpleContainer();
 
         $definition = new ArrayDefinition([
             ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::CONSTRUCTOR => $constructorParameters,
+            ArrayDefinition::CONSTRUCTOR => $constructorArguments,
         ]);
 
         /** @var Phone $phone */
@@ -108,7 +108,7 @@ final class ArrayDefinitionTest extends TestCase
     public function testInvalidConstructor(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: incorrect constructor parameters. Expected array, got string.');
+        $this->expectExceptionMessage('Invalid definition: incorrect constructor arguments. Expected array, got string.');
         new ArrayDefinition([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => 'Kiradzu',
@@ -215,24 +215,24 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame($country, $phone->getCountry());
     }
 
-    public function dataInvalidCallMethods(): array
+    public function dataInvalidMethodCalls(): array
     {
         return [
-            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method parameters. Expected array, got string.'],
+            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method arguments. Expected array, got string.'],
         ];
     }
 
     /**
-     * @dataProvider dataInvalidCallMethods
+     * @dataProvider dataInvalidMethodCalls
      */
-    public function testInvalidCallMethods($callMethods, string $message): void
+    public function testInvalidMethodCalls($methodCalls, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
         new ArrayDefinition(array_merge(
             [
                 ArrayDefinition::CLASS_NAME => Phone::class,],
-            $callMethods
+            $methodCalls
         ));
     }
 }

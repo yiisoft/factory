@@ -8,7 +8,7 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exceptions\InvalidConfigException;
 
 /**
- * Factory allows for creation of object using runtime parameters.
+ * Factory allows creating objects passing arguments runtime.
  * A factory will try to use a PSR-11 compliant container to get dependencies,
  * but will fall back to manual instantiation
  * if the container cannot provide a required dependency.
@@ -37,7 +37,7 @@ interface FactoryInterface extends ContainerInterface
      *     'charset' => 'utf8',
      * ]);
      *
-     * // create an object with two constructor parameters
+     * // create an object with two constructor arguments
      * $object = $factory->create('MyClass', [$param1, $param2]);
      * ```
      *
@@ -53,11 +53,11 @@ interface FactoryInterface extends ContainerInterface
      * - a PHP callable: either an anonymous function or an array representing
      *   a class method (`[$class or $object, $method]`).
      *   The callable should return a new instance of the object being created.
-     * @param array $params the constructor parameters
-     *
-     * @throws InvalidConfigException if the configuration is invalid.
+     * @param array $constructorArguments The constructor arguments.
      *
      * @return mixed|object the created object
+     *@throws InvalidConfigException if the configuration is invalid.
+     *
      */
-    public function create($config, array $params = []);
+    public function create($config, array $constructorArguments = []);
 }
