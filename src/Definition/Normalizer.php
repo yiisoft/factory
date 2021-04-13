@@ -158,7 +158,8 @@ class Normalizer
             // Method.
             if ($key === ArrayDefinition::CLASS_NAME || $key === ArrayDefinition::CONSTRUCTOR) {
                 continue;
-            } elseif (substr($key, -2) === '()') {
+            }
+            if (substr($key, -2) === '()') {
                 if (!is_array($value)) {
                     throw new InvalidConfigException(
                         sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', self::getType($value))
@@ -166,7 +167,6 @@ class Normalizer
                 }
                 // Not property = meta.
             } elseif (substr($key, 0, 1) !== '@') {
-
                 if (!in_array($key, $allowedMeta, true)) {
                     throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
                 }
