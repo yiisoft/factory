@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Unit\Resolver;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
@@ -25,7 +26,7 @@ class DefinitionExtractorTest extends TestCase
         $container = new Factory();
 
         /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(\DateTime::class);
+        $dependencies = $resolver->fromClassName(DateTime::class);
 
 
         $this->assertCount(2, $dependencies);

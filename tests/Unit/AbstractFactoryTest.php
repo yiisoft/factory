@@ -7,7 +7,6 @@ namespace Yiisoft\Factory\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use League\Container\Container;
-use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -37,7 +36,7 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
-    public function testSingleton()
+    public function testSingleton(): void
     {
         $factory = new Factory($this->createContainer(), [
             'engine' => new EngineMarkOne(),
@@ -141,23 +140,4 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertSame($one->getEngine(), $two->getEngine());
     }
 
-    public function testClassParametersOverride()
-    {
-        $container = $this->createContainer();
-        $factory = new Factory($container, [
-            EngineInterface::class => [
-                'class' => EngineMarkOne::class,
-                'setNumber()' => [20],
-            ],
-        ]);
-        $engineOne = $factory->create(EngineInterface::class, [
-            'setNumber()' => [30],
-        ]);
-        $engineTwo = $factory->create([
-            'class' => new ArrayDefinition(EngineInterface::class),
-            'setNumber()' => [40],
-        ]);
-        $this->assertEquals(30, $engineOne->getNumber());
-        $this->assertEquals(40, $engineTwo->getNumber());
-    }
 }

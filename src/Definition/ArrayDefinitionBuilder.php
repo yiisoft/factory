@@ -68,7 +68,7 @@ final class ArrayDefinitionBuilder
                     /** @var object */
                     $object = $setter;
                 }
-            } elseif (substr($name, 0, 1) === '@') {
+            } elseif (strpos($name, '@') === 0) {
                 $propertyName = substr($name, 1);
                 $object->$propertyName = $arguments;
             }

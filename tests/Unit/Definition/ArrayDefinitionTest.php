@@ -40,7 +40,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        $defintion = new ArrayDefinition([
+        new ArrayDefinition([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
     }

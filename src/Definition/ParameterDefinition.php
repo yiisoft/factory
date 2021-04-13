@@ -20,9 +20,6 @@ class ParameterDefinition implements DefinitionInterface
     private $value = null;
     private ?string $type;
 
-    /**
-     * @param mixed $value
-     */
     public function __construct(ReflectionParameter $parameter, string $type = null)
     {
         $this->parameter = $parameter;

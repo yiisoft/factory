@@ -33,7 +33,7 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @psalm-var array<string, mixed|array>
      */
-    private array $methodsAndProperties = [];
+    private array $methodsAndProperties;
 
     /**
      * @psalm-var array<string, mixed>
@@ -62,7 +62,7 @@ class ArrayDefinition implements DefinitionInterface
                     );
                 }
                 // Not property = meta.
-            } elseif (substr($key, 0, 1) !== '@') {
+            } elseif (strpos($key, '@') !== 0) {
                 if (!in_array($key, $allowedMeta, true)) {
                     throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
                 }
