@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\Normalizer;
-use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Exception\InvalidConfigException;
-use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\Phone;
 
