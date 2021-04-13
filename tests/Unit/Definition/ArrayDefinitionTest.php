@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Definitions;
+namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ArrayDefinition;

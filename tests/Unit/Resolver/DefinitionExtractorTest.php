@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace YYiisoft\Factory\Tests\Unit\Resolvers;
+namespace Yiisoft\Factory\Tests\Unit\Resolver;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
