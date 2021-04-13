@@ -17,7 +17,7 @@ class NormalizerTest extends TestCase
 {
     public function testParseCallableDefinition(): void
     {
-        $fn = fn () => new EngineMarkOne();
+        $fn = static fn () => new EngineMarkOne();
         $definition = [
             'definition' => $fn,
             'tags' => ['one', 'two'],
