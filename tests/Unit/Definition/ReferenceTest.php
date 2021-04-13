@@ -10,7 +10,7 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 
 /**
- * ReferenceTest contains tests for \yii\di\Reference
+ * ReferenceTest contains tests for Yiisoft\Factory\Definition\Reference
  */
 class ReferenceTest extends TestCase
 {
