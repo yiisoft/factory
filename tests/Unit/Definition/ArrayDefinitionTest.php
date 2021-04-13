@@ -118,8 +118,8 @@ final class ArrayDefinitionTest extends TestCase
     {
         return [
             [false, null, []],
-            [true, null, ['@dev' => true]],
-            [true, 'Radar', ['@dev' => true, '@codeName' => 'Radar']],
+            [true, null, ['$dev' => true]],
+            [true, 'Radar', ['$dev' => true, '$codeName' => 'Radar']],
         ];
     }
 

@@ -47,7 +47,7 @@ class Normalizer
      * $container->set('full_definition', [
      *     'class' => EngineMarkOne::class,
      *     '__construct()' => [42],
-     *     '@argName' => 'value',
+     *     '$argName' => 'value',
      *     'setX()' => [42],
      * ]);
      * ```
@@ -168,7 +168,7 @@ class Normalizer
                     );
                 }
                 // Not property = meta.
-            } elseif (strpos($key, '@') !== 0) {
+            } elseif (strpos($key, '$') !== 0) {
                 if ($allowedMeta === [] || !in_array($key, $allowedMeta, true)) {
                     throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
                 }

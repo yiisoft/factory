@@ -337,9 +337,9 @@ final class FactoryTest extends TestCase
             'recorder' => [
                 'class' => Recorder::class,
                 'first()' => [],
-                '@second' => null,
+                '$second' => null,
                 'third()' => [],
-                '@fourth' => null,
+                '$fourth' => null,
             ],
         ]);
 
