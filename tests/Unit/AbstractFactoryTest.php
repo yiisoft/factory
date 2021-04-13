@@ -139,5 +139,4 @@ abstract class AbstractFactoryTest extends TestCase
         $this->assertNotSame($one, $two);
         $this->assertSame($one->getEngine(), $two->getEngine());
     }
-
 }
