@@ -150,8 +150,8 @@ class Normalizer
         if (isset($definition[self::DEFINITION_META])) {
             $newDefinition = $definition[self::DEFINITION_META];
             unset($definition[self::DEFINITION_META]);
-            $meta = array_filter($definition, function ($key) use ($allowedMeta) {
-                return in_array($key, $allowedMeta);
+            $meta = array_filter($definition, static function ($key) use ($allowedMeta) {
+                return in_array($key, $allowedMeta, true);
             }, ARRAY_FILTER_USE_KEY);
             $definition = $newDefinition;
         }
@@ -168,7 +168,7 @@ class Normalizer
                     );
                 }
                 // Not property = meta.
-            } elseif (substr($key, 0, 1) !== '@') {
+            } elseif (strpos($key, '@') !== 0) {
                 if (!in_array($key, $allowedMeta, true)) {
                     throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
                 }
