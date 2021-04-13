@@ -169,7 +169,7 @@ class Normalizer
                 }
                 // Not property = meta.
             } elseif (strpos($key, '@') !== 0) {
-                if (!in_array($key, $allowedMeta, true)) {
+                if ($allowedMeta === [] || !in_array($key, $allowedMeta, true)) {
                     throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
                 }
                 $meta[$key] = $value;
