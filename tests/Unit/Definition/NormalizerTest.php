@@ -42,7 +42,7 @@ class NormalizerTest extends TestCase
     public function testErrorOnMethodTypo(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: metadata "setId" is not allowed. Did you mean "setId()" or "@setId"?');
+        $this->expectExceptionMessage('Invalid definition: metadata "setId" is not allowed. Did you mean "setId()" or "$setId"?');
 
         Normalizer::parse([
             'class' => Phone::class,
@@ -53,7 +53,7 @@ class NormalizerTest extends TestCase
     public function testErrorOnPropertyTypo(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: metadata "dev" is not allowed. Did you mean "dev()" or "@dev"?');
+        $this->expectExceptionMessage('Invalid definition: metadata "dev" is not allowed. Did you mean "dev()" or "$dev"?');
         Normalizer::parse([
             'class' => Phone::class,
             'dev' => true,
