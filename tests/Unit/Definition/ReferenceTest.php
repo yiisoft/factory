@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit\Definitions;
+namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Definitions\Reference;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 
 /**
- * ReferenceTest contains tests for \yii\di\Reference
+ * ReferenceTest contains tests for Yiisoft\Factory\Definition\Reference
  */
 class ReferenceTest extends TestCase
 {
@@ -23,6 +23,6 @@ class ReferenceTest extends TestCase
     public function testInvalid(): void
     {
         $this->expectException(InvalidConfigException::class);
-        Reference::to(['__class' => EngineInterface::class]);
+        Reference::to(['class' => EngineInterface::class]);
     }
 }

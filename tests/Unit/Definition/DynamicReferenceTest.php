@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit\Definitions;
+namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\DynamicReference;
+use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Injector\Injector;
@@ -61,7 +61,7 @@ class DynamicReferenceTest extends TestCase
     public function testFullDefinition(): void
     {
         $ref = DynamicReference::to([
-            '__class' => EngineMarkOne::class,
+            'class' => EngineMarkOne::class,
         ]);
         $this->assertInstanceOf(EngineMarkOne::class, $ref->resolve($this->createContainer()));
     }

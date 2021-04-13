@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 
@@ -25,6 +25,10 @@ class DefinitionResolver
         $result = [];
         /** @var mixed $definition */
         foreach ($dependencies as $key => $definition) {
+            if ($definition instanceof ParameterDefinition && !$definition->hasValue()) {
+                continue;
+            }
+
             /** @var mixed */
             $result[$key] = self::resolve($container, $definition);
         }

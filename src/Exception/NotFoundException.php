@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Exceptions;
+namespace Yiisoft\Factory\Exception;
 
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;

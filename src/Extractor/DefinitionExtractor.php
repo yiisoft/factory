@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Extractors;
+namespace Yiisoft\Factory\Extractor;
 
 use Closure;
 use ReflectionClass;
@@ -11,10 +11,10 @@ use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use Yiisoft\Factory\Definitions\ClassDefinition;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Definitions\ParameterDefinition;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Definition\ClassDefinition;
+use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Definition\ParameterDefinition;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
  * Class DefinitionExtractor
@@ -98,11 +98,18 @@ class DefinitionExtractor implements ExtractorInterface
         }
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
-        return new ParameterDefinition(
+        $definition = new ParameterDefinition(
             $parameter,
-            $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
             $type !== null ? $type->getName() : null
         );
+
+        if ($parameter->isDefaultValueAvailable()) {
+            $definition->setValue($parameter->getDefaultValue());
+        } elseif (!$parameter->isVariadic()) {
+            $definition->setValue(null);
+        }
+
+        return $definition;
     }
 
     /**

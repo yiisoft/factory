@@ -2,28 +2,42 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
-use Yiisoft\Factory\Extractors\DefinitionExtractor;
+use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Extractor\DefinitionExtractor;
 
 use function array_key_exists;
 use function call_user_func_array;
 use function is_string;
 
 /**
- * Builds object by ArrayDefinition.
+ * @internal Builds object by ArrayDefinition.
  */
-class ArrayBuilder
+final class ArrayDefinitionBuilder
 {
+    private static ?self $instance = null;
     private static ?DefinitionExtractor $extractor = null;
 
     /**
      * @psalm-var array<string, array<string, DefinitionInterface>>
      */
     private static array $dependencies = [];
+
+    private function __construct()
+    {
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
 
     /**
      * @throws NotInstantiableException
@@ -33,14 +47,34 @@ class ArrayBuilder
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);
-        $parameters = $definition->getParams();
-        $this->injectParameters($dependencies, $parameters);
+        $constructorArguments = $definition->getConstructorArguments();
+
+        $this->injectArguments($dependencies, $constructorArguments);
+
         $resolved = DefinitionResolver::resolveArray($container, $dependencies);
+
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
-        $config = DefinitionResolver::resolveArray($container, $definition->getConfig());
 
-        return $this->configure($object, $config);
+        $methodsAndProperties = DefinitionResolver::resolveArray($container, $definition->getMethodsAndProperties());
+        /** @var mixed $arguments */
+        foreach ($methodsAndProperties as $name => $arguments) {
+            if (substr($name, -2) === '()') {
+                $methodName = substr($name, 0, -2);
+
+                /** @var mixed */
+                $setter = call_user_func_array([$object, $methodName], $arguments);
+                if ($setter instanceof $object) {
+                    /** @var object */
+                    $object = $setter;
+                }
+            } elseif (strpos($name, '@') === 0) {
+                $propertyName = substr($name, 1);
+                $object->$propertyName = $arguments;
+            }
+        }
+
+        return $object;
     }
 
     /**
@@ -48,28 +82,28 @@ class ArrayBuilder
      *
      * @throws InvalidConfigException
      */
-    private function injectParameters(array &$dependencies, array $parameters): void
+    private function injectArguments(array &$dependencies, array $arguments): void
     {
-        $isIntegerIndexed = $this->isIntegerIndexed($parameters);
+        $isIntegerIndexed = $this->isIntegerIndexed($arguments);
         $dependencyIndex = 0;
-        $usedParameters = [];
+        $usedArguments = [];
         $isVariadic = false;
         foreach ($dependencies as $key => &$value) {
             if ($value instanceof ParameterDefinition && $value->getParameter()->isVariadic()) {
                 $isVariadic = true;
             }
             $index = $isIntegerIndexed ? $dependencyIndex : $key;
-            if (array_key_exists($index, $parameters)) {
-                $value = DefinitionResolver::ensureResolvable($parameters[$index]);
-                $usedParameters[$index] = 1;
+            if (array_key_exists($index, $arguments)) {
+                $value = DefinitionResolver::ensureResolvable($arguments[$index]);
+                $usedArguments[$index] = 1;
             }
             $dependencyIndex++;
         }
         unset($value);
         if ($isVariadic) {
             /** @var mixed $value */
-            foreach ($parameters as $index => $value) {
-                if (!isset($usedParameters[$index])) {
+            foreach ($arguments as $index => $value) {
+                if (!isset($usedArguments[$index])) {
                     $dependencies[$index] = DefinitionResolver::ensureResolvable($value);
                 }
             }
@@ -77,12 +111,12 @@ class ArrayBuilder
         /** @psalm-var array<string, DefinitionInterface> $dependencies */
     }
 
-    private function isIntegerIndexed(array $parameters): bool
+    private function isIntegerIndexed(array $arguments): bool
     {
         $hasStringIndex = false;
         $hasIntegerIndex = false;
 
-        foreach ($parameters as $index => $_parameter) {
+        foreach ($arguments as $index => $_argument) {
             if (is_string($index)) {
                 $hasStringIndex = true;
                 if ($hasIntegerIndex) {
@@ -97,7 +131,7 @@ class ArrayBuilder
         }
         if ($hasIntegerIndex && $hasStringIndex) {
             throw new InvalidConfigException(
-                'Parameters indexed both by name and by position are not allowed in the same array.'
+                'Arguments indexed both by name and by position are not allowed in the same array.'
             );
         }
 
@@ -107,7 +141,7 @@ class ArrayBuilder
     /**
      * Returns the dependencies of the specified class.
      *
-     * @param class-string $class class name, interface name or alias name
+     * @param class-string $class Class name or interface name.
      *
      * @throws NotInstantiableException
      *
@@ -125,42 +159,11 @@ class ArrayBuilder
 
     private function getExtractor(): DefinitionExtractor
     {
-        if (static::$extractor === null) {
+        if (self::$extractor === null) {
             // For now use hard coded extractor.
-            static::$extractor = new DefinitionExtractor();
+            self::$extractor = new DefinitionExtractor();
         }
 
-        return static::$extractor;
-    }
-
-    /**
-     * Configures an object with the given configuration.
-     *
-     * @param object $object The object to be configured.
-     * @param array $config Property values and methods to call.
-     *
-     * @psalm-param array<string,mixed> $config
-     *
-     * @return object The object itself.
-     */
-    private function configure(object $object, array $config): object
-    {
-        /** @var mixed $arguments */
-        foreach ($config as $action => $arguments) {
-            if (substr($action, -2) === '()') {
-                // method call
-                /** @var mixed */
-                $setter = call_user_func_array([$object, substr($action, 0, -2)], $arguments);
-                if ($setter instanceof $object) {
-                    /** @var object */
-                    $object = $setter;
-                }
-            } else {
-                // property
-                $object->$action = $arguments;
-            }
-        }
-
-        return $object;
+        return self::$extractor;
     }
 }

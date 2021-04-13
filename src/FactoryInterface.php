@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 
 /**
- * Factory allows for creation of object using runtime parameters.
+ * Factory allows creating objects passing arguments runtime.
  * A factory will try to use a PSR-11 compliant container to get dependencies,
  * but will fall back to manual instantiation
  * if the container cannot provide a required dependency.
@@ -30,14 +30,16 @@ interface FactoryInterface extends ContainerInterface
      *
      * // create an object using a configuration array
      * $object = $factory->create([
-     *     '__class' => \Yiisoft\Db\Connection::class,
-     *     'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
-     *     'username' => 'root',
-     *     'password' => '',
-     *     'charset' => 'utf8',
+     *     'class' => \Yiisoft\Db\Connection\Connection::class,
+     *     '__construct()' => [
+     *         'dsn' => 'mysql:host=127.0.0.1;dbname=demo',
+     *     ],
+     *     'setUsername()' => ['root'],
+     *     'setPassword()' => [''],
+     *     'setCharset()' => ['utf8'],
      * ]);
      *
-     * // create an object with two constructor parameters
+     * // create an object with two constructor arguments
      * $object = $factory->create('MyClass', [$param1, $param2]);
      * ```
      *
@@ -53,11 +55,11 @@ interface FactoryInterface extends ContainerInterface
      * - a PHP callable: either an anonymous function or an array representing
      *   a class method (`[$class or $object, $method]`).
      *   The callable should return a new instance of the object being created.
-     * @param array $params the constructor parameters
+     * @param array $constructorArguments The constructor arguments.
      *
-     * @throws InvalidConfigException if the configuration is invalid.
+     *@throws InvalidConfigException if the configuration is invalid.
      *
      * @return mixed|object the created object
      */
-    public function create($config, array $params = []);
+    public function create($config, array $constructorArguments = []);
 }

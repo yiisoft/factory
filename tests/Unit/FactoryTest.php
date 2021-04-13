@@ -6,14 +6,15 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\Reference;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
+use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\Immutable;
+use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -98,13 +99,13 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer();
         $factory = new Factory($container, [
             EngineMarkOne::class => [
-                '__class' => EngineMarkOne::class,
+                'class' => EngineMarkOne::class,
                 'setNumber()' => [42],
             ],
         ]);
 
         $instance = $factory->create([
-            '__class' => EngineMarkOne::class,
+            'class' => EngineMarkOne::class,
         ]);
 
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
@@ -119,13 +120,13 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer();
         $factory = new Factory($container, [
             EngineMarkOne::class => [
-                '__class' => EngineMarkOne::class,
+                'class' => EngineMarkOne::class,
                 'setNumber()' => [42],
             ],
         ]);
 
         $instance = $factory->create([
-            '__class' => EngineMarkOne::class,
+            'class' => EngineMarkOne::class,
             'setNumber()' => [43],
         ]);
 
@@ -279,7 +280,7 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer([EngineInterface::class => new EngineMarkOne()]);
         $factory = new Factory($container, [
             EngineInterface::class => [
-                '__class' => EngineMarkOne::class,
+                'class' => EngineMarkOne::class,
                 'setNumber()' => [42],
             ],
         ]);
@@ -296,7 +297,7 @@ final class FactoryTest extends TestCase
         $container = new SimpleContainer([ContainerInterface::class => &$container]);
         $factory = new Factory($container, [
             'factoryObject' => [
-                '__class' => Factory::class,
+                'class' => Factory::class,
                 '__construct()' => [
                     'container' => Reference::to(ContainerInterface::class),
                     'definitions' => [],
@@ -317,7 +318,7 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory(new SimpleContainer(), [
             'immutableObject' => [
-                '__class' => Immutable::class,
+                'class' => Immutable::class,
                 'id()' => ['id-testMe'],
                 'fieldImmutable()' => ['testMe'],
             ],
@@ -328,5 +329,23 @@ final class FactoryTest extends TestCase
         $otherImmutableObject->id('id-testMe');
 
         $this->assertEquals($oneImmutableObject, $otherImmutableObject);
+    }
+
+    public function testCallsOrder(): void
+    {
+        $factory = new Factory(new SimpleContainer(), [
+            'recorder' => [
+                'class' => Recorder::class,
+                'first()' => [],
+                '@second' => null,
+                'third()' => [],
+                '@fourth' => null,
+            ],
+        ]);
+
+        /** @var Recorder $object */
+        $object = $factory->get('recorder');
+
+        $this->assertEquals(['Call first()', 'Set @second', 'Call third()', 'Set @fourth'], $object->getEvents());
     }
 }

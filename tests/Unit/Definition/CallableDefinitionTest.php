@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit\Definitions;
+namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Definitions\CallableDefinition;
+use Yiisoft\Factory\Definition\CallableDefinition;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\CarFactory;
 use Yiisoft\Factory\Tests\Support\ColorInterface;

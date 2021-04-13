@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Definitions;
+namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 
@@ -17,8 +17,8 @@ use Psr\Container\ContainerInterface;
  *    Service1::class => [
  *        '__construct()' => [
  *            DynamicReference::to([
- *                '__class' => SomeClass::class,
- *                'someProp' => 15
+ *                'class' => SomeClass::class,
+ *                '@someProp' => 15
  *            ])
  *        ]
  *    ]

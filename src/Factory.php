@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definitions\ArrayDefinition;
-use Yiisoft\Factory\Definitions\DefinitionInterface;
-use Yiisoft\Factory\Definitions\Normalizer;
-use Yiisoft\Factory\Exceptions\InvalidConfigException;
-use Yiisoft\Factory\Exceptions\NotInstantiableException;
+use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Definition\Normalizer;
+use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 
 use function is_string;
 
@@ -40,9 +40,9 @@ class Factory implements FactoryInterface
         $this->setMultiple($definitions);
     }
 
-    public function create($config, array $params = [])
+    public function create($config, array $constructorArguments = [])
     {
-        $definition = Normalizer::normalize($config, null, $params);
+        $definition = Normalizer::normalize($config, null, $constructorArguments);
         if ($definition instanceof ArrayDefinition && $this->has($definition->getClass())) {
             $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
         }
@@ -60,13 +60,20 @@ class Factory implements FactoryInterface
     }
 
     /**
-     * @param mixed $id
+     * @param string $id
+     *
+     * @throws NotInstantiableException
      *
      * @return mixed|object
      */
     public function get($id)
     {
-        $definition = $this->getDefinition($id);
+        try {
+            $definition = $this->getDefinition($id);
+        } catch (InvalidConfigException $e) {
+            throw new NotInstantiableException($id);
+        }
+
         if ($definition instanceof ArrayDefinition) {
             return $definition->resolve($this->container ?? $this);
         }
@@ -84,7 +91,7 @@ class Factory implements FactoryInterface
         if (is_string($id)) {
             // prevent infinite loop when Reference definition points to string but not to a class
             /** @psalm-suppress ArgumentTypeCoercion */
-            return $this->definitions[$id] ?? ArrayDefinition::fromArray($id);
+            return $this->definitions[$id] ?? new ArrayDefinition([ArrayDefinition::CLASS_NAME => $id]);
         }
 
         return Normalizer::normalize($id);
