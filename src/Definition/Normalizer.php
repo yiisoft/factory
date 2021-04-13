@@ -17,6 +17,7 @@ use function is_string;
  */
 class Normalizer
 {
+    private const DEFINITION_META = 'definition';
     /**
      * Definition may be defined multiple ways.
      * Interface name as string:
