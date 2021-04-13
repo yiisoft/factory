@@ -129,4 +129,60 @@ class Normalizer
 
         return false;
     }
+
+    /**
+     * Validates definition for correctness.
+     *
+     * @param mixed $definition
+     * @param array $allowedMeta
+     *
+     * @throws InvalidConfigException
+     */
+    public static function parse($definition, array $allowedMeta): array
+    {
+        if (!is_array($definition)) {
+            return [$definition, []];
+        }
+
+        $meta = [];
+        if (isset($definition[self::DEFINITION_META])) {
+            $newDefinition = $definition[self::DEFINITION_META];
+            unset($definition[self::DEFINITION_META]);
+            $meta = array_filter($definition, function ($key) use ($allowedMeta) {
+                return in_array($key, $allowedMeta);
+            }, ARRAY_FILTER_USE_KEY);
+            $definition = $newDefinition;
+        }
+
+        foreach ($definition as $key => $value) {
+            // Method.
+            if ($key === ArrayDefinition::CLASS_NAME || $key === ArrayDefinition::CONSTRUCTOR) {
+                continue;
+            } elseif (substr($key, -2) === '()') {
+                if (!is_array($value)) {
+                    throw new InvalidConfigException(
+                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', self::getType($value))
+                    );
+                }
+                // Not property = meta.
+            } elseif (substr($key, 0, 1) !== '@') {
+
+                if (!in_array($key, $allowedMeta, true)) {
+                    throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
+                }
+                $meta[$key] = $value;
+                unset($definition[$key]);
+            }
+        }
+
+        return [$definition, $meta];
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private static function getType($value): string
+    {
+        return is_object($value) ? get_class($value) : gettype($value);
+    }
 }

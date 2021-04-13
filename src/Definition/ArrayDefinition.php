@@ -48,29 +48,11 @@ class ArrayDefinition implements DefinitionInterface
      */
     public function __construct(array $config, array $allowedMeta = [])
     {
+        [$config,] = Normalizer::parse($config, $allowedMeta);
         $this->setClass($config);
         unset($config[self::CLASS_NAME]);
         $this->setConstructorArguments($config);
         unset($config[self::CONSTRUCTOR]);
-
-        foreach ($config as $key => $value) {
-            // Method.
-            if (substr($key, -2) === '()') {
-                if (!is_array($value)) {
-                    throw new InvalidConfigException(
-                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
-                    );
-                }
-                // Not property = meta.
-            } elseif (strpos($key, '@') !== 0) {
-                if (!in_array($key, $allowedMeta, true)) {
-                    throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "@%s"?', $key, $key, $key));
-                }
-                $this->meta[$key] = $value;
-                unset($config[$key]);
-            }
-        }
-
         $this->methodsAndProperties = $config;
     }
 
