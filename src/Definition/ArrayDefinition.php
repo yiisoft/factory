@@ -180,4 +180,9 @@ class ArrayDefinition implements DefinitionInterface
     {
         return is_object($value) ? get_class($value) : gettype($value);
     }
+
+    public function getMeta(): array
+    {
+        return $this->meta;
+    }
 }
