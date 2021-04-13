@@ -44,13 +44,6 @@ class ArrayDefinition implements DefinitionInterface
      * @param array $config Container entry config.
      * @param string[] $allowedMeta Allowed metadata keys.
      *
-     * @psalm-param array{
-     *   class: class-string,
-     *   constructor?: array,
-     *   callMethods?: array,
-     *   setProperties?: array,
-     * } $config
-     *
      * @throws InvalidConfigException
      */
     public function __construct(array $config, array $allowedMeta = [])
