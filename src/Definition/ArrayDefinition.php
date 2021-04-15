@@ -42,13 +42,15 @@ class ArrayDefinition implements DefinitionInterface
 
     /**
      * @param array $config Container entry config.
-     * @param string[] $allowedMeta Allowed metadata keys.
+     * @param bool $checkDefinition Check definition flag.
      *
      * @throws InvalidConfigException
      */
-    public function __construct(array $config, array $allowedMeta = [])
+    public function __construct(array $config, bool $checkDefinition = true)
     {
-        [$config,] = Normalizer::parse($config, $allowedMeta);
+        if ($checkDefinition) {
+            [$config,] = Normalizer::parse($config, []);
+        }
         $this->setClass($config);
         unset($config[self::CLASS_NAME]);
         $this->setConstructorArguments($config);
