@@ -156,7 +156,7 @@ class Normalizer
             $definition = $newDefinition;
         }
 
-        if (is_callable($definition)) {
+        if (is_callable($definition, true)) {
             return [$definition, $meta];
         }
 
