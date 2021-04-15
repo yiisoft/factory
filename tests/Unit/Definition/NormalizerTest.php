@@ -9,6 +9,7 @@ use Yiisoft\Factory\Definition\Normalizer;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\Phone;
+use Yiisoft\Factory\Tests\Support\StaticFactory;
 
 /**
  * NormalizerTest contains tests for Yiisoft\Factory\Definition\Normalizer
@@ -24,6 +25,17 @@ class NormalizerTest extends TestCase
         ];
         [$definition, $meta] = Normalizer::parse($definition, ['tags']);
         $this->assertSame($fn, $definition);
+        $this->assertSame(['tags' => ['one', 'two']], $meta);
+    }
+
+    public function testParseArrayCallableDefinition(): void
+    {
+        $definition = [
+            'definition' => [StaticFactory::class, 'create'],
+            'tags' => ['one', 'two'],
+        ];
+        [$definition, $meta] = Normalizer::parse($definition, ['tags']);
+        $this->assertSame([StaticFactory::class, 'create'], $definition);
         $this->assertSame(['tags' => ['one', 'two']], $meta);
     }
 

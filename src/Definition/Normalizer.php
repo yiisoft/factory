@@ -156,6 +156,10 @@ class Normalizer
             $definition = $newDefinition;
         }
 
+        if (is_callable($definition)) {
+            return [$definition, $meta];
+        }
+
         foreach ($definition as $key => $value) {
             // Method.
             if ($key === ArrayDefinition::CLASS_NAME || $key === ArrayDefinition::CONSTRUCTOR) {
