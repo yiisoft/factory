@@ -142,7 +142,7 @@ class Normalizer
      */
     public static function parse($definition, array $allowedMeta): array
     {
-        if (!is_array($definition) || is_callable($definition)) {
+        if (!is_array($definition)) {
             return [$definition, []];
         }
 
@@ -154,6 +154,10 @@ class Normalizer
                 return in_array($key, $allowedMeta, true);
             }, ARRAY_FILTER_USE_KEY);
             $definition = $newDefinition;
+        }
+
+        if (is_callable($definition)) {
+            return [$definition, $meta];
         }
 
         foreach ($definition as $key => $value) {
