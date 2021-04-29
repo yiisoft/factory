@@ -262,7 +262,7 @@ final class ArrayDefinitionTest extends TestCase
     public function testExample(): void
     {
         new ArrayDefinition([
-            fn () => 42
+            fn () => 42,
         ]);
     }
 }
