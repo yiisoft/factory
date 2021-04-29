@@ -131,7 +131,8 @@ final class ArrayDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $definition = new ArrayDefinition(array_merge([
-            ArrayDefinition::CLASS_NAME => Phone::class,], $setProperties));
+            ArrayDefinition::CLASS_NAME => Phone::class,
+        ], $setProperties));
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -181,7 +182,8 @@ final class ArrayDefinitionTest extends TestCase
 
         $definition = new ArrayDefinition(array_merge(
             [
-                ArrayDefinition::CLASS_NAME => Phone::class,],
+                ArrayDefinition::CLASS_NAME => Phone::class,
+            ],
             $callMethods
         ));
 
@@ -230,7 +232,8 @@ final class ArrayDefinitionTest extends TestCase
         $this->expectExceptionMessage($message);
         new ArrayDefinition(array_merge(
             [
-                ArrayDefinition::CLASS_NAME => Phone::class,],
+                ArrayDefinition::CLASS_NAME => Phone::class,
+            ],
             $methodCalls
         ));
     }
@@ -253,6 +256,13 @@ final class ArrayDefinitionTest extends TestCase
         new ArrayDefinition([
             'class' => Phone::class,
             'dev' => true,
+        ]);
+    }
+
+    public function testExample(): void
+    {
+        new ArrayDefinition([
+            fn () => 42
         ]);
     }
 }
