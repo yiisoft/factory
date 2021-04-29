@@ -12,6 +12,7 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
 use function array_key_exists;
 use function get_class;
 use function gettype;
+use function in_array;
 use function is_array;
 use function is_object;
 use function is_string;
@@ -31,37 +32,42 @@ class ArrayDefinition implements DefinitionInterface
     private array $constructorArguments;
 
     /**
-     * @psalm-var array<string, mixed|array>
+     * @psalm-var array<string, mixed>
      */
     private array $methodsAndProperties;
 
     /**
      * @psalm-var array<string, mixed>
      */
-    private array $meta = [];
+    private array $meta;
 
     /**
      * @param array $config Container entry config.
      * @param bool $checkDefinition Check definition flag.
+     * @param string[] $allowMeta
      *
      * @throws InvalidConfigException
      */
-    public function __construct(array $config, bool $checkDefinition = true)
+    public function __construct(array $config, array $allowMeta = [])
     {
-        if ($checkDefinition) {
-            [$config,] = Normalizer::parse($config, []);
+        foreach ($config as $key => $_value) {
+            if (!is_string($key)) {
+                throw new InvalidConfigException('Invalid definition: keys should be string.');
+            }
         }
+
+        /** @psalm-var array<string, mixed> $config */
+
         $this->setClass($config);
-        unset($config[self::CLASS_NAME]);
         $this->setConstructorArguments($config);
-        unset($config[self::CONSTRUCTOR]);
-        $this->methodsAndProperties = $config;
+        $this->setMethodsAndProperties($config);
+        $this->setMeta($config, $allowMeta);
     }
 
     /**
      * @throws InvalidConfigException
      */
-    private function setClass(array $config): void
+    private function setClass(array &$config): void
     {
         if (!array_key_exists(self::CLASS_NAME, $config)) {
             throw new InvalidConfigException('Invalid definition: no class name specified.');
@@ -69,6 +75,7 @@ class ArrayDefinition implements DefinitionInterface
 
         /** @var mixed */
         $class = $config[self::CLASS_NAME];
+        unset($config[self::CLASS_NAME]);
 
         if (!is_string($class)) {
             throw new InvalidConfigException(sprintf('Invalid definition: invalid class name "%s".', (string)$class));
@@ -84,9 +91,15 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    private function setConstructorArguments(array $config): void
+    private function setConstructorArguments(array &$config): void
     {
-        $arguments = $config[self::CONSTRUCTOR] ?? [];
+        if (!isset($config[self::CONSTRUCTOR])) {
+            $this->constructorArguments = [];
+            return;
+        }
+
+        $arguments = $config[self::CONSTRUCTOR];
+        unset($config[self::CONSTRUCTOR]);
 
         if (!is_array($arguments)) {
             throw new InvalidConfigException(
@@ -98,6 +111,59 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         $this->constructorArguments = $arguments;
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    private function setMethodsAndProperties(array &$config): void
+    {
+        $methodsAndProperties = [];
+
+        foreach ($config as $key => $value) {
+            if (substr($key, -2) === '()') {
+                if (!is_array($value)) {
+                    throw new InvalidConfigException(
+                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
+                    );
+                }
+
+                /** @var string $methodName */
+                $methodName = substr($key, 0, -2);
+
+                $methodsAndProperties[] = [ArrayDefinitionBuilder::METHOD, $methodName, $value];
+                unset($config[$key]);
+            } elseif (strncmp($key, '$', 1) === 0) {
+                /** @var string $propertyName */
+                $propertyName = substr($key, 1);
+
+                $methodsAndProperties[$key] = [ArrayDefinitionBuilder::PROPERTY, $propertyName, $value];
+                unset($config[$key]);
+            }
+        }
+
+        $this->methodsAndProperties = $methodsAndProperties;
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    private function setMeta(array $config, array $allowMeta): void
+    {
+        foreach ($config as $key => $_value) {
+            if (!in_array($key, $allowMeta, true)) {
+                throw new InvalidConfigException(
+                    sprintf(
+                        'Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "$%s"?',
+                        $key,
+                        $key,
+                        $key
+                    )
+                );
+            }
+        }
+
+        $this->meta = $config;
     }
 
     /**
@@ -129,21 +195,27 @@ class ArrayDefinition implements DefinitionInterface
 
     public function merge(self $other): self
     {
-        $methodsAndProperties = $this->getMethodsAndProperties();
+        $new = clone $this;
+        $new->class = $other->class;
+        $new->constructorArguments = $this->mergeArguments($this->constructorArguments, $other->constructorArguments);
 
-        foreach ($other->getMethodsAndProperties() as $name => $arguments) {
-            $methodsAndProperties[$name] = isset($methodsAndProperties[$name])
-                ? $this->mergeArguments($methodsAndProperties[$name], $arguments)
-                : $arguments;
+        $methodsAndProperties = $this->methodsAndProperties;
+        foreach ($other->methodsAndProperties as $key => $item) {
+            if ($item[0] === ArrayDefinitionBuilder::PROPERTY) {
+                $methodsAndProperties[$key] = $item;
+            } elseif ($item[0] === ArrayDefinitionBuilder::METHOD) {
+                $methodsAndProperties[$key] = [
+                    $item[0],
+                    $item[1],
+                    isset($methodsAndProperties[$key])
+                        ? $this->mergeArguments($methodsAndProperties[$key][2], $item[2])
+                        : $item[2]
+                ];
+            }
         }
+        $new->methodsAndProperties = $methodsAndProperties;
 
-        return new self(array_merge([
-            self::CLASS_NAME => $other->getClass(),
-            self::CONSTRUCTOR => $this->mergeArguments(
-                $this->getConstructorArguments(),
-                $other->getConstructorArguments()
-            ),
-        ], $methodsAndProperties));
+        return $new;
     }
 
     private function mergeArguments(array $selfArguments, array $otherArguments): array

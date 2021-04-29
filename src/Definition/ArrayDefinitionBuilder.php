@@ -18,6 +18,9 @@ use function is_string;
  */
 final class ArrayDefinitionBuilder
 {
+    public const METHOD = 'method';
+    public const PROPERTY = 'property';
+
     private static ?self $instance = null;
     private static ?DefinitionExtractor $extractor = null;
 
@@ -56,21 +59,20 @@ final class ArrayDefinitionBuilder
         /** @psalm-suppress MixedMethodCall */
         $object = new $class(...array_values($resolved));
 
-        $methodsAndProperties = DefinitionResolver::resolveArray($container, $definition->getMethodsAndProperties());
-        /** @var mixed $arguments */
-        foreach ($methodsAndProperties as $name => $arguments) {
-            if (substr($name, -2) === '()') {
-                $methodName = substr($name, 0, -2);
-
+        $methodsAndProperties = $definition->getMethodsAndProperties();
+        foreach ($methodsAndProperties as $key => $item) {
+            $methodsAndProperties[$key][2] = DefinitionResolver::resolveArray($container, [$item[2]])[0];
+        }
+        foreach ($methodsAndProperties as $item) {
+            if ($item[0] === self::METHOD) {
                 /** @var mixed */
-                $setter = call_user_func_array([$object, $methodName], $arguments);
+                $setter = call_user_func_array([$object, $item[1]], $item[2]);
                 if ($setter instanceof $object) {
                     /** @var object */
                     $object = $setter;
                 }
-            } elseif (strpos($name, '$') === 0) {
-                $propertyName = substr($name, 1);
-                $object->$propertyName = $arguments;
+            } elseif ($item[0] === self::PROPERTY) {
+                $object->{$item[1]} = $item[2];
             }
         }
 

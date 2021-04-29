@@ -17,8 +17,6 @@ use function is_string;
  */
 class Normalizer
 {
-    private const DEFINITION_META = 'definition';
-
     /**
      * Definition may be defined multiple ways.
      * Interface name as string:
@@ -56,7 +54,7 @@ class Normalizer
      *
      * @throws InvalidConfigException
      */
-    public static function normalize($definition, string $id = null, array $constructorArguments = [], bool $checkDefinition = true): DefinitionInterface
+    public static function normalize($definition, string $id = null, array $constructorArguments = []): DefinitionInterface
     {
         if ($definition instanceof DefinitionInterface) {
             return $definition;
@@ -86,7 +84,7 @@ class Normalizer
                 $config[ArrayDefinition::CLASS_NAME] = $id;
             }
             /** @psalm-suppress ArgumentTypeCoercion */
-            return new ArrayDefinition($config, $checkDefinition);
+            return new ArrayDefinition($config);
         }
 
         if (is_object($definition)) {
@@ -130,65 +128,5 @@ class Normalizer
         }
 
         return false;
-    }
-
-    /**
-     * Validates definition for correctness.
-     *
-     * @param mixed $definition
-     * @param array $allowedMeta
-     *
-     * @throws InvalidConfigException
-     */
-    public static function parse($definition, array $allowedMeta): array
-    {
-        if (!is_array($definition)) {
-            return [$definition, []];
-        }
-
-        $meta = [];
-        if (isset($definition[self::DEFINITION_META])) {
-            $newDefinition = $definition[self::DEFINITION_META];
-            unset($definition[self::DEFINITION_META]);
-            $meta = array_filter($definition, static function ($key) use ($allowedMeta) {
-                return in_array($key, $allowedMeta, true);
-            }, ARRAY_FILTER_USE_KEY);
-            $definition = $newDefinition;
-        }
-
-        if (is_callable($definition, true)) {
-            return [$definition, $meta];
-        }
-
-        foreach ($definition as $key => $value) {
-            // Method.
-            if ($key === ArrayDefinition::CLASS_NAME || $key === ArrayDefinition::CONSTRUCTOR) {
-                continue;
-            }
-            if (substr($key, -2) === '()') {
-                if (!is_array($value)) {
-                    throw new InvalidConfigException(
-                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', self::getType($value))
-                    );
-                }
-                // Not property = meta.
-            } elseif (strpos($key, '$') !== 0) {
-                if ($allowedMeta === [] || !in_array($key, $allowedMeta, true)) {
-                    throw new InvalidConfigException(sprintf('Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "$%s"?', $key, $key, $key));
-                }
-                $meta[$key] = $value;
-                unset($definition[$key]);
-            }
-        }
-
-        return [$definition, $meta];
-    }
-
-    /**
-     * @param mixed $value
-     */
-    private static function getType($value): string
-    {
-        return is_object($value) ? get_class($value) : gettype($value);
     }
 }
