@@ -209,7 +209,7 @@ class ArrayDefinition implements DefinitionInterface
                     $item[1],
                     isset($methodsAndProperties[$key])
                         ? $this->mergeArguments($methodsAndProperties[$key][2], $item[2])
-                        : $item[2]
+                        : $item[2],
                 ];
             }
         }
