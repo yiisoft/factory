@@ -279,7 +279,7 @@ final class ArrayDefinitionTest extends TestCase
             ArrayDefinition::CONSTRUCTOR => ['version' => '2.0'],
             '$dev' => true,
             '$codeName' => 'b',
-            'setId()' => [42]
+            'setId()' => [42],
         ]);
         $c = $a->merge($b);
 
