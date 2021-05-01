@@ -60,19 +60,20 @@ final class ArrayDefinitionBuilder
         $object = new $class(...array_values($resolved));
 
         $methodsAndProperties = $definition->getMethodsAndProperties();
-        foreach ($methodsAndProperties as $key => $item) {
-            $methodsAndProperties[$key][2] = DefinitionResolver::resolveArray($container, [$item[2]])[0];
-        }
         foreach ($methodsAndProperties as $item) {
-            if ($item[0] === self::METHOD) {
+            /** @var mixed $value */
+            [$type, $name, $value] = $item;
+            /** @var mixed */
+            $value = DefinitionResolver::resolveArray($container, ['value' => $value])['value'];
+            if ($type === self::METHOD) {
                 /** @var mixed */
-                $setter = call_user_func_array([$object, $item[1]], $item[2]);
+                $setter = call_user_func_array([$object, $name], $value);
                 if ($setter instanceof $object) {
                     /** @var object */
                     $object = $setter;
                 }
-            } elseif ($item[0] === self::PROPERTY) {
-                $object->{$item[1]} = $item[2];
+            } elseif ($type === self::PROPERTY) {
+                $object->$name = $value;
             }
         }
 

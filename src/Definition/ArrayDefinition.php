@@ -17,6 +17,8 @@ use function is_string;
 
 /**
  * Builds object by array config
+ *
+ * @psalm-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
  */
 class ArrayDefinition implements DefinitionInterface
 {
@@ -30,7 +32,7 @@ class ArrayDefinition implements DefinitionInterface
     private array $constructorArguments;
 
     /**
-     * @psalm-var array<string, mixed>
+     * @psalm-var array<string, MethodOrPropertyItem>
      */
     private array $methodsAndProperties;
 
@@ -90,6 +92,8 @@ class ArrayDefinition implements DefinitionInterface
             throw new InvalidConfigException('Invalid definition: empty class name.');
         }
 
+        /** @psalm-var class-string $class */
+
         $this->class = $class;
     }
 
@@ -140,7 +144,7 @@ class ArrayDefinition implements DefinitionInterface
                 /** @var string $methodName */
                 $methodName = substr($key, 0, -2);
 
-                $methodsAndProperties[] = [ArrayDefinitionBuilder::METHOD, $methodName, $value];
+                $methodsAndProperties[$key] = [ArrayDefinitionBuilder::METHOD, $methodName, $value];
                 unset($config[$key]);
             } elseif (strncmp($key, '$', 1) === 0) {
                 /** @var string $propertyName */
@@ -167,6 +171,9 @@ class ArrayDefinition implements DefinitionInterface
         return $this->constructorArguments;
     }
 
+    /**
+     * @psalm-return array<string, MethodOrPropertyItem>
+     */
     public function getMethodsAndProperties(): array
     {
         return $this->methodsAndProperties;
@@ -192,6 +199,7 @@ class ArrayDefinition implements DefinitionInterface
             if ($item[0] === ArrayDefinitionBuilder::PROPERTY) {
                 $methodsAndProperties[$key] = $item;
             } elseif ($item[0] === ArrayDefinitionBuilder::METHOD) {
+                /** @psalm-suppress MixedArgument */
                 $methodsAndProperties[$key] = [
                     $item[0],
                     $item[1],
