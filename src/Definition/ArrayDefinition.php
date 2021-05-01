@@ -68,6 +68,8 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
+     * @psalm-param array<string, mixed> $config
+     *
      * @throws InvalidConfigException
      */
     private function setClass(array &$config): void
@@ -88,10 +90,16 @@ class ArrayDefinition implements DefinitionInterface
             throw new InvalidConfigException('Invalid definition: empty class name.');
         }
 
+        if (!class_exists($class)) {
+            throw new InvalidConfigException(sprintf('Invalid definition: class "%s" does not exist.', $class));
+        }
+
         $this->class = $class;
     }
 
     /**
+     * @psalm-param array<string, mixed> $config
+     *
      * @throws InvalidConfigException
      */
     private function setConstructorArguments(array &$config): void
@@ -117,6 +125,8 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
+     * @psalm-param array<string, mixed> $config
+     *
      * @throws InvalidConfigException
      */
     private function setMethodsAndProperties(array &$config): void
