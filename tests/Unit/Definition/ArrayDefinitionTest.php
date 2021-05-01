@@ -6,12 +6,23 @@ namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Factory\Definition\ArrayDefinitionBuilder;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase
 {
+    public function testIntegerKeyOfArray(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: keys should be string.');
+        new ArrayDefinition([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            'RX',
+        ]);
+    }
+
     public function testClass(): void
     {
         $container = new SimpleContainer();
@@ -254,5 +265,46 @@ final class ArrayDefinitionTest extends TestCase
             'class' => Phone::class,
             'dev' => true,
         ]);
+    }
+
+    public function testMerge(): void
+    {
+        $a = new ArrayDefinition([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            ArrayDefinition::CONSTRUCTOR => ['name' => 'Retro', 'version' => '1.0'],
+            '$codeName' => 'a',
+        ]);
+        $b = new ArrayDefinition([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+            ArrayDefinition::CONSTRUCTOR => ['version' => '2.0'],
+            '$dev' => true,
+            '$codeName' => 'b',
+            'setId()' => [42]
+        ]);
+        $c = $a->merge($b);
+
+        $this->assertSame(Phone::class, $c->getClass());
+        $this->assertSame(['name' => 'Retro', 'version' => '2.0'], $c->getConstructorArguments());
+        $this->assertSame(
+            [
+                '$codeName' => [ArrayDefinitionBuilder::PROPERTY, 'codeName', 'b'],
+                '$dev' => [ArrayDefinitionBuilder::PROPERTY, 'dev', true],
+                'setId()' => [ArrayDefinitionBuilder::METHOD, 'setId', [42]],
+            ],
+            $c->getMethodsAndProperties(),
+        );
+    }
+
+    public function testMergeImmutability(): void
+    {
+        $a = new ArrayDefinition([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+        ]);
+        $b = new ArrayDefinition([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+        ]);
+        $c = $a->merge($b);
+        $this->assertNotSame($a, $c);
+        $this->assertNotSame($b, $c);
     }
 }
