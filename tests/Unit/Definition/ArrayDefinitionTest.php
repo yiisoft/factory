@@ -238,7 +238,7 @@ final class ArrayDefinitionTest extends TestCase
     public function testErrorOnMethodTypo(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: metadata "setId" is not allowed. Did you mean "setId()" or "$setId"?');
+        $this->expectExceptionMessage('Invalid definition: key "setId" is not allowed. Did you mean "setId()" or "$setId"?');
 
         new ArrayDefinition([
             'class' => Phone::class,
@@ -249,7 +249,7 @@ final class ArrayDefinitionTest extends TestCase
     public function testErrorOnPropertyTypo(): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: metadata "dev" is not allowed. Did you mean "dev()" or "$dev"?');
+        $this->expectExceptionMessage('Invalid definition: key "dev" is not allowed. Did you mean "dev()" or "$dev"?');
         new ArrayDefinition([
             'class' => Phone::class,
             'dev' => true,

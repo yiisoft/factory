@@ -6,13 +6,11 @@ namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
-
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 use function array_key_exists;
 use function get_class;
 use function gettype;
-use function in_array;
 use function is_array;
 use function is_object;
 use function is_string;
@@ -37,18 +35,12 @@ class ArrayDefinition implements DefinitionInterface
     private array $methodsAndProperties;
 
     /**
-     * @psalm-var array<string, mixed>
-     */
-    private array $meta;
-
-    /**
      * @param array $config Container entry config.
      * @param bool $checkDefinition Check definition flag.
-     * @param string[] $allowMeta
      *
      * @throws InvalidConfigException
      */
-    public function __construct(array $config, array $allowMeta = [])
+    public function __construct(array $config)
     {
         foreach ($config as $key => $_value) {
             if (!is_string($key)) {
@@ -61,7 +53,18 @@ class ArrayDefinition implements DefinitionInterface
         $this->setClass($config);
         $this->setConstructorArguments($config);
         $this->setMethodsAndProperties($config);
-        $this->setMeta($config, $allowMeta);
+
+        if ($config !== []) {
+            $key = array_key_first($config);
+            throw new InvalidConfigException(
+                sprintf(
+                    'Invalid definition: key "%s" is not allowed. Did you mean "%s()" or "$%s"?',
+                    $key,
+                    $key,
+                    $key
+                )
+            );
+        }
     }
 
     /**
@@ -146,27 +149,6 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @throws InvalidConfigException
-     */
-    private function setMeta(array $config, array $allowMeta): void
-    {
-        foreach ($config as $key => $_value) {
-            if (!in_array($key, $allowMeta, true)) {
-                throw new InvalidConfigException(
-                    sprintf(
-                        'Invalid definition: metadata "%s" is not allowed. Did you mean "%s()" or "$%s"?',
-                        $key,
-                        $key,
-                        $key
-                    )
-                );
-            }
-        }
-
-        $this->meta = $config;
-    }
-
-    /**
      * @psalm-return class-string
      */
     public function getClass(): string
@@ -235,10 +217,5 @@ class ArrayDefinition implements DefinitionInterface
     private function getType($value): string
     {
         return is_object($value) ? get_class($value) : gettype($value);
-    }
-
-    public function getMeta(): array
-    {
-        return $this->meta;
     }
 }
