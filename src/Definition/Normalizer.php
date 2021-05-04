@@ -93,40 +93,4 @@ class Normalizer
 
         throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
     }
-
-    /**
-     * Validates definition for correctness.
-     *
-     * @param mixed $definition {@see normalize()}
-     *
-     * @throws InvalidConfigException
-     */
-    public static function validate($definition, bool $throw = true): bool
-    {
-        if ($definition instanceof DefinitionInterface) {
-            return true;
-        }
-
-        if (is_string($definition) && !empty($definition)) {
-            return true;
-        }
-
-        if (is_callable($definition)) {
-            return true;
-        }
-
-        if (is_array($definition)) {
-            return true;
-        }
-
-        if (is_object($definition)) {
-            return true;
-        }
-
-        if ($throw) {
-            throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
-        }
-
-        return false;
-    }
 }
