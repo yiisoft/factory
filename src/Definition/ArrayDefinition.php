@@ -20,8 +20,6 @@ class ArrayDefinition implements DefinitionInterface
 {
     public const CLASS_NAME = 'class';
     public const CONSTRUCTOR = '__construct()';
-    public const METHODS_AND_PROPERTIES = 'methodsAndProperties';
-    public const IS_PREPARED_CONFIG = 'isPreparedConfig';
 
     public const FLAG_PROPERTY = 'property';
     public const FLAG_METHOD = 'method';
@@ -49,37 +47,10 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param class-string $class
-     */
-    public static function create(string $class, array $constructorArguments = []): self
-    {
-        return new self($class, $constructorArguments, []);
-    }
-
-    /**
-     * @param array $config Container entry config.
-     * @param bool $checkDefinition Check definition flag.
-     *
      * @throws InvalidConfigException
      */
-    public static function fromConfig(array $config): self
+    public static function create(array $config): self
     {
-        if (isset($config[self::IS_PREPARED_CONFIG])) {
-            /**
-             * @psalm-var array{
-             *   isPreparedConfig: bool,
-             *   class: class-string,
-             *   '__construct()'?: array,
-             *   methodsAndProperties?: array<string, MethodOrPropertyItem>,
-             * } $config
-             */
-            return new self(
-                $config[self::CLASS_NAME],
-                $config[self::CONSTRUCTOR] ?? [],
-                $config[self::METHODS_AND_PROPERTIES] ?? [],
-            );
-        }
-
         foreach ($config as $key => $_value) {
             if (!is_string($key)) {
                 throw new InvalidConfigException('Invalid definition: keys should be string.');
@@ -104,6 +75,15 @@ class ArrayDefinition implements DefinitionInterface
             );
         }
 
+        return new self($class, $constructorArguments, $methodsAndProperties);
+    }
+
+    /**
+     * @psalm-param class-string $class
+     * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
+     */
+    public static function fromPreparedData(string $class, array $constructorArguments = [], array $methodsAndProperties = []): self
+    {
         return new self($class, $constructorArguments, $methodsAndProperties);
     }
 

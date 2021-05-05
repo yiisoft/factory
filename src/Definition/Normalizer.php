@@ -66,7 +66,7 @@ class Normalizer
             }
             if ($id === $definition || (!empty($constructorArguments) && class_exists($definition))) {
                 /** @psalm-var class-string $definition */
-                return ArrayDefinition::create($definition, $constructorArguments);
+                return ArrayDefinition::fromPreparedData($definition, $constructorArguments);
             }
             return Reference::to($definition);
         }
@@ -81,7 +81,7 @@ class Normalizer
                 $config[ArrayDefinition::CLASS_NAME] = $id;
             }
             /** @psalm-suppress ArgumentTypeCoercion */
-            return ArrayDefinition::fromConfig($config);
+            return ArrayDefinition::create($config);
         }
 
         if (is_object($definition)) {
