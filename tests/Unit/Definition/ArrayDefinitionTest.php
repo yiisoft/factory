@@ -6,7 +6,6 @@ namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ArrayDefinition;
-use Yiisoft\Factory\Definition\ArrayDefinitionBuilder;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -17,7 +16,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: keys should be string.');
-        new ArrayDefinition([
+        ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             'RX',
         ]);
@@ -29,7 +28,7 @@ final class ArrayDefinitionTest extends TestCase
 
         $class = Phone::class;
 
-        $definition = new ArrayDefinition([
+        $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
 
@@ -51,7 +50,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        new ArrayDefinition([
+        ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => $class,
         ]);
     }
@@ -60,7 +59,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: no class name specified.');
-        new ArrayDefinition([]);
+        ArrayDefinition::fromConfig([]);
     }
 
     public function dataConstructor(): array
@@ -81,7 +80,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $definition = new ArrayDefinition([
+        $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => $constructorArguments,
         ]);
@@ -98,7 +97,7 @@ final class ArrayDefinitionTest extends TestCase
         $container = new SimpleContainer();
 
         $colors = ['red', 'green', 'blue'];
-        $definition = new ArrayDefinition([
+        $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => [
                 null,
@@ -119,7 +118,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: incorrect constructor arguments. Expected array, got string.');
-        new ArrayDefinition([
+        ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => 'Kiradzu',
         ]);
@@ -141,8 +140,9 @@ final class ArrayDefinitionTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $definition = new ArrayDefinition(array_merge([
-            ArrayDefinition::CLASS_NAME => Phone::class,], $setProperties));
+        $definition = ArrayDefinition::fromConfig(array_merge([
+            ArrayDefinition::CLASS_NAME => Phone::class,
+        ], $setProperties));
 
         /** @var Phone $phone */
         $phone = $definition->resolve($container);
@@ -190,9 +190,10 @@ final class ArrayDefinitionTest extends TestCase
     {
         $container = new SimpleContainer();
 
-        $definition = new ArrayDefinition(array_merge(
+        $definition = ArrayDefinition::fromConfig(array_merge(
             [
-                ArrayDefinition::CLASS_NAME => Phone::class,],
+                ArrayDefinition::CLASS_NAME => Phone::class,
+            ],
             $callMethods
         ));
 
@@ -209,7 +210,7 @@ final class ArrayDefinitionTest extends TestCase
 
         $author = 'Sergei';
         $country = 'Russia';
-        $definition = new ArrayDefinition(
+        $definition = ArrayDefinition::fromConfig(
             array_merge([
                 ArrayDefinition::CLASS_NAME => Phone::class,
             ], [
@@ -239,9 +240,10 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
-        new ArrayDefinition(array_merge(
+        ArrayDefinition::fromConfig(array_merge(
             [
-                ArrayDefinition::CLASS_NAME => Phone::class,],
+                ArrayDefinition::CLASS_NAME => Phone::class,
+            ],
             $methodCalls
         ));
     }
@@ -251,7 +253,7 @@ final class ArrayDefinitionTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: key "setId" is not allowed. Did you mean "setId()" or "$setId"?');
 
-        new ArrayDefinition([
+        ArrayDefinition::fromConfig([
             'class' => Phone::class,
             'setId' => [42],
         ]);
@@ -261,7 +263,7 @@ final class ArrayDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: key "dev" is not allowed. Did you mean "dev()" or "$dev"?');
-        new ArrayDefinition([
+        ArrayDefinition::fromConfig([
             'class' => Phone::class,
             'dev' => true,
         ]);
@@ -269,12 +271,12 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testMerge(): void
     {
-        $a = new ArrayDefinition([
+        $a = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => ['name' => 'Retro', 'version' => '1.0'],
             '$codeName' => 'a',
         ]);
-        $b = new ArrayDefinition([
+        $b = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => ['version' => '2.0'],
             '$dev' => true,
@@ -287,9 +289,9 @@ final class ArrayDefinitionTest extends TestCase
         $this->assertSame(['name' => 'Retro', 'version' => '2.0'], $c->getConstructorArguments());
         $this->assertSame(
             [
-                '$codeName' => [ArrayDefinitionBuilder::PROPERTY, 'codeName', 'b'],
-                '$dev' => [ArrayDefinitionBuilder::PROPERTY, 'dev', true],
-                'setId()' => [ArrayDefinitionBuilder::METHOD, 'setId', [42]],
+                '$codeName' => [ArrayDefinition::FLAG_PROPERTY, '$codeName', 'b'],
+                '$dev' => [ArrayDefinition::FLAG_PROPERTY, '$dev', true],
+                'setId()' => [ArrayDefinition::FLAG_METHOD, 'setId()', [42]],
             ],
             $c->getMethodsAndProperties(),
         );
@@ -297,12 +299,8 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testMergeImmutability(): void
     {
-        $a = new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-        ]);
-        $b = new ArrayDefinition([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-        ]);
+        $a = ArrayDefinition::create(Phone::class);
+        $b = ArrayDefinition::create(Phone::class);
         $c = $a->merge($b);
         $this->assertNotSame($a, $c);
         $this->assertNotSame($b, $c);

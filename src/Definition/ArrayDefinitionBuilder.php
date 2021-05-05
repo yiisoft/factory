@@ -18,9 +18,6 @@ use function is_string;
  */
 final class ArrayDefinitionBuilder
 {
-    public const METHOD = 'method';
-    public const PROPERTY = 'property';
-
     private static ?self $instance = null;
     private static ?DefinitionExtractor $extractor = null;
 
@@ -65,15 +62,15 @@ final class ArrayDefinitionBuilder
             [$type, $name, $value] = $item;
             /** @var mixed */
             $value = DefinitionResolver::resolveArray($container, ['value' => $value])['value'];
-            if ($type === self::METHOD) {
+            if ($type === ArrayDefinition::FLAG_METHOD) {
                 /** @var mixed */
-                $setter = call_user_func_array([$object, $name], $value);
+                $setter = call_user_func_array([$object, substr($name, 0, -2)], $value);
                 if ($setter instanceof $object) {
                     /** @var object */
                     $object = $setter;
                 }
-            } elseif ($type === self::PROPERTY) {
-                $object->$name = $value;
+            } elseif ($type === ArrayDefinition::FLAG_PROPERTY) {
+                $object->{substr($name, 1)} = $value;
             }
         }
 

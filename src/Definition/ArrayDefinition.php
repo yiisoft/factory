@@ -24,6 +24,11 @@ class ArrayDefinition implements DefinitionInterface
 {
     public const CLASS_NAME = 'class';
     public const CONSTRUCTOR = '__construct()';
+    public const METHODS_AND_PROPERTIES = 'methodsAndProperties';
+    public const IS_PREPARED_CONFIG = 'isPreparedConfig';
+
+    public const FLAG_PROPERTY = 'property';
+    public const FLAG_METHOD = 'method';
 
     /**
      * @psalm-var class-string
@@ -37,13 +42,48 @@ class ArrayDefinition implements DefinitionInterface
     private array $methodsAndProperties;
 
     /**
+     * @psalm-param class-string $class
+     * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
+     */
+    private function __construct(string $class, array $constructorArguments, array $methodsAndProperties)
+    {
+        $this->class = $class;
+        $this->constructorArguments = $constructorArguments;
+        $this->methodsAndProperties = $methodsAndProperties;
+    }
+
+    /**
+     * @psalm-param class-string $class
+     */
+    public static function create(string $class, array $constructorArguments = []): self
+    {
+        return new self($class, $constructorArguments, []);
+    }
+
+    /**
      * @param array $config Container entry config.
      * @param bool $checkDefinition Check definition flag.
      *
      * @throws InvalidConfigException
      */
-    public function __construct(array $config)
+    public static function fromConfig(array $config): self
     {
+        if (isset($config[self::IS_PREPARED_CONFIG])) {
+            /**
+             * @psalm-var array{
+             *   isPreparedConfig: bool,
+             *   class: class-string,
+             *   '__construct()'?: array,
+             *   methodsAndProperties?: array<string, MethodOrPropertyItem>,
+             * } $config
+             */
+            return new self(
+                $config[self::CLASS_NAME],
+                $config[self::CONSTRUCTOR] ?? [],
+                $config[self::METHODS_AND_PROPERTIES] ?? [],
+            );
+        }
+
         foreach ($config as $key => $_value) {
             if (!is_string($key)) {
                 throw new InvalidConfigException('Invalid definition: keys should be string.');
@@ -52,9 +92,9 @@ class ArrayDefinition implements DefinitionInterface
 
         /** @psalm-var array<string, mixed> $config */
 
-        $this->setClass($config);
-        $this->setConstructorArguments($config);
-        $this->setMethodsAndProperties($config);
+        $class = self::getClassFromConfig($config);
+        $constructorArguments = self::getConstructorArgumentsFromConfig($config);
+        $methodsAndProperties = self::getMethodsAndPropertiesFromConfig($config);
 
         if ($config !== []) {
             $key = array_key_first($config);
@@ -67,14 +107,18 @@ class ArrayDefinition implements DefinitionInterface
                 )
             );
         }
+
+        return new self($class, $constructorArguments, $methodsAndProperties);
     }
 
     /**
      * @psalm-param array<string, mixed> $config
      *
+     * @psalm-return class-string
+     *
      * @throws InvalidConfigException
      */
-    private function setClass(array &$config): void
+    private static function getClassFromConfig(array &$config): string
     {
         if (!array_key_exists(self::CLASS_NAME, $config)) {
             throw new InvalidConfigException('Invalid definition: no class name specified.');
@@ -84,17 +128,11 @@ class ArrayDefinition implements DefinitionInterface
         $class = $config[self::CLASS_NAME];
         unset($config[self::CLASS_NAME]);
 
-        if (!is_string($class)) {
-            throw new InvalidConfigException(sprintf('Invalid definition: invalid class name "%s".', (string)$class));
-        }
-
-        if ($class === '') {
-            throw new InvalidConfigException('Invalid definition: empty class name.');
-        }
+        ArrayDefinitionValidator::validateClassName($class);
 
         /** @psalm-var class-string $class */
 
-        $this->class = $class;
+        return $class;
     }
 
     /**
@@ -102,60 +140,43 @@ class ArrayDefinition implements DefinitionInterface
      *
      * @throws InvalidConfigException
      */
-    private function setConstructorArguments(array &$config): void
+    private static function getConstructorArgumentsFromConfig(array &$config): array
     {
         if (!isset($config[self::CONSTRUCTOR])) {
-            $this->constructorArguments = [];
-            return;
+            return [];
         }
 
         $arguments = $config[self::CONSTRUCTOR];
         unset($config[self::CONSTRUCTOR]);
 
-        if (!is_array($arguments)) {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                    $this->getType($arguments)
-                )
-            );
-        }
+        ArrayDefinitionValidator::validateConstructorArguments($arguments);
 
-        $this->constructorArguments = $arguments;
+        return $arguments;
     }
 
     /**
      * @psalm-param array<string, mixed> $config
      *
+     * @psalm-return array<string, MethodOrPropertyItem>
+     *
      * @throws InvalidConfigException
      */
-    private function setMethodsAndProperties(array &$config): void
+    private static function getMethodsAndPropertiesFromConfig(array &$config): array
     {
         $methodsAndProperties = [];
 
         foreach ($config as $key => $value) {
             if (substr($key, -2) === '()') {
-                if (!is_array($value)) {
-                    throw new InvalidConfigException(
-                        sprintf('Invalid definition: incorrect method arguments. Expected array, got %s.', $this->getType($value))
-                    );
-                }
-
-                /** @var string $methodName */
-                $methodName = substr($key, 0, -2);
-
-                $methodsAndProperties[$key] = [ArrayDefinitionBuilder::METHOD, $methodName, $value];
+                ArrayDefinitionValidator::validateMethodArguments($value);
+                $methodsAndProperties[$key] = [self::FLAG_METHOD, $key, $value];
                 unset($config[$key]);
             } elseif (strncmp($key, '$', 1) === 0) {
-                /** @var string $propertyName */
-                $propertyName = substr($key, 1);
-
-                $methodsAndProperties[$key] = [ArrayDefinitionBuilder::PROPERTY, $propertyName, $value];
+                $methodsAndProperties[$key] = [self::FLAG_PROPERTY, $key, $value];
                 unset($config[$key]);
             }
         }
 
-        $this->methodsAndProperties = $methodsAndProperties;
+        return $methodsAndProperties;
     }
 
     /**
@@ -196,9 +217,9 @@ class ArrayDefinition implements DefinitionInterface
 
         $methodsAndProperties = $this->methodsAndProperties;
         foreach ($other->methodsAndProperties as $key => $item) {
-            if ($item[0] === ArrayDefinitionBuilder::PROPERTY) {
+            if ($item[0] === self::FLAG_PROPERTY) {
                 $methodsAndProperties[$key] = $item;
-            } elseif ($item[0] === ArrayDefinitionBuilder::METHOD) {
+            } elseif ($item[0] === self::FLAG_METHOD) {
                 /** @psalm-suppress MixedArgument */
                 $methodsAndProperties[$key] = [
                     $item[0],
@@ -223,13 +244,5 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         return $selfArguments;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    private function getType($value): string
-    {
-        return is_object($value) ? get_class($value) : gettype($value);
     }
 }
