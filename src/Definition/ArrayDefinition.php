@@ -9,10 +9,6 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 use function array_key_exists;
-use function get_class;
-use function gettype;
-use function is_array;
-use function is_object;
 use function is_string;
 
 /**
