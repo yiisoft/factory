@@ -66,12 +66,12 @@ class DefinitionResolver
      */
     public static function ensureResolvable($value)
     {
-        if ($value instanceof DefinitionInterface && !$value instanceof ReferenceInterface) {
-            throw new InvalidConfigException('Only reference allowed in parameters, the definition object received:' . var_export($value, true));
-        }
-
         if ($value instanceof ReferenceInterface || is_array($value)) {
             return $value;
+        }
+
+        if ($value instanceof DefinitionInterface) {
+            throw new InvalidConfigException('Only reference allowed in parameters, the definition object received:' . var_export($value, true));
         }
 
         return new ValueDefinition($value);
