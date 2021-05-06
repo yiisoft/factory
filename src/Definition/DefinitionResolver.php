@@ -68,9 +68,6 @@ class DefinitionResolver
         if ($value instanceof DefinitionInterface || is_array($value)) {
             return $value;
         }
-        if (!is_string($value) && is_callable($value, true)) {
-            return new CallableDefinition($value);
-        }
 
         return new ValueDefinition($value);
     }

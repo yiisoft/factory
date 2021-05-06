@@ -105,7 +105,7 @@ class Normalizer
      */
     public static function validate($definition, bool $throw = true): bool
     {
-        if ($definition instanceof DefinitionInterface) {
+        if ($definition instanceof ReferenceInterface) {
             return true;
         }
 
