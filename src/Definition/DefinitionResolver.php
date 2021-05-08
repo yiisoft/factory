@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 
 use function is_array;
 use function is_callable;
@@ -61,15 +62,21 @@ class DefinitionResolver
     /**
      * @param mixed $value
      *
+     * @throws InvalidConfigException
+     *
      * @return array|CallableDefinition|DefinitionInterface|ValueDefinition
      */
     public static function ensureResolvable($value)
     {
-        if ($value instanceof DefinitionInterface || is_array($value)) {
+        if ($value instanceof ReferenceInterface || is_array($value)) {
             return $value;
         }
-        if (!is_string($value) && is_callable($value, true)) {
-            return new CallableDefinition($value);
+
+        if ($value instanceof DefinitionInterface) {
+            throw new InvalidConfigException(
+                'Only references are allowed in parameters, a definition object was provided: ' .
+                var_export($value, true)
+            );
         }
 
         return new ValueDefinition($value);

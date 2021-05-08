@@ -56,7 +56,7 @@ class Normalizer
      */
     public static function normalize($definition, string $id = null, array $constructorArguments = []): DefinitionInterface
     {
-        if ($definition instanceof DefinitionInterface) {
+        if ($definition instanceof ReferenceInterface) {
             return $definition;
         }
 
