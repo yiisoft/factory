@@ -71,7 +71,7 @@ class DefinitionResolver
         }
 
         if ($value instanceof DefinitionInterface) {
-            throw new InvalidConfigException('Only reference allowed in parameters, the definition object received:' . var_export($value, true));
+            throw new InvalidConfigException('Only references are allowed in parameters, a definition object was provided: ' . var_export($value, true));
         }
 
         return new ValueDefinition($value);
