@@ -51,14 +51,6 @@ class ArrayDefinition implements DefinitionInterface
      */
     public static function create(array $config): self
     {
-        foreach ($config as $key => $_value) {
-            if (!is_string($key)) {
-                throw new InvalidConfigException('Invalid definition: keys should be string.');
-            }
-        }
-
-        /** @psalm-var array<string, mixed> $config */
-
         $class = self::getClassFromConfig($config);
         $constructorArguments = self::getConstructorArgumentsFromConfig($config);
         $methodsAndProperties = self::getMethodsAndPropertiesFromConfig($config);
@@ -88,8 +80,6 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, mixed> $config
-     *
      * @psalm-return class-string
      *
      * @throws InvalidConfigException
@@ -112,8 +102,6 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, mixed> $config
-     *
      * @throws InvalidConfigException
      */
     private static function getConstructorArgumentsFromConfig(array &$config): array
@@ -131,8 +119,6 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array<string, mixed> $config
-     *
      * @psalm-return array<string, MethodOrPropertyItem>
      *
      * @throws InvalidConfigException
@@ -142,6 +128,9 @@ class ArrayDefinition implements DefinitionInterface
         $methodsAndProperties = [];
 
         foreach ($config as $key => $value) {
+            if (!is_string($key)) {
+                throw new InvalidConfigException('Invalid definition: keys should be string.');
+            }
             if (substr($key, -2) === '()') {
                 ArrayDefinitionValidator::validateMethodArguments($value);
                 $methodsAndProperties[$key] = [self::FLAG_METHOD, $key, $value];
