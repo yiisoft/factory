@@ -49,8 +49,6 @@ class DefinitionResolver
         if ($definition instanceof DefinitionInterface) {
             /** @var mixed $definition */
             $definition = $definition->resolve($container);
-        } elseif (!is_string($definition) && !is_array($definition) && is_callable($definition, true)) {
-            return (new CallableDefinition($definition))->resolve($container);
         } elseif (is_array($definition)) {
             /** @psalm-var array<string,mixed> $definition */
             return self::resolveArray($container, $definition);
