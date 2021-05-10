@@ -36,13 +36,7 @@ class ArrayDefinition implements DefinitionInterface
     private array $methodsAndProperties;
 
     /**
-     * @psalm-var array<string, mixed>
-     */
-    private array $meta = [];
-
-    /**
      * @param array $config Container entry config.
-     * @param bool $checkDefinition Check definition flag.
      *
      * @throws InvalidConfigException
      */
@@ -160,10 +154,5 @@ class ArrayDefinition implements DefinitionInterface
     private function getType($value): string
     {
         return is_object($value) ? get_class($value) : gettype($value);
-    }
-
-    public function getMeta(): array
-    {
-        return $this->meta;
     }
 }
