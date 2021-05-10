@@ -49,7 +49,7 @@ class ArrayDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    public static function create(array $config): self
+    public static function fromConfig(array $config): self
     {
         $class = self::getClassFromConfig($config);
         $constructorArguments = self::getConstructorArgumentsFromConfig($config);

@@ -81,7 +81,7 @@ class Normalizer
                 $config[ArrayDefinition::CLASS_NAME] = $id;
             }
             /** @psalm-suppress ArgumentTypeCoercion */
-            return ArrayDefinition::create($config);
+            return ArrayDefinition::fromConfig($config);
         }
 
         if (is_object($definition)) {
