@@ -87,7 +87,7 @@ class Normalizer
             }
 
             // Validate config
-            [$config,] = Normalizer::parse($config, []);
+            [$config,] = self::parse($config, []);
 
             /** @psalm-suppress ArgumentTypeCoercion */
             return new ArrayDefinition($config);
@@ -142,8 +142,9 @@ class Normalizer
      * @param mixed $definition Definition.
      * @param array $allowedMeta Allowed metadata.
      *
-     * @return array [[definition without meta], [meta]]
      * @throws InvalidConfigException If definition is not valid.
+     *
+     * @return array [[definition without meta], [meta]]
      */
     public static function parse($definition, array $allowedMeta): array
     {
