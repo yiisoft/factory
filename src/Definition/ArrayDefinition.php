@@ -46,11 +46,8 @@ class ArrayDefinition implements DefinitionInterface
      *
      * @throws InvalidConfigException
      */
-    public function __construct(array $config, bool $checkDefinition = true)
+    public function __construct(array $config)
     {
-        if ($checkDefinition) {
-            [$config,] = Normalizer::parse($config, []);
-        }
         $this->setClass($config);
         unset($config[self::CLASS_NAME]);
         $this->setConstructorArguments($config);

@@ -56,7 +56,7 @@ class Normalizer
      *
      * @throws InvalidConfigException
      */
-    public static function normalize($definition, string $id = null, array $constructorArguments = [], bool $checkDefinition = true): DefinitionInterface
+    public static function normalize($definition, string $id = null, array $constructorArguments = []): DefinitionInterface
     {
         if ($definition instanceof DefinitionInterface) {
             return $definition;
@@ -85,8 +85,12 @@ class Normalizer
             if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
                 $config[ArrayDefinition::CLASS_NAME] = $id;
             }
+
+            // Validate config
+            [$config,] = Normalizer::parse($config, []);
+
             /** @psalm-suppress ArgumentTypeCoercion */
-            return new ArrayDefinition($config, $checkDefinition);
+            return new ArrayDefinition($config);
         }
 
         if (is_object($definition)) {
@@ -133,12 +137,13 @@ class Normalizer
     }
 
     /**
-     * Validates definition for correctness.
+     * Validates definition for correctness, extracts metadata.
      *
-     * @param mixed $definition
-     * @param array $allowedMeta
+     * @param mixed $definition Definition.
+     * @param array $allowedMeta Allowed metadata.
      *
-     * @throws InvalidConfigException
+     * @return array [[definition without meta], [meta]]
+     * @throws InvalidConfigException If definition is not valid.
      */
     public static function parse($definition, array $allowedMeta): array
     {

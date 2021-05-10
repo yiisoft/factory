@@ -213,46 +213,4 @@ final class ArrayDefinitionTest extends TestCase
         self::assertSame($author, $phone->getAuthor());
         self::assertSame($country, $phone->getCountry());
     }
-
-    public function dataInvalidMethodCalls(): array
-    {
-        return [
-            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method arguments. Expected array, got string.'],
-        ];
-    }
-
-    /**
-     * @dataProvider dataInvalidMethodCalls
-     */
-    public function testInvalidMethodCalls($methodCalls, string $message): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage($message);
-        new ArrayDefinition(array_merge(
-            [
-                ArrayDefinition::CLASS_NAME => Phone::class,],
-            $methodCalls
-        ));
-    }
-
-    public function testErrorOnMethodTypo(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: metadata "setId" is not allowed. Did you mean "setId()" or "$setId"?');
-
-        new ArrayDefinition([
-            'class' => Phone::class,
-            'setId' => [42],
-        ]);
-    }
-
-    public function testErrorOnPropertyTypo(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: metadata "dev" is not allowed. Did you mean "dev()" or "$dev"?');
-        new ArrayDefinition([
-            'class' => Phone::class,
-            'dev' => true,
-        ]);
-    }
 }
