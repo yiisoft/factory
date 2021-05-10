@@ -8,8 +8,6 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 
 use function is_array;
-use function is_callable;
-use function is_string;
 
 class DefinitionResolver
 {
