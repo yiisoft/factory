@@ -8,10 +8,9 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\Normalizer;
+use Yiisoft\Factory\Definition\DefinitionValidator;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-
-use function is_string;
 
 class Factory implements FactoryInterface
 {
@@ -21,10 +20,21 @@ class Factory implements FactoryInterface
     private ?ContainerInterface $container = null;
 
     /**
+     * @var mixed[] Definitions
+     * @psalm-var array<string, mixed>
+     */
+    private array $definitions = [];
+
+    /**
      * @var DefinitionInterface[] object definitions indexed by their types
      * @psalm-var array<string, DefinitionInterface>
      */
-    private array $definitions = [];
+    private array $definitionInstances = [];
+
+    /**
+     * @var bool $validate Validate definitions when set
+     */
+    private bool $validate;
 
     /**
      * Factory constructor.
@@ -34,17 +44,33 @@ class Factory implements FactoryInterface
      * @throws InvalidConfigException
      * @throws NotInstantiableException
      */
-    public function __construct(ContainerInterface $container = null, array $definitions = [])
-    {
+    public function __construct(
+        ContainerInterface $container = null,
+        array $definitions = [],
+        bool $validate = true
+    ) {
         $this->container = $container;
+        $this->validate = $validate;
         $this->setMultiple($definitions);
     }
 
     public function create($config, array $constructorArguments = [])
     {
-        $definition = Normalizer::normalize($config, null, $constructorArguments);
-        if ($definition instanceof ArrayDefinition && $this->has($definition->getClass())) {
-            $definition = $this->merge($this->getDefinition($definition->getClass()), $definition);
+        if ($this->validate) {
+            DefinitionValidator::validate($config);
+        }
+
+        $definition = Normalizer::normalize($config);
+        if ($definition instanceof ArrayDefinition) {
+            if (!empty($constructorArguments)) {
+                $definition->setConstructorArguments($constructorArguments);
+            }
+            if ($this->has($definition->getClass())) {
+                $definition = $this->merge(
+                    $this->getDefinition($definition->getClass()),
+                    $definition
+                );
+            }
         }
 
         if ($definition instanceof ArrayDefinition) {
@@ -82,19 +108,20 @@ class Factory implements FactoryInterface
     }
 
     /**
-     * @param mixed $id
-     *
      * @throws InvalidConfigException
      */
-    public function getDefinition($id): DefinitionInterface
+    public function getDefinition(string $id): DefinitionInterface
     {
-        if (is_string($id)) {
-            // prevent infinite loop when Reference definition points to string but not to a class
-            /** @psalm-suppress ArgumentTypeCoercion */
-            return $this->definitions[$id] ?? ArrayDefinition::fromPreparedData($id);
+        if (!isset($this->definitionInstances[$id])) {
+            if (isset($this->definitions[$id])) {
+                $this->definitionInstances[$id] = Normalizer::normalize($this->definitions[$id], $id);
+            } else {
+                /** @psalm-var class-string $id */
+                $this->definitionInstances[$id] = ArrayDefinition::fromPreparedData($id);
+            }
         }
 
-        return Normalizer::normalize($id);
+        return $this->definitionInstances[$id];
     }
 
     /**
@@ -103,12 +130,14 @@ class Factory implements FactoryInterface
      * @param mixed $definition
      *
      * @throws InvalidConfigException
-     *
-     * @see `Normalizer::normalize()`
      */
     public function set(string $id, $definition): void
     {
-        $this->definitions[$id] = Normalizer::normalize($definition, $id);
+        if ($this->validate) {
+            DefinitionValidator::validate($definition);
+        }
+
+        $this->definitions[$id] = $definition;
     }
 
     /**

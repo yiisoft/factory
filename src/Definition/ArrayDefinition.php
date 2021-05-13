@@ -157,6 +157,11 @@ class ArrayDefinition implements DefinitionInterface
         return $this->constructorArguments;
     }
 
+    public function setConstructorArguments(array $arguments): void
+    {
+        $this->constructorArguments = $arguments;
+    }
+
     /**
      * @psalm-return array<string, MethodOrPropertyItem>
      */
