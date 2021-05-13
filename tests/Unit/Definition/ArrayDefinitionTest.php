@@ -6,7 +6,6 @@ namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ArrayDefinition;
-use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
