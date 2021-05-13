@@ -18,8 +18,8 @@ class ArrayDefinition implements DefinitionInterface
     public const CLASS_NAME = 'class';
     public const CONSTRUCTOR = '__construct()';
 
-    public const FLAG_PROPERTY = 'property';
-    public const FLAG_METHOD = 'method';
+    public const TYPE_PROPERTY = 'property';
+    public const TYPE_METHOD = 'method';
 
     /**
      * @psalm-var class-string
@@ -82,9 +82,9 @@ class ArrayDefinition implements DefinitionInterface
                 continue;
             }
             if (substr($key, -2) === '()') {
-                $methodsAndProperties[$key] = [self::FLAG_METHOD, $key, $value];
+                $methodsAndProperties[$key] = [self::TYPE_METHOD, $key, $value];
             } elseif (strncmp($key, '$', 1) === 0) {
-                $methodsAndProperties[$key] = [self::FLAG_PROPERTY, $key, $value];
+                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $key, $value];
             }
         }
 
@@ -134,9 +134,9 @@ class ArrayDefinition implements DefinitionInterface
 
         $methodsAndProperties = $this->methodsAndProperties;
         foreach ($other->methodsAndProperties as $key => $item) {
-            if ($item[0] === self::FLAG_PROPERTY) {
+            if ($item[0] === self::TYPE_PROPERTY) {
                 $methodsAndProperties[$key] = $item;
-            } elseif ($item[0] === self::FLAG_METHOD) {
+            } elseif ($item[0] === self::TYPE_METHOD) {
                 /** @psalm-suppress MixedArgument */
                 $methodsAndProperties[$key] = [
                     $item[0],

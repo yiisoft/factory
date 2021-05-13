@@ -62,14 +62,14 @@ final class ArrayDefinitionBuilder
             [$type, $name, $value] = $item;
             /** @var mixed */
             $value = DefinitionResolver::resolveArray($container, ['value' => $value])['value'];
-            if ($type === ArrayDefinition::FLAG_METHOD) {
+            if ($type === ArrayDefinition::TYPE_METHOD) {
                 /** @var mixed */
                 $setter = call_user_func_array([$object, substr($name, 0, -2)], $value);
                 if ($setter instanceof $object) {
                     /** @var object */
                     $object = $setter;
                 }
-            } elseif ($type === ArrayDefinition::FLAG_PROPERTY) {
+            } elseif ($type === ArrayDefinition::TYPE_PROPERTY) {
                 $object->{substr($name, 1)} = $value;
             }
         }

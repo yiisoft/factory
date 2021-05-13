@@ -198,9 +198,9 @@ final class ArrayDefinitionTest extends TestCase
         $this->assertSame(['name' => 'Retro', 'version' => '2.0'], $c->getConstructorArguments());
         $this->assertSame(
             [
-                '$codeName' => [ArrayDefinition::FLAG_PROPERTY, '$codeName', 'b'],
-                '$dev' => [ArrayDefinition::FLAG_PROPERTY, '$dev', true],
-                'setId()' => [ArrayDefinition::FLAG_METHOD, 'setId()', [42]],
+                '$codeName' => [ArrayDefinition::TYPE_PROPERTY, '$codeName', 'b'],
+                '$dev' => [ArrayDefinition::TYPE_PROPERTY, '$dev', true],
+                'setId()' => [ArrayDefinition::TYPE_METHOD, 'setId()', [42]],
             ],
             $c->getMethodsAndProperties(),
         );
