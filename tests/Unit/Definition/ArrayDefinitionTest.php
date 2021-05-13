@@ -12,16 +12,6 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase
 {
-    public function testIntegerKeyOfArray(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: keys should be string.');
-        ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            'RX',
-        ]);
-    }
-
     public function testClass(): void
     {
         $container = new SimpleContainer();
@@ -33,33 +23,6 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         self::assertInstanceOf(Phone::class, $definition->resolve($container));
-    }
-
-    public function dataInvalidClass(): array
-    {
-        return [
-            [42, 'Invalid definition: invalid class name "42".'],
-            ['', 'Invalid definition: empty class name.'],
-        ];
-    }
-
-    /**
-     * @dataProvider dataInvalidClass
-     */
-    public function testInvalidClass($class, string $message): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage($message);
-        ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => $class,
-        ]);
-    }
-
-    public function testWithoutClass(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: no class name specified.');
-        ArrayDefinition::fromConfig([]);
     }
 
     public function dataConstructor(): array
@@ -112,16 +75,6 @@ final class ArrayDefinitionTest extends TestCase
         $phone = $definition->resolve($container);
 
         self::assertSame($colors, $phone->getColors());
-    }
-
-    public function testInvalidConstructor(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: incorrect constructor arguments. Expected array, got string.');
-        ArrayDefinition::fromConfig([
-            ArrayDefinition::CLASS_NAME => Phone::class,
-            ArrayDefinition::CONSTRUCTOR => 'Kiradzu',
-        ]);
     }
 
     public function dataSetProperties(): array
@@ -224,49 +177,6 @@ final class ArrayDefinitionTest extends TestCase
 
         self::assertSame($author, $phone->getAuthor());
         self::assertSame($country, $phone->getCountry());
-    }
-
-    public function dataInvalidMethodCalls(): array
-    {
-        return [
-            [['addApp()' => 'Browser'], 'Invalid definition: incorrect method arguments. Expected array, got string.'],
-        ];
-    }
-
-    /**
-     * @dataProvider dataInvalidMethodCalls
-     */
-    public function testInvalidMethodCalls($methodCalls, string $message): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage($message);
-        ArrayDefinition::fromConfig(array_merge(
-            [
-                ArrayDefinition::CLASS_NAME => Phone::class,
-            ],
-            $methodCalls
-        ));
-    }
-
-    public function testErrorOnMethodTypo(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: key "setId" is not allowed. Did you mean "setId()" or "$setId"?');
-
-        ArrayDefinition::fromConfig([
-            'class' => Phone::class,
-            'setId' => [42],
-        ]);
-    }
-
-    public function testErrorOnPropertyTypo(): void
-    {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: key "dev" is not allowed. Did you mean "dev()" or "$dev"?');
-        ArrayDefinition::fromConfig([
-            'class' => Phone::class,
-            'dev' => true,
-        ]);
     }
 
     public function testMerge(): void

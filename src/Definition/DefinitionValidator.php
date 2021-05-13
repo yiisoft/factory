@@ -117,7 +117,7 @@ final class DefinitionValidator
         }
 
         if ($id === null && !isset($definition[ArrayDefinition::CLASS_NAME])) {
-            throw new InvalidConfigException('Invalid definition: not define class name.');
+            throw new InvalidConfigException('Invalid definition: no class name specified.');
         }
     }
 

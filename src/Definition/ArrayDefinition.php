@@ -8,9 +8,6 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
-use function array_key_exists;
-use function is_string;
-
 /**
  * Builds object by array config
  *
@@ -51,23 +48,11 @@ class ArrayDefinition implements DefinitionInterface
      */
     public static function fromConfig(array $config): self
     {
-        $class = self::getClassFromConfig($config);
-        $constructorArguments = self::getConstructorArgumentsFromConfig($config);
-        $methodsAndProperties = self::getMethodsAndPropertiesFromConfig($config);
-
-        if ($config !== []) {
-            $key = array_key_first($config);
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: key "%s" is not allowed. Did you mean "%s()" or "$%s"?',
-                    $key,
-                    $key,
-                    $key
-                )
-            );
-        }
-
-        return new self($class, $constructorArguments, $methodsAndProperties);
+        return new self(
+            $config[self::CLASS_NAME],
+            $config[self::CONSTRUCTOR] ?? [],
+            self::getMethodsAndPropertiesFromConfig($config)
+        );
     }
 
     /**
@@ -80,64 +65,22 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-return class-string
-     *
-     * @throws InvalidConfigException
-     */
-    private static function getClassFromConfig(array &$config): string
-    {
-        if (!array_key_exists(self::CLASS_NAME, $config)) {
-            throw new InvalidConfigException('Invalid definition: no class name specified.');
-        }
-
-        /** @var mixed */
-        $class = $config[self::CLASS_NAME];
-        unset($config[self::CLASS_NAME]);
-
-        ArrayDefinitionValidator::validateClassName($class);
-
-        /** @psalm-var class-string $class */
-
-        return $class;
-    }
-
-    /**
-     * @throws InvalidConfigException
-     */
-    private static function getConstructorArgumentsFromConfig(array &$config): array
-    {
-        if (!isset($config[self::CONSTRUCTOR])) {
-            return [];
-        }
-
-        $arguments = $config[self::CONSTRUCTOR];
-        unset($config[self::CONSTRUCTOR]);
-
-        ArrayDefinitionValidator::validateConstructorArguments($arguments);
-
-        return $arguments;
-    }
-
-    /**
      * @psalm-return array<string, MethodOrPropertyItem>
      *
      * @throws InvalidConfigException
      */
-    private static function getMethodsAndPropertiesFromConfig(array &$config): array
+    private static function getMethodsAndPropertiesFromConfig(array $config): array
     {
         $methodsAndProperties = [];
 
         foreach ($config as $key => $value) {
-            if (!is_string($key)) {
-                throw new InvalidConfigException('Invalid definition: keys should be string.');
+            if ($key === self::CONSTRUCTOR) {
+                continue;
             }
             if (substr($key, -2) === '()') {
-                ArrayDefinitionValidator::validateMethodArguments($value);
                 $methodsAndProperties[$key] = [self::FLAG_METHOD, $key, $value];
-                unset($config[$key]);
             } elseif (strncmp($key, '$', 1) === 0) {
                 $methodsAndProperties[$key] = [self::FLAG_PROPERTY, $key, $value];
-                unset($config[$key]);
             }
         }
 
