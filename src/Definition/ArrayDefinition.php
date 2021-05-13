@@ -44,7 +44,10 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @throws InvalidConfigException
+     * @psalm-param array{
+     *   class:class-string,
+     *   '__construct()'?:array,
+     * }&array<string, mixed> $config
      */
     public static function fromConfig(array $config): self
     {
@@ -65,14 +68,15 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-return array<string, MethodOrPropertyItem>
+     * @psalm-param array<string, mixed> $config
      *
-     * @throws InvalidConfigException
+     * @psalm-return array<string, MethodOrPropertyItem>
      */
     private static function getMethodsAndPropertiesFromConfig(array $config): array
     {
         $methodsAndProperties = [];
 
+        /** @var mixed $value */
         foreach ($config as $key => $value) {
             if ($key === self::CONSTRUCTOR) {
                 continue;
