@@ -64,13 +64,13 @@ final class ArrayDefinitionBuilder
             $value = DefinitionResolver::resolveArray($container, ['value' => $value])['value'];
             if ($type === ArrayDefinition::TYPE_METHOD) {
                 /** @var mixed */
-                $setter = call_user_func_array([$object, substr($name, 0, -2)], $value);
+                $setter = call_user_func_array([$object, $name], $value);
                 if ($setter instanceof $object) {
                     /** @var object */
                     $object = $setter;
                 }
             } elseif ($type === ArrayDefinition::TYPE_PROPERTY) {
-                $object->{substr($name, 1)} = $value;
+                $object->$name = $value;
             }
         }
 

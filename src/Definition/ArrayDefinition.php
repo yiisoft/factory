@@ -8,6 +8,8 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
+use function count;
+
 /**
  * Builds object by array config
  *
@@ -81,10 +83,11 @@ class ArrayDefinition implements DefinitionInterface
             if ($key === self::CONSTRUCTOR) {
                 continue;
             }
-            if (substr($key, -2) === '()') {
-                $methodsAndProperties[$key] = [self::TYPE_METHOD, $key, $value];
-            } elseif (strncmp($key, '$', 1) === 0) {
-                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $key, $value];
+
+            if (count($methodArray = explode('()', $key)) === 2) {
+                $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
+            } elseif (count($propertyArray = explode('$', $key)) === 2) {
+                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $propertyArray[1], $value];
             }
         }
 
