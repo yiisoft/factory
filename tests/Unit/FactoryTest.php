@@ -359,7 +359,7 @@ final class FactoryTest extends TestCase
                 '2.0',
                 [ArrayDefinition::CONSTRUCTOR => ['name' => 'Hello World', 'version' => '1.0']],
                 Phone::class,
-                ['version' => '2.0']
+                ['version' => '2.0'],
             ],
             [
                 'Table',
