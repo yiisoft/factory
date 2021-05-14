@@ -63,7 +63,7 @@ class Factory implements FactoryInterface
         $definition = Normalizer::normalize($config);
         if ($definition instanceof ArrayDefinition) {
             if (!empty($constructorArguments)) {
-                $definition->setConstructorArguments($constructorArguments);
+                $definition->mergeConstructorArguments($constructorArguments);
             }
             if ($this->has($definition->getClass())) {
                 $definition = $this->merge(
@@ -134,7 +134,7 @@ class Factory implements FactoryInterface
     public function set(string $id, $definition): void
     {
         if ($this->validate) {
-            DefinitionValidator::validate($definition);
+            DefinitionValidator::validate($definition, $id);
         }
 
         $this->definitions[$id] = $definition;

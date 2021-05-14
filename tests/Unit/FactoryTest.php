@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Factory;
@@ -14,6 +15,7 @@ use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\Immutable;
+use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -347,5 +349,49 @@ final class FactoryTest extends TestCase
         $object = $factory->get('recorder');
 
         $this->assertEquals(['Call first()', 'Set @second', 'Call third()', 'Set @fourth'], $object->getEvents());
+    }
+
+    public function dataCreate(): array
+    {
+        return [
+            [
+                'Hello World',
+                '2.0',
+                [ArrayDefinition::CONSTRUCTOR => ['name' => 'Hello World', 'version' => '1.0']],
+                Phone::class,
+                ['version' => '2.0']
+            ],
+            [
+                'Table',
+                '1.0',
+                Phone::class,
+                [
+                    ArrayDefinition::CLASS_NAME => Phone::class,
+                    ArrayDefinition::CONSTRUCTOR => ['name' => 'Table'],
+                ],
+                ['version' => '1.0'],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataCreate
+     */
+    public function testCreate(
+        $expectedName,
+        $expectedVersion,
+        $factoryDefinition,
+        $createDefinition,
+        $constructorArguments
+    ): void {
+        $factory = new Factory(null, [
+            Phone::class => $factoryDefinition,
+        ]);
+
+        $phone = $factory->create($createDefinition, $constructorArguments);
+
+        $this->assertInstanceOf(Phone::class, $phone);
+        $this->assertSame($expectedName, $phone->getName());
+        $this->assertSame($expectedVersion, $phone->getVersion());
     }
 }

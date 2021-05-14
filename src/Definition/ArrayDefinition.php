@@ -107,9 +107,9 @@ class ArrayDefinition implements DefinitionInterface
         return $this->constructorArguments;
     }
 
-    public function setConstructorArguments(array $arguments): void
+    public function mergeConstructorArguments(array $arguments): void
     {
-        $this->constructorArguments = $arguments;
+        $this->constructorArguments = $this->mergeArguments($this->constructorArguments, $arguments);
     }
 
     /**
