@@ -106,19 +106,38 @@ final class DefinitionValidator
                 continue;
             }
 
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: key "%s" is not allowed. Did you mean "%s()" or "$%s"?',
-                    $key,
-                    $key,
-                    $key
-                )
-            );
+            self::throwInvalidArrayDefinitionKey($key);
         }
 
         if ($id === null && !isset($definition[ArrayDefinition::CLASS_NAME])) {
             throw new InvalidConfigException('Invalid definition: no class name specified.');
         }
+    }
+
+    /**
+     * @throws InvalidConfigException
+     */
+    private static function throwInvalidArrayDefinitionKey(string $key): void
+    {
+        $preparedKey = trim(strtr($key, [
+            '()' => '',
+            '$' => '',
+        ]));
+
+        if ($preparedKey === '' || !preg_match('/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$/', $preparedKey)) {
+            throw new InvalidConfigException(
+                sprintf('Invalid definition: key "%s" is not allowed.', $key)
+            );
+        }
+
+        throw new InvalidConfigException(
+            sprintf(
+                'Invalid definition: key "%s" is not allowed. Did you mean "%s()" or "$%s"?',
+                $key,
+                $preparedKey,
+                $preparedKey
+            )
+        );
     }
 
     /**

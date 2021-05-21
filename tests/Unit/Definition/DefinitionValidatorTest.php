@@ -69,7 +69,7 @@ final class DefinitionValidatorTest extends TestCase
     /**
      * @dataProvider dataInvalidMethodCalls
      */
-    public function testInvalidMethodCalls($methodCalls, string $message): void
+    public function testInvalidMethodCalls(array $methodCalls, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage($message);
@@ -81,23 +81,27 @@ final class DefinitionValidatorTest extends TestCase
         ));
     }
 
-    public function testErrorOnPropertyTypo(): void
+    public function dataErrorOnPropertyOrMethodTypo(): array
     {
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: key "dev" is not allowed. Did you mean "dev()" or "$dev"?');
-        DefinitionValidator::validate([
-            'class' => Phone::class,
-            'dev' => true,
-        ]);
+        return [
+            ['dev', true, 'Invalid definition: key "dev" is not allowed. Did you mean "dev()" or "$dev"?'],
+            ['setId', [42], 'Invalid definition: key "setId" is not allowed. Did you mean "setId()" or "$setId"?'],
+            ['()test', [42], 'Invalid definition: key "()test" is not allowed. Did you mean "test()" or "$test"?'],
+            ['var$', true, 'Invalid definition: key "var$" is not allowed. Did you mean "var()" or "$var"?'],
+            ['100$', true, 'Invalid definition: key "100$" is not allowed.'],
+        ];
     }
 
-    public function testErrorOnMethodTypo(): void
+    /**
+     * @dataProvider dataErrorOnPropertyOrMethodTypo
+     */
+    public function testErrorOnPropertyOrMethodTypo(string $key, $value, string $message): void
     {
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: key "setId" is not allowed. Did you mean "setId()" or "$setId"?');
+        $this->expectExceptionMessage($message);
         DefinitionValidator::validate([
             'class' => Phone::class,
-            'setId' => [42],
+            $key => $value,
         ]);
     }
 }
