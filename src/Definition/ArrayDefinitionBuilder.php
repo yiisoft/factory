@@ -61,7 +61,7 @@ final class ArrayDefinitionBuilder
             /** @var mixed $value */
             [$type, $name, $value] = $item;
             /** @var mixed */
-            $value = DefinitionResolver::resolveArray($container, ['value' => $value])['value'];
+            $value = DefinitionResolver::resolve($container, $value);
             if ($type === ArrayDefinition::TYPE_METHOD) {
                 /** @var mixed */
                 $setter = call_user_func_array([$object, $name], $value);
