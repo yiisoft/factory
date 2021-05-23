@@ -6,23 +6,22 @@ namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
-
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
-use function array_key_exists;
-use function get_class;
-use function gettype;
-use function is_array;
-use function is_object;
-use function is_string;
+use function count;
 
 /**
  * Builds object by array config
+ *
+ * @psalm-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
  */
 class ArrayDefinition implements DefinitionInterface
 {
     public const CLASS_NAME = 'class';
     public const CONSTRUCTOR = '__construct()';
+
+    public const TYPE_PROPERTY = 'property';
+    public const TYPE_METHOD = 'method';
 
     /**
      * @psalm-var class-string
@@ -31,73 +30,68 @@ class ArrayDefinition implements DefinitionInterface
     private array $constructorArguments;
 
     /**
-     * @psalm-var array<string, mixed|array>
+     * @psalm-var array<string, MethodOrPropertyItem>
      */
     private array $methodsAndProperties;
 
     /**
-     * @psalm-var array<string, mixed>
+     * @psalm-param class-string $class
+     * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
      */
-    private array $meta = [];
-
-    /**
-     * @param array $config Container entry config.
-     * @param bool $checkDefinition Check definition flag.
-     *
-     * @throws InvalidConfigException
-     */
-    public function __construct(array $config, bool $checkDefinition = true)
+    private function __construct(string $class, array $constructorArguments, array $methodsAndProperties)
     {
-        if ($checkDefinition) {
-            [$config,] = Normalizer::parse($config, []);
-        }
-        $this->setClass($config);
-        unset($config[self::CLASS_NAME]);
-        $this->setConstructorArguments($config);
-        unset($config[self::CONSTRUCTOR]);
-        $this->methodsAndProperties = $config;
-    }
-
-    /**
-     * @throws InvalidConfigException
-     */
-    private function setClass(array $config): void
-    {
-        if (!array_key_exists(self::CLASS_NAME, $config)) {
-            throw new InvalidConfigException('Invalid definition: no class name specified.');
-        }
-
-        /** @var mixed */
-        $class = $config[self::CLASS_NAME];
-
-        if (!is_string($class)) {
-            throw new InvalidConfigException(sprintf('Invalid definition: invalid class name "%s".', (string)$class));
-        }
-
-        if ($class === '') {
-            throw new InvalidConfigException('Invalid definition: empty class name.');
-        }
-
         $this->class = $class;
+        $this->constructorArguments = $constructorArguments;
+        $this->methodsAndProperties = $methodsAndProperties;
     }
 
     /**
-     * @throws InvalidConfigException
+     * @psalm-param array{
+     *   class:class-string,
+     *   '__construct()'?:array,
+     * }&array<string, mixed> $config
      */
-    private function setConstructorArguments(array $config): void
+    public static function fromConfig(array $config): self
     {
-        $arguments = $config[self::CONSTRUCTOR] ?? [];
+        return new self(
+            $config[self::CLASS_NAME],
+            $config[self::CONSTRUCTOR] ?? [],
+            self::getMethodsAndPropertiesFromConfig($config)
+        );
+    }
 
-        if (!is_array($arguments)) {
-            throw new InvalidConfigException(
-                sprintf(
-                    'Invalid definition: incorrect constructor arguments. Expected array, got %s.',
-                    $this->getType($arguments)
-                )
-            );
+    /**
+     * @psalm-param class-string $class
+     * @psalm-param array<string, MethodOrPropertyItem> $methodsAndProperties
+     */
+    public static function fromPreparedData(string $class, array $constructorArguments = [], array $methodsAndProperties = []): self
+    {
+        return new self($class, $constructorArguments, $methodsAndProperties);
+    }
+
+    /**
+     * @psalm-param array<string, mixed> $config
+     *
+     * @psalm-return array<string, MethodOrPropertyItem>
+     */
+    private static function getMethodsAndPropertiesFromConfig(array $config): array
+    {
+        $methodsAndProperties = [];
+
+        /** @var mixed $value */
+        foreach ($config as $key => $value) {
+            if ($key === self::CONSTRUCTOR) {
+                continue;
+            }
+
+            if (count($methodArray = explode('()', $key)) === 2) {
+                $methodsAndProperties[$key] = [self::TYPE_METHOD, $methodArray[0], $value];
+            } elseif (count($propertyArray = explode('$', $key)) === 2) {
+                $methodsAndProperties[$key] = [self::TYPE_PROPERTY, $propertyArray[1], $value];
+            }
         }
 
-        $this->constructorArguments = $arguments;
+        return $methodsAndProperties;
     }
 
     /**
@@ -113,6 +107,14 @@ class ArrayDefinition implements DefinitionInterface
         return $this->constructorArguments;
     }
 
+    public function mergeConstructorArguments(array $arguments): void
+    {
+        $this->constructorArguments = $this->mergeArguments($this->constructorArguments, $arguments);
+    }
+
+    /**
+     * @psalm-return array<string, MethodOrPropertyItem>
+     */
     public function getMethodsAndProperties(): array
     {
         return $this->methodsAndProperties;
@@ -129,21 +131,28 @@ class ArrayDefinition implements DefinitionInterface
 
     public function merge(self $other): self
     {
-        $methodsAndProperties = $this->getMethodsAndProperties();
+        $new = clone $this;
+        $new->class = $other->class;
+        $new->constructorArguments = $this->mergeArguments($this->constructorArguments, $other->constructorArguments);
 
-        foreach ($other->getMethodsAndProperties() as $name => $arguments) {
-            $methodsAndProperties[$name] = isset($methodsAndProperties[$name])
-                ? $this->mergeArguments($methodsAndProperties[$name], $arguments)
-                : $arguments;
+        $methodsAndProperties = $this->methodsAndProperties;
+        foreach ($other->methodsAndProperties as $key => $item) {
+            if ($item[0] === self::TYPE_PROPERTY) {
+                $methodsAndProperties[$key] = $item;
+            } elseif ($item[0] === self::TYPE_METHOD) {
+                /** @psalm-suppress MixedArgument */
+                $methodsAndProperties[$key] = [
+                    $item[0],
+                    $item[1],
+                    isset($methodsAndProperties[$key])
+                        ? $this->mergeArguments($methodsAndProperties[$key][2], $item[2])
+                        : $item[2],
+                ];
+            }
         }
+        $new->methodsAndProperties = $methodsAndProperties;
 
-        return new self(array_merge([
-            self::CLASS_NAME => $other->getClass(),
-            self::CONSTRUCTOR => $this->mergeArguments(
-                $this->getConstructorArguments(),
-                $other->getConstructorArguments()
-            ),
-        ], $methodsAndProperties));
+        return $new;
     }
 
     private function mergeArguments(array $selfArguments, array $otherArguments): array
@@ -155,18 +164,5 @@ class ArrayDefinition implements DefinitionInterface
         }
 
         return $selfArguments;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    private function getType($value): string
-    {
-        return is_object($value) ? get_class($value) : gettype($value);
-    }
-
-    public function getMeta(): array
-    {
-        return $this->meta;
     }
 }

@@ -9,14 +9,20 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 
 use function is_array;
 
-class DefinitionResolver
+/**
+ * @internal
+ */
+final class DefinitionResolver
 {
     /**
      * Resolves dependencies by replacing them with the actual object instances.
      *
-     * @param array<string,mixed> $dependencies The dependencies.
+     * @param array $dependencies The dependencies.
+     *
+     * @psalm-param array<string,mixed> $dependencies
      *
      * @return array The resolved dependencies.
+     *
      * @psalm-return array<string,mixed>
      */
     public static function resolveArray(ContainerInterface $container, array $dependencies): array
@@ -58,6 +64,8 @@ class DefinitionResolver
     /**
      * @param mixed $value
      *
+     * @throws InvalidConfigException
+     *
      * @return array|CallableDefinition|DefinitionInterface|ValueDefinition
      */
     public static function ensureResolvable($value)
@@ -67,7 +75,10 @@ class DefinitionResolver
         }
 
         if ($value instanceof DefinitionInterface) {
-            throw new InvalidConfigException('Only references are allowed in parameters, a definition object was provided: ' . var_export($value, true));
+            throw new InvalidConfigException(
+                'Only references are allowed in parameters, a definition object was provided: ' .
+                var_export($value, true)
+            );
         }
 
         return new ValueDefinition($value);
