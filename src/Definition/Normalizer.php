@@ -14,6 +14,8 @@ use function is_string;
 
 /**
  * Class Definition represents a definition in a container
+ *
+ * @psalm-import-type ArrayDefinitionConfig from ArrayDefinition
  */
 class Normalizer
 {
@@ -86,7 +88,7 @@ class Normalizer
             if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
                 $config[ArrayDefinition::CLASS_NAME] = $id;
             }
-            /** @psalm-suppress ArgumentTypeCoercion */
+            /** @psalm-var ArrayDefinitionConfig $config */
             return ArrayDefinition::fromConfig($config);
         }
 
