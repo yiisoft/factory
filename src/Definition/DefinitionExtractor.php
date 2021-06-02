@@ -68,11 +68,13 @@ final class DefinitionExtractor
     private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
     {
         /**
-         * @psalm-suppress UndefinedClass
-         *
          * @var ReflectionNamedType|ReflectionUnionType|null $type
          */
         $type = $parameter->getType();
+
+        if ($parameter->isVariadic()) {
+            return $this->createParameterDefinition($parameter);
+        }
 
         // PHP 8 union type is used as type hint
         /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
@@ -111,18 +113,7 @@ final class DefinitionExtractor
         }
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
-        $definition = new ParameterDefinition(
-            $parameter,
-            $type !== null ? $type->getName() : null
-        );
-
-        if ($parameter->isDefaultValueAvailable()) {
-            $definition->setValue($parameter->getDefaultValue());
-        } elseif (!$parameter->isVariadic()) {
-            $definition->setValue(null);
-        }
-
-        return $definition;
+        return $this->createParameterDefinition($parameter);
     }
 
     /**
@@ -132,5 +123,18 @@ final class DefinitionExtractor
     public function fromCallable(callable $callable): array
     {
         return $this->fromFunction(new ReflectionFunction(Closure::fromCallable($callable)));
+    }
+
+    private function createParameterDefinition(ReflectionParameter $parameter): ParameterDefinition
+    {
+        $definition = new ParameterDefinition($parameter);
+
+        if ($parameter->isDefaultValueAvailable()) {
+            $definition->setValue($parameter->getDefaultValue());
+        } elseif (!$parameter->isVariadic()) {
+            $definition->setValue(null);
+        }
+
+        return $definition;
     }
 }

@@ -7,6 +7,7 @@ namespace Yiisoft\Factory\Definition;
 use Psr\Container\ContainerInterface;
 use ReflectionParameter;
 use Yiisoft\Factory\FactoryInterface;
+
 use function is_object;
 
 class ParameterDefinition implements DefinitionInterface
@@ -18,12 +19,10 @@ class ParameterDefinition implements DefinitionInterface
      * @var mixed
      */
     private $value = null;
-    private ?string $type;
 
-    public function __construct(ReflectionParameter $parameter, string $type = null)
+    public function __construct(ReflectionParameter $parameter)
     {
         $this->parameter = $parameter;
-        $this->type = $type;
     }
 
     /**
@@ -43,11 +42,6 @@ class ParameterDefinition implements DefinitionInterface
     public function hasValue(): bool
     {
         return $this->hasValue;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
     }
 
     public function resolve(ContainerInterface $container)

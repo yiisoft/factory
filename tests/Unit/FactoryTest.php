@@ -18,7 +18,10 @@ use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
+use Yiisoft\Factory\Tests\Support\VariadicClosures;
 use Yiisoft\Test\Support\Container\SimpleContainer;
+
+use function count;
 
 final class FactoryTest extends TestCase
 {
@@ -393,5 +396,30 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(Phone::class, $phone);
         $this->assertSame($expectedName, $phone->getName());
         $this->assertSame($expectedVersion, $phone->getVersion());
+    }
+
+    public function dataCreateObjectWithVariadicClosuresInConstructor(): array
+    {
+        return [
+            [[fn () => '1'], '1'],
+            [[fn () => '1', fn () => '2'], '12'],
+            [[], ''],
+        ];
+    }
+
+    /**
+     * @dataProvider dataCreateObjectWithVariadicClosuresInConstructor
+     */
+    public function testCreateObjectWithVariadicClosuresInConstructor(array $closures, string $expectedConcat): void
+    {
+        $object = (new Factory())->create(VariadicClosures::class, $closures);
+
+        $concat = '';
+        foreach ($object->getClosures() as $c) {
+            $concat .= $c();
+        }
+
+        $this->assertCount(count($closures), $object->getClosures());
+        $this->assertSame($expectedConcat, $concat);
     }
 }

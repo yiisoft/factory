@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace YYiisoft\Factory\Tests\Php8;
+namespace Yiisoft\Factory\Tests\Php8;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
