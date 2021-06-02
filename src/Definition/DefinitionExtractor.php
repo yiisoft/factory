@@ -67,9 +67,6 @@ final class DefinitionExtractor
 
     private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
     {
-        /**
-         * @var ReflectionNamedType|ReflectionUnionType|null $type
-         */
         $type = $parameter->getType();
 
         if ($parameter->isVariadic()) {
@@ -98,6 +95,8 @@ final class DefinitionExtractor
             /** @psalm-suppress MixedArgument */
             return new ClassDefinition(implode('|', $types), $type->allowsNull());
         }
+
+        /** @var ReflectionNamedType|null $type */
 
         // Our parameter has a class type hint
         if ($type !== null && !$type->isBuiltin()) {
