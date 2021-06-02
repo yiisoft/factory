@@ -7,7 +7,6 @@ namespace Yiisoft\Factory\Definition;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-use Yiisoft\Factory\Extractor\DefinitionExtractor;
 
 use function array_key_exists;
 use function call_user_func_array;
@@ -19,7 +18,6 @@ use function is_string;
 final class ArrayDefinitionBuilder
 {
     private static ?self $instance = null;
-    private static ?DefinitionExtractor $extractor = null;
 
     /**
      * @psalm-var array<string, array<string, DefinitionInterface>>
@@ -151,19 +149,9 @@ final class ArrayDefinitionBuilder
     private function getDependencies(string $class): array
     {
         if (!isset(self::$dependencies[$class])) {
-            self::$dependencies[$class] = $this->getExtractor()->fromClassName($class);
+            self::$dependencies[$class] = DefinitionExtractor::getInstance()->fromClassName($class);
         }
 
         return self::$dependencies[$class];
-    }
-
-    private function getExtractor(): DefinitionExtractor
-    {
-        if (self::$extractor === null) {
-            // For now use hard coded extractor.
-            self::$extractor = new DefinitionExtractor();
-        }
-
-        return self::$extractor;
     }
 }

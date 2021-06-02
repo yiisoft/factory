@@ -7,7 +7,7 @@ namespace YYiisoft\Factory\Tests\Php8;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
-use Yiisoft\Factory\Extractor\DefinitionExtractor;
+use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\UnionCar;
@@ -16,7 +16,7 @@ class DefinitionExtractorUnionTypesTest extends TestCase
 {
     public function testResolveCarConstructor(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(UnionCar::class);
