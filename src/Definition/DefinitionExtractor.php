@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Extractor;
+namespace Yiisoft\Factory\Definition;
 
 use Closure;
 use ReflectionClass;
@@ -11,18 +11,31 @@ use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use Yiisoft\Factory\Definition\ClassDefinition;
-use Yiisoft\Factory\Definition\DefinitionInterface;
-use Yiisoft\Factory\Definition\ParameterDefinition;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
- * Class DefinitionExtractor
- * This implementation resolves dependencies by using class type hints.
+ * This class resolves dependencies by using class type hints.
  * Note that service names need not match the parameter names, parameter names are ignored
+ *
+ * @internal
  */
-class DefinitionExtractor implements ExtractorInterface
+final class DefinitionExtractor
 {
+    private static ?self $instance = null;
+
+    private function __construct()
+    {
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
     /**
      * @psalm-param class-string $class
      *
@@ -54,12 +67,11 @@ class DefinitionExtractor implements ExtractorInterface
 
     private function fromParameter(ReflectionParameter $parameter): DefinitionInterface
     {
-        /**
-         * @psalm-suppress UndefinedClass
-         *
-         * @var ReflectionNamedType|ReflectionUnionType|null $type
-         */
         $type = $parameter->getType();
+
+        if ($parameter->isVariadic()) {
+            return $this->createParameterDefinition($parameter);
+        }
 
         // PHP 8 union type is used as type hint
         /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
@@ -84,6 +96,8 @@ class DefinitionExtractor implements ExtractorInterface
             return new ClassDefinition(implode('|', $types), $type->allowsNull());
         }
 
+        /** @var ReflectionNamedType|null $type */
+
         // Our parameter has a class type hint
         if ($type !== null && !$type->isBuiltin()) {
             $typeName = $type->getName();
@@ -98,18 +112,7 @@ class DefinitionExtractor implements ExtractorInterface
         }
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
-        $definition = new ParameterDefinition(
-            $parameter,
-            $type !== null ? $type->getName() : null
-        );
-
-        if ($parameter->isDefaultValueAvailable()) {
-            $definition->setValue($parameter->getDefaultValue());
-        } elseif (!$parameter->isVariadic()) {
-            $definition->setValue(null);
-        }
-
-        return $definition;
+        return $this->createParameterDefinition($parameter);
     }
 
     /**
@@ -119,5 +122,18 @@ class DefinitionExtractor implements ExtractorInterface
     public function fromCallable(callable $callable): array
     {
         return $this->fromFunction(new ReflectionFunction(Closure::fromCallable($callable)));
+    }
+
+    private function createParameterDefinition(ReflectionParameter $parameter): ParameterDefinition
+    {
+        $definition = new ParameterDefinition($parameter);
+
+        if ($parameter->isDefaultValueAvailable()) {
+            $definition->setValue($parameter->getDefaultValue());
+        } elseif (!$parameter->isVariadic()) {
+            $definition->setValue(null);
+        }
+
+        return $definition;
     }
 }

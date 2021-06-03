@@ -38,15 +38,11 @@ class DynamicReference implements ReferenceInterface
     }
 
     /**
-     * @param mixed $definition
-     *
-     * @return ReferenceInterface
-     *
-     * {@see Normalizer}
+     * @see Normalizer
      */
-    public static function to($definition): ReferenceInterface
+    public static function to($id): ReferenceInterface
     {
-        return new self($definition);
+        return new self($id);
     }
 
     public function resolve(ContainerInterface $container)

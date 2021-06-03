@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit\Resolver;
+namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-use Yiisoft\Factory\Extractor\DefinitionExtractor;
+use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
@@ -22,7 +22,7 @@ class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
 
         /** @var DefinitionInterface[] $dependencies */
@@ -44,7 +44,7 @@ class DefinitionExtractorTest extends TestCase
 
     public function testResolveCarConstructor(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(Car::class);
@@ -57,7 +57,7 @@ class DefinitionExtractorTest extends TestCase
 
     public function testResolveGearBoxConstructor(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(GearBox::class);
@@ -67,7 +67,7 @@ class DefinitionExtractorTest extends TestCase
 
     public function testOptionalInterfaceDependency(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalInterfaceDependency::class);
@@ -77,7 +77,7 @@ class DefinitionExtractorTest extends TestCase
 
     public function testNullableInterfaceDependency(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableInterfaceDependency::class);
@@ -87,7 +87,7 @@ class DefinitionExtractorTest extends TestCase
 
     public function testOptionalConcreteDependency(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(OptionalConcreteDependency::class);
@@ -97,7 +97,7 @@ class DefinitionExtractorTest extends TestCase
 
     public function testNullableConcreteDependency(): void
     {
-        $resolver = new DefinitionExtractor();
+        $resolver = DefinitionExtractor::getInstance();
         $container = new Factory();
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(NullableConcreteDependency::class);

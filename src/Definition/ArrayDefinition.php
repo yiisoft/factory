@@ -14,6 +14,7 @@ use function count;
  * Builds object by array config
  *
  * @psalm-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
+ * @psalm-type ArrayDefinitionConfig = array{class:class-string,'__construct()'?:array}&array<string, mixed>
  */
 class ArrayDefinition implements DefinitionInterface
 {
@@ -46,10 +47,7 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
-     * @psalm-param array{
-     *   class:class-string,
-     *   '__construct()'?:array,
-     * }&array<string, mixed> $config
+     * @psalm-param ArrayDefinitionConfig $config
      */
     public static function fromConfig(array $config): self
     {
