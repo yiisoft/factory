@@ -35,6 +35,9 @@ class ClassDefinition implements DefinitionInterface
         return $this->class;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function resolve(ContainerInterface $container)
     {
         if ($this->isUnionType()) {
@@ -52,7 +55,7 @@ class ClassDefinition implements DefinitionInterface
         }
 
         if (!$result instanceof $this->class) {
-            $actualType = gettype($this->class);
+            $actualType = gettype($result);
             throw new InvalidConfigException(
                 "Container returned incorrect type \"$actualType\" for service \"$this->class\"."
             );
@@ -74,7 +77,7 @@ class ClassDefinition implements DefinitionInterface
                 /** @var mixed */
                 $result = $container->get($type);
                 if (!$result instanceof $type) {
-                    $actualType = gettype($this->class);
+                    $actualType = gettype($result);
                     throw new InvalidConfigException(
                         "Container returned incorrect type \"$actualType\" for service \"$this->class\"."
                     );
