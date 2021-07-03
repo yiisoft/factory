@@ -8,11 +8,14 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
 use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
+use Yiisoft\Factory\Tests\Support\DefinitionInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
@@ -468,5 +471,19 @@ final class FactoryTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: 42');
         $factory->create(42);
+    }
+
+    public function testDefinitionInParameters(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessageMatches('/^Only references are allowed in parameters, a definition object was provided:/');
+        $factory->create(
+            Car::class,
+            [
+                new ValueDefinition(new EngineMarkTwo(), 'object'),
+            ]
+        );
     }
 }
