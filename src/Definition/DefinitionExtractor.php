@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Closure;
 use ReflectionClass;
-use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -113,15 +111,6 @@ final class DefinitionExtractor
 
         // Our parameter does not have a class type hint and either has a default value or is nullable.
         return $this->createParameterDefinition($parameter);
-    }
-
-    /**
-     * @return DefinitionInterface[]
-     * @psalm-return array<string, DefinitionInterface>
-     */
-    public function fromCallable(callable $callable): array
-    {
-        return $this->fromFunction(new ReflectionFunction(Closure::fromCallable($callable)));
     }
 
     private function createParameterDefinition(ReflectionParameter $parameter): ParameterDefinition
