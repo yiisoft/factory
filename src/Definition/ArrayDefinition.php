@@ -138,14 +138,11 @@ class ArrayDefinition implements DefinitionInterface
             if ($item[0] === self::TYPE_PROPERTY) {
                 $methodsAndProperties[$key] = $item;
             } elseif ($item[0] === self::TYPE_METHOD) {
-                /** @psalm-suppress MixedArgument */
-                $methodsAndProperties[$key] = [
-                    $item[0],
-                    $item[1],
-                    isset($methodsAndProperties[$key])
-                        ? $this->mergeArguments($methodsAndProperties[$key][2], $item[2])
-                        : $item[2],
-                ];
+                /** @psalm-suppress MixedArgument, MixedAssignment */
+                $arguments = isset($methodsAndProperties[$key])
+                    ? $this->mergeArguments($methodsAndProperties[$key][2], $item[2])
+                    : $item[2];
+                $methodsAndProperties[$key] = [$item[0], $item[1], $arguments];
             }
         }
         $new->methodsAndProperties = $methodsAndProperties;
