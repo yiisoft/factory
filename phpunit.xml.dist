@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit backupGlobals="false"
+<phpunit bootstrap="vendor/autoload.php"
          colors="true"
          verbose="true"
-         bootstrap="vendor/autoload.php"
          failOnRisky="true"
          failOnWarning="true"
->
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         stopOnFailure="false"
+         executionOrder="random"
+         resolveDependencies="true">
     <php>
-        <ini name="error_reporting" value="-1" />
+        <ini name="error_reporting" value="-1"/>
     </php>
 
     <testsuites>
-        <testsuite name="Yii Factory Tests">
+        <testsuite name="Yii Factory tests">
             <directory>./tests/Unit</directory>
             <directory phpVersion="8" phpVersionOperator=">=">./tests/Php8</directory>
         </testsuite>
@@ -20,11 +24,7 @@
 
     <coverage>
         <include>
-            <directory>./</directory>
+            <directory>./src</directory>
         </include>
-        <exclude>
-            <directory>./tests</directory>
-            <directory>./vendor</directory>
-        </exclude>
     </coverage>
 </phpunit>
