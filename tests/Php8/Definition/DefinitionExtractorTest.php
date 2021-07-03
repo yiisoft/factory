@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Php8;
+namespace Yiisoft\Factory\Tests\Php8\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
-use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\UnionCar;
 
-class DefinitionExtractorUnionTypesTest extends TestCase
+class DefinitionExtractorTest extends TestCase
 {
     public function testResolveCarConstructor(): void
     {
-        $resolver = DefinitionExtractor::getInstance();
+        $extractor = DefinitionExtractor::getInstance();
         $container = new Factory();
-        /** @var DefinitionInterface[] $dependencies */
-        $dependencies = $resolver->fromClassName(UnionCar::class);
+
+        $dependencies = $extractor->fromClassName(UnionCar::class);
 
         $this->assertCount(1, $dependencies);
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);

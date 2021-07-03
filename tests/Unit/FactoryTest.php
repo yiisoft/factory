@@ -6,9 +6,11 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use stdClass;
 use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
@@ -17,6 +19,7 @@ use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\Recorder;
+use Yiisoft\Factory\Tests\Support\SelfType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Factory\Tests\Support\VariadicClosures;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -421,5 +424,49 @@ final class FactoryTest extends TestCase
 
         $this->assertCount(count($closures), $object->getClosures());
         $this->assertSame($expectedConcat, $concat);
+    }
+
+    public function testGetWithIncorrectConfiguration(): void
+    {
+        $factory = new Factory(null, ['x' => 42], false);
+
+        $this->expectException(NotInstantiableException::class);
+        $factory->get('x');
+    }
+
+    public function testSelfTypeDependency(): void
+    {
+        $containerObject = new SelfType();
+        $containerObject->setColor('pink');
+
+        $factory = new Factory(
+            new SimpleContainer([SelfType::class => $containerObject]),
+        );
+
+        /** @var SelfType $object */
+        $object = $factory->create(['class' => SelfType::class]);
+
+        $this->assertSame('pink', $object->getColor());
+    }
+
+    public function testCreateFromCallable(): void
+    {
+        $object = (new Factory())->create([$this, 'createStdClass']);
+
+        $this->assertInstanceOf(stdClass::class, $object);
+    }
+
+    public function createStdClass(): stdClass
+    {
+        return new stdClass();
+    }
+
+    public function testCreateWithInvalidConfig(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: 42');
+        $factory->create(42);
     }
 }
