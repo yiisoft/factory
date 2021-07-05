@@ -11,6 +11,7 @@ use Yiisoft\Factory\Definition\Normalizer;
 use Yiisoft\Factory\Definition\DefinitionValidator;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Injector\Injector;
 
 class Factory implements FactoryInterface
 {
@@ -51,6 +52,7 @@ class Factory implements FactoryInterface
     ) {
         $this->container = $container;
         $this->validate = $validate;
+        $this->setDefaultDefinitions();
         $this->setMultiple($definitions);
     }
 
@@ -169,5 +171,16 @@ class Factory implements FactoryInterface
     public function has($id): bool
     {
         return isset($this->definitions[$id]);
+    }
+
+    private function setDefaultDefinitions(): void
+    {
+        /** @var ContainerInterface */
+        $container = $this->container ?? $this;
+
+        $this->setMultiple([
+            ContainerInterface::class => $container,
+            Injector::class => new Injector($container),
+        ]);
     }
 }
