@@ -183,7 +183,7 @@ final class FactoryTest extends TestCase
         ]);
         $two = $factory->create([
             'class' => Car::class,
-            '__construct()' => [$factory->get(EngineMarkTwo::class)]
+            '__construct()' => [$factory->get(EngineMarkTwo::class)],
         ]);
 
         $this->assertNotSame($one, $two);
@@ -200,11 +200,11 @@ final class FactoryTest extends TestCase
 
         $one = $factory->create([
             'class' => Car::class,
-            '__construct()' => ['engine' => $factory->get(EngineMarkOne::class)]
+            '__construct()' => ['engine' => $factory->get(EngineMarkOne::class)],
         ]);
         $two = $factory->create([
             'class' => Car::class,
-            '__construct()' => ['engine' => $factory->get(EngineMarkTwo::class)]
+            '__construct()' => ['engine' => $factory->get(EngineMarkTwo::class)],
         ]);
 
         $this->assertNotSame($one, $two);
@@ -224,8 +224,8 @@ final class FactoryTest extends TestCase
             '__construct()' => [
                 'firstParameter' => 'date',
                 'secondParameter' => 'time',
-            ]
-        ],);
+            ],
+        ], );
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('date', $object->getFirstParameter());
@@ -241,7 +241,7 @@ final class FactoryTest extends TestCase
 
         $factory->create([
             'class' => TwoParametersDependency::class,
-            '__construct()' => ['firstParam' => 'param1', 1 => 'param2']
+            '__construct()' => ['firstParam' => 'param1', 1 => 'param2'],
         ]);
     }
 
@@ -252,7 +252,7 @@ final class FactoryTest extends TestCase
 
         $object = $factory->create([
             'class' => TwoParametersDependency::class,
-            '__construct()' => [1 => 'param2', 0 => 'param1']
+            '__construct()' => [1 => 'param2', 0 => 'param1'],
         ]);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
@@ -436,7 +436,7 @@ final class FactoryTest extends TestCase
     {
         $object = (new Factory())->create([
             'class' => VariadicClosures::class,
-            '__construct()' => $closures
+            '__construct()' => $closures,
         ]);
 
         $concat = '';

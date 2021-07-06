@@ -28,7 +28,7 @@ final class FactoryTest extends TestCase
     {
         $object = (new Factory())->create([
             'class' => VariadicUnionType::class,
-            '__construct()' => $items
+            '__construct()' => $items,
         ]);
 
         $this->assertSame($items, $object->getItems());

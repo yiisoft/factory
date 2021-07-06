@@ -6,13 +6,11 @@ namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use League\Container\Container;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
-use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 
 /**
  * General tests for factory.
