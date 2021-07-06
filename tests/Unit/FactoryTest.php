@@ -407,7 +407,7 @@ final class FactoryTest extends TestCase
         $expectedName,
         $expectedVersion,
         $factoryDefinition,
-        $createDefinition,
+        $createDefinition
     ): void {
         $factory = new Factory(null, [
             Phone::class => $factoryDefinition,
