@@ -172,70 +172,88 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
-    /**
-     * TODO: is it possible to remove second argument of {@see Factory::create()} and always pass definition instead?
-     */
-    public function testCreateWithParams(): void
+    public function testCreateWithConstructor(): void
     {
         $container = new SimpleContainer();
         $factory = new Factory($container);
 
-        $one = $factory->create(Car::class, [$factory->get(EngineMarkOne::class)]);
-        $two = $factory->create(Car::class, [$factory->get(EngineMarkTwo::class)]);
-
-        $this->assertNotSame($one, $two);
-        $this->assertInstanceOf(Car::class, $one);
-        $this->assertInstanceOf(Car::class, $two);
-        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
-        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
-    }
-
-    public function testCreateWithNamedParams(): void
-    {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
-
-        $one = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkOne::class)]);
-        $two = $factory->create(Car::class, ['engine' => $factory->get(EngineMarkTwo::class)]);
-
-        $this->assertNotSame($one, $two);
-        $this->assertInstanceOf(Car::class, $one);
-        $this->assertInstanceOf(Car::class, $two);
-        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
-        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
-    }
-
-    public function testCreateWithCallableValuesInParams(): void
-    {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
-
-        $object = $factory->create(TwoParametersDependency::class, [
-            'firstParameter' => 'date',
-            'secondParameter' => 'time',
+        $one = $factory->create([
+            'class' => Car::class,
+            '__construct()' => [$factory->get(EngineMarkOne::class)],
         ]);
+        $two = $factory->create([
+            'class' => Car::class,
+            '__construct()' => [$factory->get(EngineMarkTwo::class)]
+        ]);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(Car::class, $one);
+        $this->assertInstanceOf(Car::class, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
+        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithNamedParametersInConstructor(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $one = $factory->create([
+            'class' => Car::class,
+            '__construct()' => ['engine' => $factory->get(EngineMarkOne::class)]
+        ]);
+        $two = $factory->create([
+            'class' => Car::class,
+            '__construct()' => ['engine' => $factory->get(EngineMarkTwo::class)]
+        ]);
+
+        $this->assertNotSame($one, $two);
+        $this->assertInstanceOf(Car::class, $one);
+        $this->assertInstanceOf(Car::class, $two);
+        $this->assertInstanceOf(EngineMarkOne::class, $one->getEngine());
+        $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
+    }
+
+    public function testCreateWithCallableValuesInConstructor(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container);
+
+        $object = $factory->create([
+            'class' => TwoParametersDependency::class,
+            '__construct()' => [
+                'firstParameter' => 'date',
+                'secondParameter' => 'time',
+            ]
+        ],);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('date', $object->getFirstParameter());
         $this->assertSame('time', $object->getSecondParameter());
     }
 
-    public function testCreateWithInvalidParams(): void
+    public function testCreateWithInvalidParametersInCosntructor(): void
     {
         $container = new SimpleContainer();
         $factory = new Factory($container);
 
         $this->expectException(InvalidConfigException::class);
 
-        $factory->create(TwoParametersDependency::class, ['firstParam' => 'param1', 1 => 'param2']);
+        $factory->create([
+            'class' => TwoParametersDependency::class,
+            '__construct()' => ['firstParam' => 'param1', 1 => 'param2']
+        ]);
     }
 
-    public function testCreateWithRandomOrderedParams(): void
+    public function testCreateWithRandomOrderedParametersInConstructor(): void
     {
         $container = new SimpleContainer();
         $factory = new Factory($container);
 
-        $object = $factory->create(TwoParametersDependency::class, [1 => 'param2', 0 => 'param1']);
+        $object = $factory->create([
+            'class' => TwoParametersDependency::class,
+            '__construct()' => [1 => 'param2', 0 => 'param1']
+        ]);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('param1', $object->getFirstParameter());
@@ -365,8 +383,10 @@ final class FactoryTest extends TestCase
                 'Hello World',
                 '2.0',
                 [ArrayDefinition::CONSTRUCTOR => ['name' => 'Hello World', 'version' => '1.0']],
-                Phone::class,
-                ['version' => '2.0'],
+                [
+                    ArrayDefinition::CLASS_NAME => Phone::class,
+                    ArrayDefinition::CONSTRUCTOR => ['version' => '2.0'],
+                ],
             ],
             [
                 'Table',
@@ -374,9 +394,8 @@ final class FactoryTest extends TestCase
                 Phone::class,
                 [
                     ArrayDefinition::CLASS_NAME => Phone::class,
-                    ArrayDefinition::CONSTRUCTOR => ['name' => 'Table'],
+                    ArrayDefinition::CONSTRUCTOR => ['name' => 'Table', 'version' => '1.0'],
                 ],
-                ['version' => '1.0'],
             ],
         ];
     }
@@ -389,13 +408,12 @@ final class FactoryTest extends TestCase
         $expectedVersion,
         $factoryDefinition,
         $createDefinition,
-        $constructorArguments
     ): void {
         $factory = new Factory(null, [
             Phone::class => $factoryDefinition,
         ]);
 
-        $phone = $factory->create($createDefinition, $constructorArguments);
+        $phone = $factory->create($createDefinition);
 
         $this->assertInstanceOf(Phone::class, $phone);
         $this->assertSame($expectedName, $phone->getName());
@@ -416,7 +434,10 @@ final class FactoryTest extends TestCase
      */
     public function testCreateObjectWithVariadicClosuresInConstructor(array $closures, string $expectedConcat): void
     {
-        $object = (new Factory())->create(VariadicClosures::class, $closures);
+        $object = (new Factory())->create([
+            'class' => VariadicClosures::class,
+            '__construct()' => $closures
+        ]);
 
         $concat = '';
         foreach ($object->getClosures() as $c) {
@@ -471,17 +492,17 @@ final class FactoryTest extends TestCase
         $factory->create(42);
     }
 
-    public function testDefinitionInParameters(): void
+    public function testDefinitionInConstructor(): void
     {
         $factory = new Factory();
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches('/^Only references are allowed in parameters, a definition object was provided:/');
-        $factory->create(
-            Car::class,
-            [
+        $factory->create([
+            'class' => Car::class,
+            '__construct()' => [
                 new ValueDefinition(new EngineMarkTwo(), 'object'),
-            ]
-        );
+            ],
+        ]);
     }
 }

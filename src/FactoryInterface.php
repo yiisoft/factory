@@ -16,7 +16,7 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 interface FactoryInterface extends ContainerInterface
 {
     /**
-     * Creates a new object using the given configuration and constructor arguments.
+     * Creates a new object using the given configuration.
      *
      * You may view this method as an enhanced version of the `new` operator.
      * The method supports creating an object based on a class name, a configuration array or
@@ -38,9 +38,6 @@ interface FactoryInterface extends ContainerInterface
      *     'setPassword()' => [''],
      *     'setCharset()' => ['utf8'],
      * ]);
-     *
-     * // create an object with two constructor arguments
-     * $object = $factory->create('MyClass', [$param1, $param2]);
      * ```
      *
      * Using [[Container|dependency injection container]], this method can also identify
@@ -55,11 +52,10 @@ interface FactoryInterface extends ContainerInterface
      * - a PHP callable: either an anonymous function or an array representing
      *   a class method (`[$class or $object, $method]`).
      *   The callable should return a new instance of the object being created.
-     * @param array $constructorArguments The constructor arguments.
      *
      *@throws InvalidConfigException if the configuration is invalid.
      *
      * @return mixed|object the created object
      */
-    public function create($config, array $constructorArguments = []);
+    public function create($config);
 }

@@ -26,7 +26,10 @@ final class FactoryTest extends TestCase
      */
     public function testCreateObjectWithVariadicUnionTypeInConstructor(array $items): void
     {
-        $object = (new Factory())->create(VariadicUnionType::class, $items);
+        $object = (new Factory())->create([
+            'class' => VariadicUnionType::class,
+            '__construct()' => $items
+        ]);
 
         $this->assertSame($items, $object->getItems());
     }
