@@ -11,7 +11,6 @@ use Yiisoft\Factory\Definition\Normalizer;
 use Yiisoft\Factory\Definition\DefinitionValidator;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-use Yiisoft\Injector\Injector;
 
 class Factory implements FactoryInterface
 {
