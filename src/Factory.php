@@ -180,7 +180,6 @@ class Factory implements FactoryInterface
 
         $this->setMultiple([
             ContainerInterface::class => $container,
-            Injector::class => new Injector($container),
         ]);
     }
 }
