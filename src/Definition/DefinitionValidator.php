@@ -43,7 +43,7 @@ final class DefinitionValidator
             return;
         }
 
-        throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
+        throw new InvalidConfigException('Invalid definition: ' . var_export($definition, true));
     }
 
     /**

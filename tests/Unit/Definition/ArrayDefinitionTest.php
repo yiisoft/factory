@@ -184,6 +184,7 @@ final class ArrayDefinitionTest extends TestCase
             ArrayDefinition::CLASS_NAME => Phone::class,
             ArrayDefinition::CONSTRUCTOR => ['name' => 'Retro', 'version' => '1.0'],
             '$codeName' => 'a',
+            'setColors()' => ['red', 'green'],
         ]);
         $b = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -191,6 +192,7 @@ final class ArrayDefinitionTest extends TestCase
             '$dev' => true,
             '$codeName' => 'b',
             'setId()' => [42],
+            'setColors()' => ['yellow'],
         ]);
         $c = $a->merge($b);
 
@@ -199,6 +201,7 @@ final class ArrayDefinitionTest extends TestCase
         $this->assertSame(
             [
                 '$codeName' => [ArrayDefinition::TYPE_PROPERTY, 'codeName', 'b'],
+                'setColors()' => [ArrayDefinition::TYPE_METHOD, 'setColors', ['yellow', 'green']],
                 '$dev' => [ArrayDefinition::TYPE_PROPERTY, 'dev', true],
                 'setId()' => [ArrayDefinition::TYPE_METHOD, 'setId', [42]],
             ],

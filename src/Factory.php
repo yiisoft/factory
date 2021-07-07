@@ -51,26 +51,25 @@ class Factory implements FactoryInterface
     ) {
         $this->container = $container;
         $this->validate = $validate;
+        $this->setDefaultDefinitions();
         $this->setMultiple($definitions);
     }
 
-    public function create($config, array $constructorArguments = [])
+    public function create($config)
     {
         if ($this->validate) {
             DefinitionValidator::validate($config);
         }
 
         $definition = Normalizer::normalize($config);
-        if ($definition instanceof ArrayDefinition) {
-            if (!empty($constructorArguments)) {
-                $definition->mergeConstructorArguments($constructorArguments);
-            }
-            if ($this->has($definition->getClass())) {
-                $definition = $this->merge(
-                    $this->getDefinition($definition->getClass()),
-                    $definition
-                );
-            }
+        if (
+            ($definition instanceof ArrayDefinition) &&
+            $this->has($definition->getClass())
+        ) {
+            $definition = $this->merge(
+                $this->getDefinition($definition->getClass()),
+                $definition
+            );
         }
 
         if ($definition instanceof ArrayDefinition) {
@@ -169,5 +168,15 @@ class Factory implements FactoryInterface
     public function has($id): bool
     {
         return isset($this->definitions[$id]);
+    }
+
+    private function setDefaultDefinitions(): void
+    {
+        /** @var ContainerInterface */
+        $container = $this->container ?? $this;
+
+        $this->setMultiple([
+            ContainerInterface::class => $container,
+        ]);
     }
 }

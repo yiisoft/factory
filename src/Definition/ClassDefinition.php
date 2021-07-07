@@ -8,7 +8,9 @@ use Psr\Container\ContainerInterface;
 use Throwable;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 
+use function get_class;
 use function gettype;
+use function is_object;
 
 /**
  * Reference points to a class name in the container
@@ -35,6 +37,9 @@ class ClassDefinition implements DefinitionInterface
         return $this->class;
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public function resolve(ContainerInterface $container)
     {
         if ($this->isUnionType()) {
@@ -52,7 +57,7 @@ class ClassDefinition implements DefinitionInterface
         }
 
         if (!$result instanceof $this->class) {
-            $actualType = gettype($this->class);
+            $actualType = $this->getValueType($result);
             throw new InvalidConfigException(
                 "Container returned incorrect type \"$actualType\" for service \"$this->class\"."
             );
@@ -74,7 +79,7 @@ class ClassDefinition implements DefinitionInterface
                 /** @var mixed */
                 $result = $container->get($type);
                 if (!$result instanceof $type) {
-                    $actualType = gettype($this->class);
+                    $actualType = $this->getValueType($result);
                     throw new InvalidConfigException(
                         "Container returned incorrect type \"$actualType\" for service \"$this->class\"."
                     );
@@ -95,5 +100,13 @@ class ClassDefinition implements DefinitionInterface
     private function isUnionType(): bool
     {
         return strpos($this->class, '|') !== false;
+    }
+
+    /**
+     * @param mixed $value
+     */
+    private function getValueType($value): string
+    {
+        return is_object($value) ? get_class($value) : gettype($value);
     }
 }
