@@ -14,6 +14,9 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
+use Yiisoft\Factory\Tests\Support\ColorPink;
+use Yiisoft\Factory\Tests\Support\ConstructorWithoutTypeHint;
+use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
@@ -526,5 +529,20 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $factory->set('test', 42);
+    }
+
+    public function testDefinitionAsConstructorArgument(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessageMatches(
+            '~^Only references are allowed in parameters, a definition object was provided: ' .
+            'Yiisoft\\\\Factory\\\\Definition\\\\ArrayDefinition::~'
+        );
+        $factory->create([
+            'class' => Cube::class,
+            '__construct()' => [ArrayDefinition::fromConfig(['class' => ColorPink::class])]
+        ]);
     }
 }
