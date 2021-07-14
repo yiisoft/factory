@@ -519,4 +519,12 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
         $this->assertInstanceOf(GearBox::class, $factory->create('object2'));
     }
+
+    public function testSetInvalidDefinition(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $factory->set('test', 42);
+    }
 }
