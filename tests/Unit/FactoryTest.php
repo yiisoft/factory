@@ -17,6 +17,7 @@ use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
+use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\Recorder;
@@ -504,5 +505,18 @@ final class FactoryTest extends TestCase
                 new ValueDefinition(new EngineMarkTwo(), 'object'),
             ],
         ]);
+    }
+
+    public function testSetMultiple(): void
+    {
+        $factory = new Factory();
+
+        $factory->setMultiple([
+            'object1' => [$this, 'createStdClass'],
+            'object2' => GearBox::class,
+        ]);
+
+        $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
+        $this->assertInstanceOf(GearBox::class, $factory->create('object2'));
     }
 }
