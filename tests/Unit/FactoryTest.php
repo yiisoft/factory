@@ -15,7 +15,6 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\ColorPink;
-use Yiisoft\Factory\Tests\Support\ConstructorWithoutTypeHint;
 use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
@@ -542,7 +541,7 @@ final class FactoryTest extends TestCase
         );
         $factory->create([
             'class' => Cube::class,
-            '__construct()' => [ArrayDefinition::fromConfig(['class' => ColorPink::class])]
+            '__construct()' => [ArrayDefinition::fromConfig(['class' => ColorPink::class])],
         ]);
     }
 
