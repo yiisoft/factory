@@ -97,6 +97,6 @@ class Normalizer
             return new ValueDefinition($definition);
         }
 
-        throw new InvalidConfigException('Invalid definition:' . var_export($definition, true));
+        throw new InvalidConfigException('Invalid definition: ' . var_export($definition, true));
     }
 }

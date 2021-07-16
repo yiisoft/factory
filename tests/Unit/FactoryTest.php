@@ -545,4 +545,13 @@ final class FactoryTest extends TestCase
             '__construct()' => [ArrayDefinition::fromConfig(['class' => ColorPink::class])]
         ]);
     }
+
+    public function testCreateWithInvalidDefinitionWithoutValidation(): void
+    {
+        $factory = new Factory(null, [], false);
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: 42');
+        $factory->create(42);
+    }
 }
