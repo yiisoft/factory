@@ -11,6 +11,7 @@ use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -504,5 +505,13 @@ final class FactoryTest extends TestCase
                 new ValueDefinition(new EngineMarkTwo(), 'object'),
             ],
         ]);
+    }
+
+    public function testCreateNonExistsClass(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(NotFoundException::class);
+        $factory->create('NonExistsClass');
     }
 }

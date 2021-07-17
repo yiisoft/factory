@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 use function array_key_exists;
@@ -38,6 +39,7 @@ final class ArrayDefinitionBuilder
     }
 
     /**
+     * @throws NotFoundException
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
@@ -145,6 +147,9 @@ final class ArrayDefinitionBuilder
      *
      * @return DefinitionInterface[] The dependencies of the specified class.
      * @psalm-return array<string, DefinitionInterface>
+     *
+     * @throws NotFoundException
+     * @throws NotInstantiableException
      */
     private function getDependencies(string $class): array
     {
