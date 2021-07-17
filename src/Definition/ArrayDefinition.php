@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Definition;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 use function count;
@@ -114,6 +115,7 @@ class ArrayDefinition implements DefinitionInterface
     }
 
     /**
+     * @throws NotFoundException
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */

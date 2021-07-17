@@ -10,6 +10,7 @@ use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\Normalizer;
 use Yiisoft\Factory\Definition\DefinitionValidator;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 class Factory implements FactoryInterface
@@ -55,6 +56,15 @@ class Factory implements FactoryInterface
         $this->setMultiple($definitions);
     }
 
+    /**
+     * @param array|callable|string $config
+     *
+     * @throws InvalidConfigException
+     * @throws NotFoundException
+     * @throws NotInstantiableException
+     *
+     * @return mixed|object
+     */
     public function create($config)
     {
         if ($this->validate) {
@@ -87,6 +97,8 @@ class Factory implements FactoryInterface
     /**
      * @param string $id
      *
+     * @throws InvalidConfigException
+     * @throws NotFoundException
      * @throws NotInstantiableException
      *
      * @return mixed|object

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definition;
 
 use ReflectionClass;
+use ReflectionException;
 use ReflectionFunctionAbstract;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
+use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
@@ -37,15 +39,24 @@ final class DefinitionExtractor
     /**
      * @psalm-param class-string $class
      *
+     * @throws NotFoundException
+     * @throws NotInstantiableException
+     *
      * @return DefinitionInterface[]
      * @psalm-return array<string, DefinitionInterface>
      */
     public function fromClassName(string $class): array
     {
-        $reflectionClass = new ReflectionClass($class);
+        try {
+            $reflectionClass = new ReflectionClass($class);
+        } catch (ReflectionException $e) {
+            throw new NotFoundException($class);
+        }
+
         if (!$reflectionClass->isInstantiable()) {
             throw new NotInstantiableException($class);
         }
+
         $constructor = $reflectionClass->getConstructor();
         return $constructor === null ? [] : $this->fromFunction($constructor);
     }
