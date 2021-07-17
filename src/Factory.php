@@ -121,7 +121,7 @@ class Factory implements FactoryInterface
     /**
      * @throws InvalidConfigException
      */
-    public function getDefinition(string $id): DefinitionInterface
+    private function getDefinition(string $id): DefinitionInterface
     {
         if (!isset($this->definitionInstances[$id])) {
             if (isset($this->definitions[$id])) {

@@ -15,9 +15,13 @@ use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
+use Yiisoft\Factory\Tests\Support\Firefighter;
+use Yiisoft\Factory\Tests\Support\ColorPink;
+use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
+use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\Recorder;
@@ -505,6 +509,71 @@ final class FactoryTest extends TestCase
                 new ValueDefinition(new EngineMarkTwo(), 'object'),
             ],
         ]);
+    }
+
+    public function testSetMultiple(): void
+    {
+        $factory = new Factory();
+
+        $factory->setMultiple([
+            'object1' => [$this, 'createStdClass'],
+            'object2' => GearBox::class,
+        ]);
+
+        $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
+        $this->assertInstanceOf(GearBox::class, $factory->create('object2'));
+    }
+
+    public function testSetInvalidDefinition(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $factory->set('test', 42);
+    }
+
+    public function testDefinitionAsConstructorArgument(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessageMatches(
+            '~^Only references are allowed in parameters, a definition object was provided: ' .
+            'Yiisoft\\\\Factory\\\\Definition\\\\ArrayDefinition::~'
+        );
+        $factory->create([
+            'class' => Cube::class,
+            '__construct()' => [ArrayDefinition::fromConfig(['class' => ColorPink::class])],
+        ]);
+    }
+
+    public function testCreateWithInvalidDefinitionWithValidation(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Invalid definition: invalid key in array definition. Allow only string keys, got 0.'
+        );
+        $factory->create([stdClass::class]);
+    }
+
+    public function testCreateWithInvalidDefinitionWithoutValidation(): void
+    {
+        $factory = new Factory(null, [], false);
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Invalid definition: 42');
+        $factory->create(42);
+    }
+
+    public function testCreateObjectWithNullableStringConstructorArgument(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(Firefighter::class);
+
+        $this->assertNull($object->getName());
     }
 
     public function testCreateNonExistsClass(): void

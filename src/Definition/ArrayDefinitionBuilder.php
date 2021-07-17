@@ -111,6 +111,9 @@ final class ArrayDefinitionBuilder
         /** @psalm-var array<string, DefinitionInterface> $dependencies */
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private function isIntegerIndexed(array $arguments): bool
     {
         $hasStringIndex = false;

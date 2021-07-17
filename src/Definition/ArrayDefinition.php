@@ -106,11 +106,6 @@ class ArrayDefinition implements DefinitionInterface
         return $this->constructorArguments;
     }
 
-    public function mergeConstructorArguments(array $arguments): void
-    {
-        $this->constructorArguments = $this->mergeArguments($this->constructorArguments, $arguments);
-    }
-
     /**
      * @psalm-return array<string, MethodOrPropertyItem>
      */
