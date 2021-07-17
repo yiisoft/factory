@@ -10,7 +10,6 @@ use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
-use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
