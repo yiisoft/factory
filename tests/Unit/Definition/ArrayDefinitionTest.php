@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\TestHelper;
-use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase
 {
