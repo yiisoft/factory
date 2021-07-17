@@ -13,18 +13,18 @@ use function is_object;
 use function is_string;
 
 /**
- * Normalizer definition from configuration to an instance of `DefinitionInterface`.
+ * Normalizer definition from configuration to an instance of {@see DefinitionInterface}.
  *
  * @psalm-import-type ArrayDefinitionConfig from ArrayDefinition
  */
 final class Normalizer
 {
     /**
-     * Normalize definition to an instance of `DefinitionInterface`.
+     * Normalize definition to an instance of {@see DefinitionInterface}.
      * Definition may be defined multiple ways:
      *  - class name,
      *  - string as reference to another class or alias,
-     *  - instance of `ReferenceInterface`,
+     *  - instance of {@see ReferenceInterface},
      *  - callable,
      *  - array,
      *  - ready object.
