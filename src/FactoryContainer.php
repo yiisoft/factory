@@ -163,7 +163,7 @@ final class FactoryContainer implements ContainerInterface
         return $this->definitionInstances[$id];
     }
 
-    private function canBeCreatedByFactory($id): bool
+    private function canBeCreatedByFactory(string $id): bool
     {
         return isset($this->definitions[$id]) || class_exists($id);
     }
