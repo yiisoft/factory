@@ -39,11 +39,11 @@ final class DefinitionExtractor
     /**
      * @psalm-param class-string $class
      *
-     * @return DefinitionInterface[]
-     * @psalm-return array<string, DefinitionInterface>
-     *
      * @throws NotFoundException
      * @throws NotInstantiableException
+     *
+     * @return DefinitionInterface[]
+     * @psalm-return array<string, DefinitionInterface>
      */
     public function fromClassName(string $class): array
     {
@@ -56,7 +56,7 @@ final class DefinitionExtractor
         if (!$reflectionClass->isInstantiable()) {
             throw new NotInstantiableException($class);
         }
-        
+
         $constructor = $reflectionClass->getConstructor();
         return $constructor === null ? [] : $this->fromFunction($constructor);
     }

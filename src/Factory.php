@@ -59,11 +59,11 @@ class Factory implements FactoryInterface
     /**
      * @param array|callable|string $config
      *
-     * @return mixed|object
-     *
      * @throws InvalidConfigException
      * @throws NotFoundException
      * @throws NotInstantiableException
+     *
+     * @return mixed|object
      */
     public function create($config)
     {

@@ -144,12 +144,11 @@ final class ArrayDefinitionBuilder
      * @param class-string $class Class name or interface name.
      *
      * @throws NotInstantiableException
+     * @throws NotFoundException
+     * @throws NotInstantiableException
      *
      * @return DefinitionInterface[] The dependencies of the specified class.
      * @psalm-return array<string, DefinitionInterface>
-     *
-     * @throws NotFoundException
-     * @throws NotInstantiableException
      */
     private function getDependencies(string $class): array
     {
