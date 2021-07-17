@@ -18,4 +18,3 @@ final class Firefighter
         return $this->name;
     }
 }
-
