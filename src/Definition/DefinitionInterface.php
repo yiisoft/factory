@@ -7,7 +7,7 @@ namespace Yiisoft\Factory\Definition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-use Yiisoft\Factory\FactoryContainer;
+use Yiisoft\Factory\ResolverContainerInterface;
 
 /**
  * Interface DefinitionInterface
@@ -15,7 +15,7 @@ use Yiisoft\Factory\FactoryContainer;
 interface DefinitionInterface
 {
     /**
-     * @param FactoryContainer $container
+     * @param ResolverContainerInterface $container
      *
      * @throws InvalidConfigException
      * @throws NotFoundException
@@ -23,5 +23,5 @@ interface DefinitionInterface
      *
      * @return mixed|object
      */
-    public function resolve(FactoryContainer $container);
+    public function resolve(ResolverContainerInterface $container);
 }

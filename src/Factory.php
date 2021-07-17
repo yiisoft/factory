@@ -12,7 +12,7 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
 
 class Factory implements FactoryInterface
 {
-    private FactoryContainer $container;
+    private ResolverContainer $container;
 
     /**
      * @var bool $validate Validate definitions when set
@@ -31,7 +31,7 @@ class Factory implements FactoryInterface
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->container = new FactoryContainer($this, $container);
+        $this->container = new ResolverContainer($this, $container);
         $this->validate = $validate;
         $this->setDefaultDefinitions();
         $this->setMultiple($definitions);

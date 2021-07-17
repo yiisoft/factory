@@ -33,10 +33,10 @@ final class CallableDefinitionTest extends TestCase
                 throw new NotFoundException($id);
             }
         );
-        $factoryContainer = TestHelper::createFactoryContainer($container);
+        $resolverContainer = TestHelper::createResolverContainer($container);
 
         /** @var Car $car */
-        $car = $definition->resolve($factoryContainer);
+        $car = $definition->resolve($resolverContainer);
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertInstanceOf(ColorPink::class, $car->getColor());

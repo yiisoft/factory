@@ -20,7 +20,7 @@ use function is_string;
 /**
  * @internal
  */
-final class FactoryContainer implements ContainerInterface
+final class ResolverContainer implements ResolverContainerInterface
 {
     private Factory $factory;
     private ?ContainerInterface $container;
@@ -81,12 +81,17 @@ final class FactoryContainer implements ContainerInterface
      *
      * @return mixed|object
      */
-    public function getFromFactoryIfHasDefinition($id)
+    public function getForReference(string $id)
     {
         if (isset($this->definitions[$id])) {
             return $this->getFromFactory($id);
         }
         return $this->get($id);
+    }
+
+    public function cloneObjectOnResolve(): bool
+    {
+        return $this->container === null;
     }
 
     /**
@@ -95,11 +100,6 @@ final class FactoryContainer implements ContainerInterface
     public function setFactoryDefinition(string $id, $definition): void
     {
         $this->definitions[$id] = $definition;
-    }
-
-    public function isUsedFactory(): bool
-    {
-        return $this->container === null;
     }
 
     /**

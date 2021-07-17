@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definition;
 
 use Yiisoft\Factory\Exception\InvalidConfigException;
-
-use Yiisoft\Factory\FactoryContainer;
+use Yiisoft\Factory\ResolverContainerInterface;
 
 use function is_array;
 
@@ -26,7 +25,7 @@ final class DefinitionResolver
      *
      * @psalm-return array<string,mixed>
      */
-    public static function resolveArray(FactoryContainer $container, array $dependencies): array
+    public static function resolveArray(ResolverContainerInterface $container, array $dependencies): array
     {
         $result = [];
         /** @var mixed $definition */
@@ -49,7 +48,7 @@ final class DefinitionResolver
      *
      * @return mixed
      */
-    public static function resolve(FactoryContainer $container, $definition)
+    public static function resolve(ResolverContainerInterface $container, $definition)
     {
         if ($definition instanceof DefinitionInterface) {
             /** @var mixed $definition */

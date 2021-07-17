@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definition;
 
 use ReflectionParameter;
-use Yiisoft\Factory\FactoryContainer;
+use Yiisoft\Factory\ResolverContainerInterface;
 
 use function is_object;
 
@@ -43,9 +43,9 @@ class ParameterDefinition implements DefinitionInterface
         return $this->hasValue;
     }
 
-    public function resolve(FactoryContainer $container)
+    public function resolve(ResolverContainerInterface $container)
     {
-        if ($container->isUsedFactory() && is_object($this->value)) {
+        if ($container->cloneObjectOnResolve() && is_object($this->value)) {
             return clone $this->value;
         }
 

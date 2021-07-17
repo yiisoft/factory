@@ -15,7 +15,7 @@ final class ParameterDefinitionTest extends TestCase
 {
     public function testResolveObjectWithFactory(): void
     {
-        $factoryContainer = TestHelper::createFactoryContainer();
+        $resolverContainer = TestHelper::createResolverContainer();
 
         $engine = new EngineMarkTwo();
 
@@ -25,7 +25,7 @@ final class ParameterDefinitionTest extends TestCase
         $definition = new ParameterDefinition($parameter);
         $definition->setValue($engine);
 
-        $value = $definition->resolve($factoryContainer);
+        $value = $definition->resolve($resolverContainer);
 
         $this->assertInstanceOf(EngineMarkTwo::class, $value);
         $this->assertNotSame($value, $engine);
