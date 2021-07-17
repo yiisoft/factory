@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definition;
 
 use ReflectionMethod;
-use Yiisoft\Factory\ResolverContainer;
 use Yiisoft\Factory\ResolverContainerInterface;
 use Yiisoft\Injector\Injector;
 
