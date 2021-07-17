@@ -14,6 +14,7 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
+use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
@@ -552,5 +553,14 @@ final class FactoryTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: 42');
         $factory->create(42);
+    }
+
+    public function testCreateObjectWithNullableStringConstructorArgument(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(Firefighter::class);
+
+        $this->assertNull($object->getName());
     }
 }
