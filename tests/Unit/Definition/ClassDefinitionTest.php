@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ClassDefinitionTest extends TestCase
@@ -24,11 +25,12 @@ final class ClassDefinitionTest extends TestCase
         $definition = new ClassDefinition(stdClass::class, true);
 
         $container = new SimpleContainer([stdClass::class => 42]);
+        $factoryContainer = TestHelper::createFactoryContainer($container);
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'Container returned incorrect type "integer" for service "' . stdClass::class . '".'
         );
-        $definition->resolve($container);
+        $definition->resolve($factoryContainer);
     }
 }

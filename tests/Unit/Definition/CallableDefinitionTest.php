@@ -10,6 +10,7 @@ use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\CarFactory;
 use Yiisoft\Factory\Tests\Support\ColorInterface;
 use Yiisoft\Factory\Tests\Support\ColorPink;
+use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -32,9 +33,10 @@ final class CallableDefinitionTest extends TestCase
                 throw new NotFoundException($id);
             }
         );
+        $factoryContainer = TestHelper::createFactoryContainer($container);
 
         /** @var Car $car */
-        $car = $definition->resolve($container);
+        $car = $definition->resolve($factoryContainer);
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertInstanceOf(ColorPink::class, $car->getColor());

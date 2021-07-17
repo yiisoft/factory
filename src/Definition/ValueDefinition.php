@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\FactoryInterface;
+use Yiisoft\Factory\FactoryContainer;
 
 use function is_object;
 
@@ -32,9 +31,9 @@ class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(FactoryContainer $container)
     {
-        if ($container instanceof FactoryInterface && is_object($this->value)) {
+        if ($container->isUsedFactory() && is_object($this->value)) {
             return clone $this->value;
         }
 

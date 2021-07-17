@@ -7,13 +7,14 @@ namespace Yiisoft\Factory\Tests\Unit\Definition;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Tests\Support\Phone;
+use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ArrayDefinitionTest extends TestCase
 {
     public function testClass(): void
     {
-        $container = new SimpleContainer();
+        $factoryContainer = TestHelper::createFactoryContainer();
 
         $class = Phone::class;
 
@@ -21,7 +22,7 @@ final class ArrayDefinitionTest extends TestCase
             ArrayDefinition::CLASS_NAME => $class,
         ]);
 
-        self::assertInstanceOf(Phone::class, $definition->resolve($container));
+        self::assertInstanceOf(Phone::class, $definition->resolve($factoryContainer));
     }
 
     public function dataConstructor(): array
@@ -40,7 +41,7 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testConstructor(?string $name, ?string $version, array $constructorArguments): void
     {
-        $container = new SimpleContainer();
+        $factoryContainer = TestHelper::createFactoryContainer();
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -48,7 +49,7 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($container);
+        $phone = $definition->resolve($factoryContainer);
 
         self::assertSame($name, $phone->getName());
         self::assertSame($version, $phone->getVersion());
@@ -56,7 +57,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testConstructorWithVariadicAndIntKeys(): void
     {
-        $container = new SimpleContainer();
+        $factoryContainer = TestHelper::createFactoryContainer();
 
         $colors = ['red', 'green', 'blue'];
         $definition = ArrayDefinition::fromConfig([
@@ -71,7 +72,7 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($container);
+        $phone = $definition->resolve($factoryContainer);
 
         self::assertSame($colors, $phone->getColors());
     }
@@ -90,14 +91,14 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testSetProperties(bool $dev, ?string $codeName, array $setProperties): void
     {
-        $container = new SimpleContainer();
+        $factoryContainer = TestHelper::createFactoryContainer();
 
         $definition = ArrayDefinition::fromConfig(array_merge([
             ArrayDefinition::CLASS_NAME => Phone::class,
         ], $setProperties));
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($container);
+        $phone = $definition->resolve($factoryContainer);
 
         self::assertSame($dev, $phone->dev);
         self::assertSame($codeName, $phone->codeName);
@@ -140,7 +141,7 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testCallMethods(?string $id, array $apps, array $callMethods): void
     {
-        $container = new SimpleContainer();
+        $factoryContainer = TestHelper::createFactoryContainer();
 
         $definition = ArrayDefinition::fromConfig(array_merge(
             [
@@ -150,7 +151,7 @@ final class ArrayDefinitionTest extends TestCase
         ));
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($container);
+        $phone = $definition->resolve($factoryContainer);
 
         self::assertSame($id, $phone->getId());
         self::assertSame($apps, $phone->getApps());
@@ -158,7 +159,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testCallFluentMethod(): void
     {
-        $container = new SimpleContainer();
+        $factoryContainer = TestHelper::createFactoryContainer();
 
         $author = 'Sergei';
         $country = 'Russia';
@@ -172,7 +173,7 @@ final class ArrayDefinitionTest extends TestCase
         );
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($container);
+        $phone = $definition->resolve($factoryContainer);
 
         self::assertSame($author, $phone->getAuthor());
         self::assertSame($country, $phone->getCountry());

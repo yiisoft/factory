@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
+use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\Exception\NotFoundException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\FactoryContainer;
 
 /**
  * Interface DefinitionInterface
- *
- * @package yii\di\contracts
  */
 interface DefinitionInterface
 {
     /**
-     * @param ContainerInterface $container
+     * @param FactoryContainer $container
+     *
+     * @throws InvalidConfigException
+     * @throws NotFoundException
+     * @throws NotInstantiableException
      *
      * @return mixed|object
      */
-    public function resolve(ContainerInterface $container);
+    public function resolve(FactoryContainer $container);
 }

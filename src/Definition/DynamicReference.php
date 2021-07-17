@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+use Yiisoft\Factory\FactoryContainer;
 
 /**
  * Class DynamicReference allows us to define a dependency to a service not defined in the container.
@@ -50,7 +50,7 @@ class DynamicReference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(FactoryContainer $container)
     {
         return $this->definition->resolve($container);
     }

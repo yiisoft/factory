@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
+
+use Yiisoft\Factory\FactoryContainer;
 
 use function is_string;
 
@@ -46,8 +47,8 @@ class Reference implements ReferenceInterface
         return new self($id);
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(FactoryContainer $container)
     {
-        return $container->get($this->id);
+        return $container->getFromFactoryIfHasDefinition($this->id);
     }
 }

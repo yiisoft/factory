@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory;
 
-use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 
 /**
@@ -13,7 +12,7 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
  * but will fall back to manual instantiation
  * if the container cannot provide a required dependency.
  */
-interface FactoryInterface extends ContainerInterface
+interface FactoryInterface
 {
     /**
      * Creates a new object using the given configuration.
