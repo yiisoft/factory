@@ -33,8 +33,8 @@ final class Normalizer
      * @param string $class The class name of the object to be defined (optional). It is used in two cases.
      *  - The definition is a string, and class name equals to definition. Returned `ArrayDefinition` with defined
      *    class.
-     *  - The definition is a `ArrayDefinition` without class name. Class name will be added to `ArrayDefinition`,
-     *    which will be returned.
+     *  - The definition is an array without class name. Class name will be added to array and `ArrayDefinition`
+     *    will be returned.
      *
      * @throws InvalidConfigException If configuration is not valid.
      *
