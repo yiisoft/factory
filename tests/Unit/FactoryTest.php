@@ -547,6 +547,17 @@ final class FactoryTest extends TestCase
         ]);
     }
 
+    public function testCreateWithInvalidDefinitionWithValidation(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage(
+            'Invalid definition: invalid key in array definition. Allow only string keys, got 0.'
+        );
+        $factory->create([stdClass::class]);
+    }
+
     public function testCreateWithInvalidDefinitionWithoutValidation(): void
     {
         $factory = new Factory(null, [], false);
