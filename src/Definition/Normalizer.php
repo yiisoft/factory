@@ -13,50 +13,34 @@ use function is_object;
 use function is_string;
 
 /**
- * Class Definition represents a definition in a container
+ * Normalizer definition from configuration to an instance of `DefinitionInterface`.
  *
  * @psalm-import-type ArrayDefinitionConfig from ArrayDefinition
  */
-class Normalizer
+final class Normalizer
 {
     /**
-     * Definition may be defined multiple ways.
-     * Interface name as string:
+     * Normalize definition to an instance of `DefinitionInterface`.
+     * Definition may be defined multiple ways:
+     *  - class name,
+     *  - string as reference to another class or alias,
+     *  - instance of `ReferenceInterface`,
+     *  - callable,
+     *  - array,
+     *  - ready object.
      *
-     * ```php
-     * $container->set('interface_name', EngineInterface::class);
-     * ```
+     * @param mixed $definition The definition for normalization.
+     * @param string $class The class name of the object to be defined (optional). It is used in two cases.
+     *  - The definition is a string, and class name equals to definition. Returned `ArrayDefinition` with defined
+     *    class.
+     *  - The definition is a `ArrayDefinition` without class name. Class name will be added to `ArrayDefinition`,
+     *    which will be returned.
      *
-     * A closure:
+     * @throws InvalidConfigException If configuration is not valid.
      *
-     * ```php
-     * $container->set('closure', function($container) {
-     *     return new MyClass($container->get('db'));
-     * });
-     * ```
-     *
-     * A callable array:
-     *
-     * ```php
-     * $container->set('static_call', [MyClass::class, 'create']);
-     * ```
-     *
-     * A definition array:
-     *
-     * ```php
-     * $container->set('full_definition', [
-     *     'class' => EngineMarkOne::class,
-     *     '__construct()' => [42],
-     *     '$argName' => 'value',
-     *     'setX()' => [42],
-     * ]);
-     * ```
-     *
-     * @param mixed $definition
-     *
-     * @throws InvalidConfigException
+     * @return DefinitionInterface Normalized definition as an object.
      */
-    public static function normalize($definition, string $id = null): DefinitionInterface
+    public static function normalize($definition, string $class = null): DefinitionInterface
     {
         // Reference
         if ($definition instanceof ReferenceInterface) {
@@ -66,8 +50,8 @@ class Normalizer
         if (is_string($definition)) {
             // Current class
             if (
-                $id === $definition ||
-                ($id === null && class_exists($definition))
+                $class === $definition ||
+                ($class === null && class_exists($definition))
             ) {
                 /** @psalm-var class-string $definition */
                 return ArrayDefinition::fromPreparedData($definition);
@@ -86,7 +70,7 @@ class Normalizer
         if (is_array($definition)) {
             $config = $definition;
             if (!array_key_exists(ArrayDefinition::CLASS_NAME, $config)) {
-                $config[ArrayDefinition::CLASS_NAME] = $id;
+                $config[ArrayDefinition::CLASS_NAME] = $class;
             }
             /** @psalm-var ArrayDefinitionConfig $config */
             return ArrayDefinition::fromConfig($config);
