@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\DependencyResolverInterface;
 
 use function array_key_exists;
 use function call_user_func_array;
@@ -43,7 +43,7 @@ final class ArrayDefinitionBuilder
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
-    public function build(ContainerInterface $container, ArrayDefinition $definition): object
+    public function build(DependencyResolverInterface $container, ArrayDefinition $definition): object
     {
         $class = $definition->getClass();
         $dependencies = $this->getDependencies($class);

@@ -9,6 +9,7 @@ use stdClass;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\GearBox;
+use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class ClassDefinitionTest extends TestCase
@@ -25,12 +26,13 @@ final class ClassDefinitionTest extends TestCase
                 GearBox::class => 7,
             ]
         );
+        $dependencyResolver = TestHelper::createDependencyResolver($container);
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'Container returned incorrect type "integer" for service "' . $class . '".'
         );
-        $definition->resolve($container);
+        $definition->resolve($dependencyResolver);
     }
 
     public function testResolveOptionalUnionTypeWithIncorrectTypeInContainer(): void
@@ -45,8 +47,9 @@ final class ClassDefinitionTest extends TestCase
                 GearBox::class => 7,
             ]
         );
+        $dependencyResolver = TestHelper::createDependencyResolver($container);
 
-        $result = $definition->resolve($container);
+        $result = $definition->resolve($dependencyResolver);
 
         $this->assertNull($result);
     }

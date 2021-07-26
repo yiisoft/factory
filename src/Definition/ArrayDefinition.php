@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\DependencyResolverInterface;
 
 use function count;
 
@@ -119,7 +119,7 @@ class ArrayDefinition implements DefinitionInterface
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      */
-    public function resolve(ContainerInterface $container): object
+    public function resolve(DependencyResolverInterface $container): object
     {
         return ArrayDefinitionBuilder::getInstance()->build($container, $this);
     }

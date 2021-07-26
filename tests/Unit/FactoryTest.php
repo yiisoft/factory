@@ -12,7 +12,6 @@ use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
-use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\Firefighter;
@@ -62,8 +61,7 @@ final class FactoryTest extends TestCase
 
     public function testCanCreateByInterfaceAsReferenceDefinition(): void
     {
-        $container = new SimpleContainer();
-        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
+        $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
 
         $one = $factory->create(Reference::to(EngineInterface::class));
         $two = $factory->create(Reference::to(EngineInterface::class));
@@ -155,8 +153,8 @@ final class FactoryTest extends TestCase
             'engine' => EngineMarkOne::class,
         ]);
 
-        $one = $factory->get('engine');
-        $two = $factory->get('engine');
+        $one = $factory->create('engine');
+        $two = $factory->create('engine');
 
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
@@ -169,8 +167,8 @@ final class FactoryTest extends TestCase
         $factory = new Factory($container);
         $factory->set(EngineMarkOne::class, EngineMarkOne::class);
 
-        $one = $factory->get(EngineMarkOne::class);
-        $two = $factory->get(EngineMarkOne::class);
+        $one = $factory->create(EngineMarkOne::class);
+        $two = $factory->create(EngineMarkOne::class);
 
         $this->assertNotSame($one, $two);
         $this->assertInstanceOf(EngineMarkOne::class, $one);
@@ -184,11 +182,11 @@ final class FactoryTest extends TestCase
 
         $one = $factory->create([
             'class' => Car::class,
-            '__construct()' => [$factory->get(EngineMarkOne::class)],
+            '__construct()' => [$factory->create(EngineMarkOne::class)],
         ]);
         $two = $factory->create([
             'class' => Car::class,
-            '__construct()' => [$factory->get(EngineMarkTwo::class)],
+            '__construct()' => [$factory->create(EngineMarkTwo::class)],
         ]);
 
         $this->assertNotSame($one, $two);
@@ -205,11 +203,11 @@ final class FactoryTest extends TestCase
 
         $one = $factory->create([
             'class' => Car::class,
-            '__construct()' => ['engine' => $factory->get(EngineMarkOne::class)],
+            '__construct()' => ['engine' => $factory->create(EngineMarkOne::class)],
         ]);
         $two = $factory->create([
             'class' => Car::class,
-            '__construct()' => ['engine' => $factory->get(EngineMarkTwo::class)],
+            '__construct()' => ['engine' => $factory->create(EngineMarkTwo::class)],
         ]);
 
         $this->assertNotSame($one, $two);
@@ -376,7 +374,7 @@ final class FactoryTest extends TestCase
         ]);
 
         /** @var Recorder $object */
-        $object = $factory->get('recorder');
+        $object = $factory->create('recorder');
 
         $this->assertEquals(['Call first()', 'Set @second', 'Call third()', 'Set @fourth'], $object->getEvents());
     }
@@ -453,12 +451,12 @@ final class FactoryTest extends TestCase
         $this->assertSame($expectedConcat, $concat);
     }
 
-    public function testGetWithIncorrectConfiguration(): void
+    public function testCreateWithInvalidFactoryDefinitionWithoutValidation(): void
     {
         $factory = new Factory(null, ['x' => 42], false);
 
-        $this->expectException(NotInstantiableException::class);
-        $factory->get('x');
+        $this->expectException(InvalidConfigException::class);
+        $factory->create('x');
     }
 
     public function testSelfTypeDependency(): void
@@ -582,5 +580,27 @@ final class FactoryTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         $factory->create('NonExistsClass');
+    }
+
+    public function testContainerInterfaceWithFactory(): void
+    {
+        $factory = new Factory(null, ['x' => new stdClass()]);
+
+        $container = $factory->create(ContainerInterface::class);
+
+        $this->assertTrue($container->has('x'));
+        $this->assertFalse($container->has('y'));
+    }
+
+    public function testContainerInterfaceWithContainer(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer(['x' => new stdClass()])
+        );
+
+        $container = $factory->create(ContainerInterface::class);
+
+        $this->assertTrue($container->has('x'));
+        $this->assertFalse($container->has('y'));
     }
 }

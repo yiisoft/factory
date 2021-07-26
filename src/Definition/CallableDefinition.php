@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Psr\Container\ContainerInterface;
 use ReflectionMethod;
+use Yiisoft\Factory\DependencyResolverInterface;
 use Yiisoft\Injector\Injector;
 
 use function is_array;
@@ -29,7 +29,7 @@ class CallableDefinition implements DefinitionInterface
         $this->method = $method;
     }
 
-    public function resolve(ContainerInterface $container)
+    public function resolve(DependencyResolverInterface $container)
     {
         $callable = $this->prepareCallable($this->method, $container);
 
@@ -42,7 +42,7 @@ class CallableDefinition implements DefinitionInterface
      *
      * @psalm-param callable|array{0:class-string,1:string} $callable
      */
-    private function prepareCallable($callable, ContainerInterface $container): callable
+    private function prepareCallable($callable, DependencyResolverInterface $container): callable
     {
         if (is_array($callable) && !is_object($callable[0])) {
             $reflection = new ReflectionMethod($callable[0], $callable[1]);
