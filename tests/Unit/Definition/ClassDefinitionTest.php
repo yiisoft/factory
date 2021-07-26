@@ -25,12 +25,12 @@ final class ClassDefinitionTest extends TestCase
         $definition = new ClassDefinition(stdClass::class, true);
 
         $container = new SimpleContainer([stdClass::class => 42]);
-        $resolverContainer = TestHelper::createResolverContainer($container);
+        $dependencyResolver = TestHelper::createDependencyResolver($container);
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'Container returned incorrect type "integer" for service "' . stdClass::class . '".'
         );
-        $definition->resolve($resolverContainer);
+        $definition->resolve($dependencyResolver);
     }
 }

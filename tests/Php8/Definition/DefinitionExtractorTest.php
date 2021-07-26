@@ -16,13 +16,13 @@ class DefinitionExtractorTest extends TestCase
     public function testResolveCarConstructor(): void
     {
         $extractor = DefinitionExtractor::getInstance();
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $dependencies = $extractor->fromClassName(UnionCar::class);
 
         $this->assertCount(1, $dependencies);
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
-        $resolved = $dependencies['engine']->resolve($resolverContainer);
+        $resolved = $dependencies['engine']->resolve($dependencyResolver);
         $this->assertInstanceOf(EngineMarkOne::class, $resolved);
     }
 }

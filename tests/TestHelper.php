@@ -9,7 +9,7 @@ use Yiisoft\Factory\DependencyResolver;
 
 final class TestHelper
 {
-    public static function createResolverContainer(
+    public static function createDependencyResolver(
         ?ContainerInterface $container = null
     ): DependencyResolver {
         return new DependencyResolver(

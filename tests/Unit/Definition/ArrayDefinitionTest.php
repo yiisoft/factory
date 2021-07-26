@@ -13,7 +13,7 @@ final class ArrayDefinitionTest extends TestCase
 {
     public function testClass(): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $class = Phone::class;
 
@@ -21,7 +21,7 @@ final class ArrayDefinitionTest extends TestCase
             ArrayDefinition::CLASS_NAME => $class,
         ]);
 
-        self::assertInstanceOf(Phone::class, $definition->resolve($resolverContainer));
+        self::assertInstanceOf(Phone::class, $definition->resolve($dependencyResolver));
     }
 
     public function dataConstructor(): array
@@ -40,7 +40,7 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testConstructor(?string $name, ?string $version, array $constructorArguments): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => Phone::class,
@@ -48,7 +48,7 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($resolverContainer);
+        $phone = $definition->resolve($dependencyResolver);
 
         self::assertSame($name, $phone->getName());
         self::assertSame($version, $phone->getVersion());
@@ -56,7 +56,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testConstructorWithVariadicAndIntKeys(): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $colors = ['red', 'green', 'blue'];
         $definition = ArrayDefinition::fromConfig([
@@ -71,7 +71,7 @@ final class ArrayDefinitionTest extends TestCase
         ]);
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($resolverContainer);
+        $phone = $definition->resolve($dependencyResolver);
 
         self::assertSame($colors, $phone->getColors());
     }
@@ -90,14 +90,14 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testSetProperties(bool $dev, ?string $codeName, array $setProperties): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $definition = ArrayDefinition::fromConfig(array_merge([
             ArrayDefinition::CLASS_NAME => Phone::class,
         ], $setProperties));
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($resolverContainer);
+        $phone = $definition->resolve($dependencyResolver);
 
         self::assertSame($dev, $phone->dev);
         self::assertSame($codeName, $phone->codeName);
@@ -140,7 +140,7 @@ final class ArrayDefinitionTest extends TestCase
      */
     public function testCallMethods(?string $id, array $apps, array $callMethods): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $definition = ArrayDefinition::fromConfig(array_merge(
             [
@@ -150,7 +150,7 @@ final class ArrayDefinitionTest extends TestCase
         ));
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($resolverContainer);
+        $phone = $definition->resolve($dependencyResolver);
 
         self::assertSame($id, $phone->getId());
         self::assertSame($apps, $phone->getApps());
@@ -158,7 +158,7 @@ final class ArrayDefinitionTest extends TestCase
 
     public function testCallFluentMethod(): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $author = 'Sergei';
         $country = 'Russia';
@@ -172,7 +172,7 @@ final class ArrayDefinitionTest extends TestCase
         );
 
         /** @var Phone $phone */
-        $phone = $definition->resolve($resolverContainer);
+        $phone = $definition->resolve($dependencyResolver);
 
         self::assertSame($author, $phone->getAuthor());
         self::assertSame($country, $phone->getCountry());

@@ -26,13 +26,13 @@ final class ClassDefinitionTest extends TestCase
                 GearBox::class => 7,
             ]
         );
-        $resolverContainer = TestHelper::createResolverContainer($container);
+        $dependencyResolver = TestHelper::createDependencyResolver($container);
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
             'Container returned incorrect type "integer" for service "' . $class . '".'
         );
-        $definition->resolve($resolverContainer);
+        $definition->resolve($dependencyResolver);
     }
 
     public function testResolveOptionalUnionTypeWithIncorrectTypeInContainer(): void
@@ -47,9 +47,9 @@ final class ClassDefinitionTest extends TestCase
                 GearBox::class => 7,
             ]
         );
-        $resolverContainer = TestHelper::createResolverContainer($container);
+        $dependencyResolver = TestHelper::createDependencyResolver($container);
 
-        $result = $definition->resolve($resolverContainer);
+        $result = $definition->resolve($dependencyResolver);
 
         $this->assertNull($result);
     }

@@ -21,24 +21,24 @@ final class ValueDefinitionTest extends TestCase
 
     public function testDoNotCloneObjectFromContainer(): void
     {
-        $resolverContainer = TestHelper::createResolverContainer(new SimpleContainer());
+        $dependencyResolver = TestHelper::createDependencyResolver(new SimpleContainer());
 
         $object = new stdClass();
 
         $definition = new ValueDefinition($object, 'object');
-        $value = $definition->resolve($resolverContainer);
+        $value = $definition->resolve($dependencyResolver);
 
         $this->assertSame($object, $value);
     }
 
     public function testCloneObjectFromFactory(): void
     {
-        $resolverContainer = TestHelper::createResolverContainer();
+        $dependencyResolver = TestHelper::createDependencyResolver();
 
         $object = new stdClass();
 
         $definition = new ValueDefinition($object, 'object');
-        $value = $definition->resolve($resolverContainer);
+        $value = $definition->resolve($dependencyResolver);
 
         $this->assertNotSame($object, $value);
     }
