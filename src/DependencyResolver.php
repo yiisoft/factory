@@ -22,7 +22,6 @@ use function is_string;
  */
 final class DependencyResolver implements DependencyResolverInterface
 {
-    private Factory $factory;
     private ?ContainerInterface $container;
 
     /**
@@ -37,9 +36,8 @@ final class DependencyResolver implements DependencyResolverInterface
      */
     private array $definitionInstances = [];
 
-    public function __construct(Factory $factory, ?ContainerInterface $container)
+    public function __construct(?ContainerInterface $container)
     {
-        $this->factory = $factory;
         $this->container = $container;
     }
 
