@@ -31,7 +31,7 @@ class Factory implements FactoryInterface
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->container = new DependencyResolver($this, $container);
+        $this->container = new DependencyResolver($container);
         $this->validate = $validate;
         $this->setDefaultDefinitions();
         $this->setMultiple($definitions);
