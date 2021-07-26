@@ -6,15 +6,15 @@ namespace Yiisoft\Factory\Tests;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Factory;
-use Yiisoft\Factory\ResolverContainer;
+use Yiisoft\Factory\DependencyResolver;
 
 final class TestHelper
 {
     public static function createResolverContainer(
         ?ContainerInterface $container = null,
         ?Factory $factory = null
-    ): ResolverContainer {
-        return new ResolverContainer(
+    ): DependencyResolver {
+        return new DependencyResolver(
             $factory ?? new Factory(),
             $container
         );

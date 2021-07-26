@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
-use Yiisoft\Factory\ResolverContainerInterface;
+use Yiisoft\Factory\DependencyResolverInterface;
 
 use function is_object;
 
@@ -31,7 +31,7 @@ class ValueDefinition implements DefinitionInterface
         return $this->type;
     }
 
-    public function resolve(ResolverContainerInterface $container)
+    public function resolve(DependencyResolverInterface $container)
     {
         if ($container->shouldCloneOnResolve() && is_object($this->value)) {
             return clone $this->value;

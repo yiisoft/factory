@@ -20,7 +20,7 @@ use function is_string;
 /**
  * @internal
  */
-final class ResolverContainer implements ResolverContainerInterface
+final class DependencyResolver implements DependencyResolverInterface
 {
     private Factory $factory;
     private ?ContainerInterface $container;

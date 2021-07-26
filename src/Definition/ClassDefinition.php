@@ -6,7 +6,7 @@ namespace Yiisoft\Factory\Definition;
 
 use Throwable;
 use Yiisoft\Factory\Exception\InvalidConfigException;
-use Yiisoft\Factory\ResolverContainerInterface;
+use Yiisoft\Factory\DependencyResolverInterface;
 
 use function get_class;
 use function gettype;
@@ -40,7 +40,7 @@ class ClassDefinition implements DefinitionInterface
     /**
      * @throws InvalidConfigException
      */
-    public function resolve(ResolverContainerInterface $container)
+    public function resolve(DependencyResolverInterface $container)
     {
         if ($this->isUnionType()) {
             return $this->resolveUnionType($container);
@@ -70,7 +70,7 @@ class ClassDefinition implements DefinitionInterface
      *
      * @return mixed
      */
-    private function resolveUnionType(ResolverContainerInterface $container)
+    private function resolveUnionType(DependencyResolverInterface $container)
     {
         $types = explode('|', $this->class);
 

@@ -7,7 +7,7 @@ namespace Yiisoft\Factory\Tests\Unit\Definition;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definition\DynamicReference;
-use Yiisoft\Factory\ResolverContainer;
+use Yiisoft\Factory\DependencyResolver;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\TestHelper;
@@ -16,7 +16,7 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 class DynamicReferenceTest extends TestCase
 {
-    public function createResolverContainer(): ResolverContainer
+    public function createResolverContainer(): DependencyResolver
     {
         $container = new SimpleContainer([
             ContainerInterface::class => &$container,

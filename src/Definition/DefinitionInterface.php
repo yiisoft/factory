@@ -7,7 +7,7 @@ namespace Yiisoft\Factory\Definition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-use Yiisoft\Factory\ResolverContainerInterface;
+use Yiisoft\Factory\DependencyResolverInterface;
 
 /**
  * Interface DefinitionInterface
@@ -15,13 +15,13 @@ use Yiisoft\Factory\ResolverContainerInterface;
 interface DefinitionInterface
 {
     /**
-     * @param ResolverContainerInterface $container
-     *
-     * @throws InvalidConfigException
-     * @throws NotFoundException
-     * @throws NotInstantiableException
+     * @param DependencyResolverInterface $container
      *
      * @return mixed|object
+     *@throws NotFoundException
+     * @throws NotInstantiableException
+     *
+     * @throws InvalidConfigException
      */
-    public function resolve(ResolverContainerInterface $container);
+    public function resolve(DependencyResolverInterface $container);
 }

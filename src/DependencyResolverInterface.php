@@ -8,7 +8,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-interface ResolverContainerInterface extends ContainerInterface
+interface DependencyResolverInterface extends ContainerInterface
 {
     /**
      * @param string $id Identifier of the entry to look for.
