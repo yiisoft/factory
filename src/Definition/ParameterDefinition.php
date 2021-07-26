@@ -45,7 +45,7 @@ class ParameterDefinition implements DefinitionInterface
 
     public function resolve(ResolverContainerInterface $container)
     {
-        if ($container->cloneObjectOnResolve() && is_object($this->value)) {
+        if ($container->shouldCloneObjectOnResolve() && is_object($this->value)) {
             return clone $this->value;
         }
 

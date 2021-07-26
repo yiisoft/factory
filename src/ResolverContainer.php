@@ -89,7 +89,7 @@ final class ResolverContainer implements ResolverContainerInterface
         return $this->get($id);
     }
 
-    public function cloneObjectOnResolve(): bool
+    public function shouldCloneObjectOnResolve(): bool
     {
         return $this->container === null;
     }

@@ -22,5 +22,5 @@ interface ResolverContainerInterface extends ContainerInterface
      */
     public function getForReference(string $id);
 
-    public function cloneObjectOnResolve(): bool;
+    public function shouldCloneObjectOnResolve(): bool;
 }
