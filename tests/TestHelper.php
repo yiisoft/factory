@@ -11,11 +11,9 @@ use Yiisoft\Factory\DependencyResolver;
 final class TestHelper
 {
     public static function createResolverContainer(
-        ?ContainerInterface $container = null,
-        ?Factory $factory = null
+        ?ContainerInterface $container = null
     ): DependencyResolver {
         return new DependencyResolver(
-            $factory ?? new Factory(),
             $container
         );
     }
