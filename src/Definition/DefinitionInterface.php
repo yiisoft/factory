@@ -17,7 +17,7 @@ interface DefinitionInterface
     /**
      * @param DependencyResolverInterface $container
      *
-     *@throws NotFoundException
+     * @throws NotFoundException
      * @throws NotInstantiableException
      * @throws InvalidConfigException
      *
