@@ -17,11 +17,11 @@ interface DefinitionInterface
     /**
      * @param DependencyResolverInterface $container
      *
-     * @return mixed|object
      *@throws NotFoundException
      * @throws NotInstantiableException
-     *
      * @throws InvalidConfigException
+     *
+     * @return mixed|object
      */
     public function resolve(DependencyResolverInterface $container);
 }
