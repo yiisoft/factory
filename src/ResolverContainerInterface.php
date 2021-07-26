@@ -20,7 +20,7 @@ interface ResolverContainerInterface extends ContainerInterface
      *
      * @psalm-suppress InvalidThrow
      */
-    public function getForReference(string $id);
+    public function resolve(string $id);
 
-    public function shouldCloneObjectOnResolve(): bool;
+    public function shouldCloneOnResolve(): bool;
 }

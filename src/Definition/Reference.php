@@ -48,6 +48,6 @@ class Reference implements ReferenceInterface
 
     public function resolve(ResolverContainerInterface $container)
     {
-        return $container->getForReference($this->id);
+        return $container->resolve($this->id);
     }
 }

@@ -81,7 +81,7 @@ final class ResolverContainer implements ResolverContainerInterface
      *
      * @return mixed|object
      */
-    public function getForReference(string $id)
+    public function resolve(string $id)
     {
         if (isset($this->definitions[$id])) {
             return $this->getFromFactory($id);
@@ -89,7 +89,7 @@ final class ResolverContainer implements ResolverContainerInterface
         return $this->get($id);
     }
 
-    public function shouldCloneObjectOnResolve(): bool
+    public function shouldCloneOnResolve(): bool
     {
         return $this->container === null;
     }
