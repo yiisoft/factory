@@ -310,7 +310,7 @@ final class FactoryTest extends TestCase
                 EngineInterface::class => new EngineMarkOne(),
             ]),
             [
-                'test' => Reference::to(EngineInterface::class)
+                'test' => Reference::to(EngineInterface::class),
             ]
         );
 
