@@ -310,13 +310,13 @@ final class FactoryTest extends TestCase
                 EngineInterface::class => new EngineMarkOne(),
             ]),
             [
-                'test' => Reference::to(EngineInterface::class),
+                EngineInterface::class => new EngineMarkTwo(),
+                'engine' => Reference::to(EngineInterface::class),
             ]
         );
 
-        $this->expectException(NotInstantiableException::class);
-        $this->expectExceptionMessage('Can not instantiate ' . EngineInterface::class . '.');
-        $factory->create('test');
+        $engine = $factory->create('engine');
+        $this->assertInstanceOf(EngineMarkTwo::class, $engine);
     }
 
     /**
