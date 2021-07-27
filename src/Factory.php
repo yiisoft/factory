@@ -85,7 +85,7 @@ class Factory
      * @throws NotFoundException
      * @throws NotInstantiableException
      *
-     * @return mixed|object The created object
+     * @return mixed|object The created object.
      */
     public function create($config)
     {
