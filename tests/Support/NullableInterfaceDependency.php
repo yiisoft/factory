@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class NullableInterfaceDependency
+final class NullableInterfaceDependency
 {
     public function __construct(?EngineInterface $engine)
     {

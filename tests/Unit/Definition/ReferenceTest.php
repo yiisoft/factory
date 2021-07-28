@@ -12,7 +12,7 @@ use Yiisoft\Factory\Tests\Support\EngineInterface;
 /**
  * ReferenceTest contains tests for Yiisoft\Factory\Definition\Reference
  */
-class ReferenceTest extends TestCase
+final class ReferenceTest extends TestCase
 {
     public function testTo(): void
     {

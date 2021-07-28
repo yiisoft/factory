@@ -15,7 +15,7 @@ use function is_object;
 /**
  * Reference points to a class name in the container
  */
-class ClassDefinition implements DefinitionInterface
+final class ClassDefinition implements DefinitionInterface
 {
     private string $class;
     private bool $optional;

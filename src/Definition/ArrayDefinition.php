@@ -17,7 +17,7 @@ use function count;
  * @psalm-type MethodOrPropertyItem = array{0:string,1:string,2:mixed}
  * @psalm-type ArrayDefinitionConfig = array{class:class-string,'__construct()'?:array}&array<string, mixed>
  */
-class ArrayDefinition implements DefinitionInterface
+final class ArrayDefinition implements DefinitionInterface
 {
     public const CLASS_NAME = 'class';
     public const CONSTRUCTOR = '__construct()';

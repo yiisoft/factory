@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class EngineMarkTwo implements EngineInterface
+final class EngineMarkTwo implements EngineInterface
 {
     public const NAME = 'Mark Two';
 

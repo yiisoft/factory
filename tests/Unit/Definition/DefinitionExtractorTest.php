@@ -18,7 +18,7 @@ use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\OptionalInterfaceDependency;
 use Yiisoft\Factory\Tests\TestHelper;
 
-class DefinitionExtractorTest extends TestCase
+final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {

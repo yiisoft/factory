@@ -7,7 +7,7 @@ namespace Yiisoft\Factory\Tests\Support;
 /**
  * A gear box.
  */
-class GearBox
+final class GearBox
 {
     private int $maxGear;
 

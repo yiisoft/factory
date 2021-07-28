@@ -15,7 +15,7 @@ use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
-class DynamicReferenceTest extends TestCase
+final class DynamicReferenceTest extends TestCase
 {
     public function createDependencyResolver(): DependencyResolver
     {

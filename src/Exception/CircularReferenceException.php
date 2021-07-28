@@ -12,6 +12,6 @@ use Psr\Container\ContainerExceptionInterface;
  * contains self-references of any level and thus could not
  * be resolved.
  */
-class CircularReferenceException extends Exception implements ContainerExceptionInterface
+final class CircularReferenceException extends Exception implements ContainerExceptionInterface
 {
 }

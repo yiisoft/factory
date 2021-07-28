@@ -11,7 +11,7 @@ use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\UnionCar;
 use Yiisoft\Factory\Tests\TestHelper;
 
-class DefinitionExtractorTest extends TestCase
+final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveCarConstructor(): void
     {

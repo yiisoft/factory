@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class UnionCar
+final class UnionCar
 {
     private NonExistingEngine|EngineMarkOne|EngineMarkTwo $engine;
 

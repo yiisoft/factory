@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class OptionalInterfaceDependency
+final class OptionalInterfaceDependency
 {
     public function __construct(EngineInterface $engine = null)
     {

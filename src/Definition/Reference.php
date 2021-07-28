@@ -24,7 +24,7 @@ use function is_string;
  * ]
  * ```
  */
-class Reference implements ReferenceInterface
+final class Reference implements ReferenceInterface
 {
     private string $id;
 

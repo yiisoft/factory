@@ -9,7 +9,7 @@ use Yiisoft\Factory\DependencyResolverInterface;
 
 use function is_object;
 
-class ParameterDefinition implements DefinitionInterface
+final class ParameterDefinition implements DefinitionInterface
 {
     private ReflectionParameter $parameter;
     private bool $hasValue = false;

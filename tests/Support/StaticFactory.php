@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class StaticFactory
+final class StaticFactory
 {
     public static function create(): StdClass
     {

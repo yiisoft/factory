@@ -7,7 +7,7 @@ namespace Yiisoft\Factory\Tests\Support;
 /**
  * Class ColorPink
  */
-class ColorPink implements ColorInterface
+final class ColorPink implements ColorInterface
 {
     private const COLOR_PINK = 'pink';
 

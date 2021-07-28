@@ -8,7 +8,7 @@ use Yiisoft\Factory\DependencyResolverInterface;
 
 use function is_object;
 
-class ValueDefinition implements DefinitionInterface
+final class ValueDefinition implements DefinitionInterface
 {
     /**
      * @var mixed
