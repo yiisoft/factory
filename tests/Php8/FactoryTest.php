@@ -9,6 +9,7 @@ use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Factory\Tests\Support\SelfUnionType;
 use Yiisoft\Factory\Tests\Support\VariadicUnionType;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class FactoryTest extends TestCase
 {
@@ -36,9 +37,10 @@ final class FactoryTest extends TestCase
 
     public function testSelfUnionTypeDependency(): void
     {
+        $containerObject = new SelfUnionType(new ColorPink());
+
         $factory = new Factory(
-            null,
-            [SelfUnionType::class => new SelfUnionType(new ColorPink())],
+            new SimpleContainer([SelfUnionType::class => $containerObject]),
         );
 
         /** @var SelfUnionType $object */
