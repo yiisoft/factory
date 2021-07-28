@@ -12,7 +12,7 @@ final class EngineMarkTwo implements EngineInterface
 
     public function getName(): string
     {
-        return static::NAME;
+        return self::NAME;
     }
 
     public function setNumber(int $value): void
