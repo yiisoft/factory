@@ -619,4 +619,23 @@ final class FactoryTest extends TestCase
         $this->assertTrue($container->has('x'));
         $this->assertFalse($container->has('y'));
     }
+
+    public function testDefinitionEqualId(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                EngineMarkOne::class => [
+                    'class' => EngineMarkOne::class,
+                    '__construct()' => [42],
+                ],
+            ]
+        );
+
+        /** @var EngineMarkOne $engine */
+        $engine = $factory->create(EngineInterface::class);
+
+        $this->assertSame(0, $engine->getNumber());
+    }
 }

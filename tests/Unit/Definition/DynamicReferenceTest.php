@@ -15,7 +15,7 @@ use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
-class DynamicReferenceTest extends TestCase
+final class DynamicReferenceTest extends TestCase
 {
     public function createDependencyResolver(): DependencyResolver
     {
@@ -56,7 +56,7 @@ class DynamicReferenceTest extends TestCase
 
     public function testCallable(): void
     {
-        $ref = DynamicReference::to([static::class, 'callableDefinition']);
+        $ref = DynamicReference::to([self::class, 'callableDefinition']);
         $this->assertInstanceOf(EngineMarkOne::class, $ref->resolve($this->createDependencyResolver()));
     }
 

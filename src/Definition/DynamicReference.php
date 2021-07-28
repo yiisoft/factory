@@ -26,7 +26,7 @@ use Yiisoft\Factory\DependencyResolverInterface;
  * ]
  * ```
  */
-class DynamicReference implements ReferenceInterface
+final class DynamicReference implements ReferenceInterface
 {
     private DefinitionInterface $definition;
 

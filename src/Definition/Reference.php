@@ -24,7 +24,7 @@ use function is_string;
  * ]
  * ```
  */
-class Reference implements ReferenceInterface
+final class Reference implements ReferenceInterface
 {
     private string $id;
 
@@ -38,11 +38,17 @@ class Reference implements ReferenceInterface
         return $this->id;
     }
 
+    /**
+     * @param mixed $id
+     *
+     * @throws InvalidConfigException
+     */
     public static function to($id): ReferenceInterface
     {
         if (!is_string($id)) {
             throw new InvalidConfigException('Reference id must be string.');
         }
+
         return new self($id);
     }
 

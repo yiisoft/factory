@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class EngineMarkTwo implements EngineInterface
+final class EngineMarkTwo implements EngineInterface
 {
     public const NAME = 'Mark Two';
 
@@ -12,7 +12,7 @@ class EngineMarkTwo implements EngineInterface
 
     public function getName(): string
     {
-        return static::NAME;
+        return self::NAME;
     }
 
     public function setNumber(int $value): void

@@ -11,7 +11,7 @@ use Yiisoft\Injector\Injector;
 use function is_array;
 use function is_object;
 
-class CallableDefinition implements DefinitionInterface
+final class CallableDefinition implements DefinitionInterface
 {
     /**
      * @var array|callable

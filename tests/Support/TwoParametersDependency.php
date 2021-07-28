@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class TwoParametersDependency
+final class TwoParametersDependency
 {
     private string $firstParameter;
 

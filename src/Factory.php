@@ -16,7 +16,7 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
  * but will fall back to manual instantiation
  * if the container cannot provide a required dependency.
  */
-class Factory
+final class Factory
 {
     private DependencyResolver $container;
 

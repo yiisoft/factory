@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-class Car
+final class Car
 {
     public ?ColorInterface $color = null;
     private EngineInterface $engine;
