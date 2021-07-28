@@ -302,6 +302,22 @@ final class FactoryTest extends TestCase
         $this->assertNotSame($engine, $instance);
     }
 
+    public function testDoNotFallbackToContainerForReference(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                'engine' => Reference::to(EngineInterface::class),
+            ]
+        );
+
+        $engine = $factory->create('engine');
+        $this->assertInstanceOf(EngineMarkTwo::class, $engine);
+    }
+
     /**
      * When resolving dependencies, factory should rely on container only
      */

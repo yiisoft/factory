@@ -81,10 +81,7 @@ final class DependencyResolver implements DependencyResolverInterface
      */
     public function resolve(string $id)
     {
-        if (isset($this->definitions[$id])) {
-            return $this->getFromFactory($id);
-        }
-        return $this->get($id);
+        return $this->getFromFactory($id);
     }
 
     public function shouldCloneOnResolve(): bool

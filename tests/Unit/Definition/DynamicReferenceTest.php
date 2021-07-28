@@ -10,6 +10,7 @@ use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\DependencyResolver;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
+use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\TestHelper;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -24,13 +25,17 @@ class DynamicReferenceTest extends TestCase
             Injector::class => &$injector,
         ]);
         $injector = new Injector($container);
-        return TestHelper::createDependencyResolver($container);
+
+        $dependencyResolver = TestHelper::createDependencyResolver($container);
+        $dependencyResolver->setFactoryDefinition(EngineInterface::class, EngineMarkTwo::class);
+
+        return $dependencyResolver;
     }
 
     public function testString(): void
     {
         $ref = DynamicReference::to(EngineInterface::class);
-        $this->assertInstanceOf(EngineMarkOne::class, $ref->resolve($this->createDependencyResolver()));
+        $this->assertInstanceOf(EngineMarkTwo::class, $ref->resolve($this->createDependencyResolver()));
     }
 
     public function testClosure(): void
