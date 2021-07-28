@@ -13,6 +13,7 @@ with dependencies resolved by a PSR-11 container.
 [![Total Downloads](https://poser.pugx.org/yiisoft/factory/downloads.png)](https://packagist.org/packages/yiisoft/factory)
 [![Build Status](https://github.com/yiisoft/factory/workflows/build/badge.svg)](https://github.com/yiisoft/factory/actions?query=workflow%3Abuild)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/factory/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/factory/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/factory/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/factory/?branch=master)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Ffactory%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/factory/master)
 [![static analysis](https://github.com/yiisoft/factory/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/factory/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/factory/coverage.svg)](https://shepherd.dev/github/yiisoft/factory)
