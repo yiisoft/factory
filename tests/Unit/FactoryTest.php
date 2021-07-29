@@ -12,6 +12,7 @@ use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\Firefighter;
@@ -316,6 +317,22 @@ final class FactoryTest extends TestCase
 
         $engine = $factory->create('engine');
         $this->assertInstanceOf(EngineMarkTwo::class, $engine);
+    }
+
+    public function testExceptionAndDoNotFallbackToContainerForReference(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+            [
+                'engine' => Reference::to(EngineInterface::class),
+            ]
+        );
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage('Can not instantiate ' . EngineInterface::class . '.');
+        $factory->create('engine');
     }
 
     /**
