@@ -147,21 +147,6 @@ final class FactoryTest extends TestCase
         $this->assertEquals(43, $instance->getNumber());
     }
 
-    public function testGetByAlias(): void
-    {
-        $container = new SimpleContainer();
-        $factory = new Factory($container, [
-            'engine' => EngineMarkOne::class,
-        ]);
-
-        $one = $factory->create('engine');
-        $two = $factory->create('engine');
-
-        $this->assertNotSame($one, $two);
-        $this->assertInstanceOf(EngineMarkOne::class, $one);
-        $this->assertInstanceOf(EngineMarkOne::class, $two);
-    }
-
     public function testTrivialDefinition(): void
     {
         $container = new SimpleContainer();
@@ -218,7 +203,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkTwo::class, $two->getEngine());
     }
 
-    public function testCreateWithCallableValuesInConstructor(): void
+    public function testCreateWithScalarParametersInConstructor(): void
     {
         $container = new SimpleContainer();
         $factory = new Factory($container);
@@ -533,7 +518,9 @@ final class FactoryTest extends TestCase
         $factory = new Factory();
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessageMatches('/^Only references are allowed in parameters, a definition object was provided:/');
+        $this->expectExceptionMessageMatches(
+            '/^Only references are allowed in parameters, a definition object was provided:/'
+        );
         $factory->create([
             'class' => Car::class,
             '__construct()' => [
