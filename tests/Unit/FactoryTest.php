@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Unit;
 
+use ArrayIterator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -16,6 +17,7 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
+use Yiisoft\Factory\Tests\Support\ExcessiveConstructorParameters;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Factory\Tests\Support\Cube;
@@ -676,5 +678,46 @@ final class FactoryTest extends TestCase
         $object = $factory->create(NullableInterfaceDependency::class);
 
         $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
+    }
+
+    public function testIntegerIndexedConstructorArguments(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'items' => [
+                    'class' => ArrayIterator::class,
+                    '__construct()' => [
+                        [],
+                        ArrayIterator::STD_PROP_LIST,
+                    ],
+                ],
+            ]
+        );
+
+        $items = $factory->create('items');
+
+        $this->assertInstanceOf(ArrayIterator::class, $items);
+        $this->assertSame(ArrayIterator::STD_PROP_LIST, $items->getFlags());
+    }
+
+    public function testExcessiveConstructorParametersIgnored(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'test' => [
+                    'class' => ExcessiveConstructorParameters::class,
+                    '__construct()' => [
+                        'parameter' => 'Mike',
+                        'age' => 43,
+                    ],
+                ],
+            ]
+        );
+
+        $object = $factory->create('test');
+
+        $this->assertSame(['Mike'], $object->getAllParameters());
     }
 }
