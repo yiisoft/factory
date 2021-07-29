@@ -14,6 +14,7 @@ use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
+use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
@@ -219,6 +220,21 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('date', $object->getFirstParameter());
         $this->assertSame('time', $object->getSecondParameter());
+    }
+
+    public function testCreateWithCallableParametersInConstructor(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create([
+            'class' => CallableDependency::class,
+            '__construct()' => [
+                'callback' => static fn() => 42,
+            ],
+        ]);
+
+        $this->assertInstanceOf(CallableDependency::class, $object);
+        $this->assertSame(42, $object->get());
     }
 
     public function testCreateWithInvalidParametersInCosntructor(): void
