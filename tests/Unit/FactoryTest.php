@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
 use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
@@ -806,5 +807,38 @@ final class FactoryTest extends TestCase
         ]);
 
         $this->assertSame('42', $object->getId());
+    }
+
+    public function testReferenceInConstructor(): void
+    {
+        $factory = new Factory(null, [
+            'color' => ColorPink::class,
+            Cube::class => [
+                'class' => Cube::class,
+                '__construct()' => [
+                    Reference::to('color'),
+                ],
+            ],
+        ]);
+
+        $object = $factory->create(Cube::class);
+
+        $this->assertInstanceOf(ColorPink::class, $object->getColor());
+    }
+
+    public function testDynamicReferenceInConstructor(): void
+    {
+        $factory = new Factory(null, [
+            Cube::class => [
+                'class' => Cube::class,
+                '__construct()' => [
+                    DynamicReference::to(ColorPink::class),
+                ],
+            ],
+        ]);
+
+        $object = $factory->create(Cube::class);
+
+        $this->assertInstanceOf(ColorPink::class, $object->getColor());
     }
 }
