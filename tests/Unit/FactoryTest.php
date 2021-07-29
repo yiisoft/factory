@@ -32,6 +32,7 @@ use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\SelfType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Factory\Tests\Support\VariadicClosures;
+use Yiisoft\Factory\Tests\Support\VariadicConstructor;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function count;
@@ -719,5 +720,91 @@ final class FactoryTest extends TestCase
         $object = $factory->create('test');
 
         $this->assertSame(['Mike'], $object->getAllParameters());
+    }
+
+    public function dataVariadicConstructorParameters(): array
+    {
+        return [
+            'stringIndexed' => [
+                'first' => 1,
+                'parameters' => 42,
+                'second' => 43,
+                'third' => 44,
+            ],
+            'integerIndexed' => [],
+        ];
+    }
+
+    public function testVariadicConstructorStringIndexedParameters(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                'test' => [
+                    'class' => VariadicConstructor::class,
+                    '__construct()' => [
+                        'first' => 1,
+                        'parameters' => 42,
+                        'second' => 43,
+                        'third' => 44,
+                    ],
+                ],
+            ]
+        );
+
+        $object = $factory->create('test');
+
+        $this->assertSame(1, $object->getFirst());
+        $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
+        $this->assertSame([42, 43, 44], $object->getParameters());
+    }
+
+    public function testVariadicConstructorIntegerIndexedParameters(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                'test' => [
+                    'class' => VariadicConstructor::class,
+                    '__construct()' => [
+                        1,
+                        new EngineMarkTwo(),
+                        42,
+                        43,
+                        44,
+                    ],
+                ],
+            ]
+        );
+
+        $object = $factory->create('test');
+
+        $this->assertSame(1, $object->getFirst());
+        $this->assertInstanceOf(EngineMarkTwo::class, $object->getEngine());
+        $this->assertSame([42, 43, 44], $object->getParameters());
+    }
+
+    public function testClassProperties(): void
+    {
+        /** @var Phone $object */
+        $object = (new Factory())->create([
+            'class' => Phone::class,
+            '$dev' => true,
+        ]);
+
+        $this->assertTrue($object->dev);
+    }
+
+    public function testClassMethods(): void
+    {
+        /** @var Phone $object */
+        $object = (new Factory())->create([
+            'class' => Phone::class,
+            'setId()' => ['42'],
+        ]);
+
+        $this->assertSame('42', $object->getId());
     }
 }
