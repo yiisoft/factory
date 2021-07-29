@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-use function call_user_func;
-
 final class CallableDependency
 {
     /**
@@ -23,6 +21,6 @@ final class CallableDependency
      */
     public function get()
     {
-        return call_user_func($this->callback);
+        return ($this->callback)();
     }
 }

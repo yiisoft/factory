@@ -229,7 +229,7 @@ final class FactoryTest extends TestCase
         $object = $factory->create([
             'class' => CallableDependency::class,
             '__construct()' => [
-                'callback' => static fn() => 42,
+                'callback' => static fn () => 42,
             ],
         ]);
 
