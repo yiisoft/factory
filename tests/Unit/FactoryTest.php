@@ -24,6 +24,7 @@ use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
+use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\SelfType;
@@ -657,5 +658,23 @@ final class FactoryTest extends TestCase
         $engine = $factory->create(EngineInterface::class);
 
         $this->assertSame(0, $engine->getNumber());
+    }
+
+    public function testOptionalInterfaceDependency(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(NullableInterfaceDependency::class);
+
+        $this->assertNull($object->getEngine());
+    }
+
+    public function testOptionalInterfaceDependencyWithDefiniion(): void
+    {
+        $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
+
+        $object = $factory->create(NullableInterfaceDependency::class);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
     }
 }
