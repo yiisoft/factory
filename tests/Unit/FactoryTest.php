@@ -27,8 +27,10 @@ use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
+use Yiisoft\Factory\Tests\Support\MethodTest;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\Phone;
+use Yiisoft\Factory\Tests\Support\PropertyTest;
 use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\SelfType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
@@ -840,5 +842,85 @@ final class FactoryTest extends TestCase
         $object = $factory->create(Cube::class);
 
         $this->assertInstanceOf(ColorPink::class, $object->getColor());
+    }
+
+    public function testClosureInProperty(): void
+    {
+        $color = static fn(): ColorPink => new ColorPink();
+
+        $factory = new Factory(
+            null,
+            [
+                PropertyTest::class => [
+                    'class' => PropertyTest::class,
+                    '$property' => $color,
+                ],
+            ]
+        );
+
+        /** @var PropertyTest $object */
+        $object = $factory->create(PropertyTest::class);
+
+        $this->assertSame($color, $object->property);
+    }
+
+    public function testDynamicReferenceInProperty(): void
+    {
+        $color = new ColorPink();
+
+        $factory = new Factory(
+            null,
+            [
+                PropertyTest::class => [
+                    'class' => PropertyTest::class,
+                    '$property' => DynamicReference::to(static fn() => $color),
+                ],
+            ]
+        );
+
+        /** @var PropertyTest $object */
+        $object = $factory->create(PropertyTest::class);
+
+        $this->assertSame($color, $object->property);
+    }
+
+    public function testClosureInMethod(): void
+    {
+        $color = static fn(): ColorPink => new ColorPink();
+
+        $factory = new Factory(
+            null,
+            [
+                MethodTest::class => [
+                    'class' => MethodTest::class,
+                    'setValue()' => [$color],
+                ],
+            ]
+        );
+
+        /** @var MethodTest $object */
+        $object = $factory->create(MethodTest::class);
+
+        $this->assertSame($color, $object->getValue());
+    }
+
+    public function testDynamicReferenceInMethod(): void
+    {
+        $color = new ColorPink();
+
+        $factory = new Factory(
+            null,
+            [
+                MethodTest::class => [
+                    'class' => MethodTest::class,
+                    'setValue()' => [DynamicReference::to(static fn() => $color)],
+                ],
+            ]
+        );
+
+        /** @var MethodTest $object */
+        $object = $factory->create(MethodTest::class);
+
+        $this->assertSame($color, $object->getValue());
     }
 }
