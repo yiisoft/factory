@@ -846,7 +846,7 @@ final class FactoryTest extends TestCase
 
     public function testClosureInProperty(): void
     {
-        $color = static fn(): ColorPink => new ColorPink();
+        $color = static fn (): ColorPink => new ColorPink();
 
         $factory = new Factory(
             null,
@@ -873,7 +873,7 @@ final class FactoryTest extends TestCase
             [
                 PropertyTest::class => [
                     'class' => PropertyTest::class,
-                    '$property' => DynamicReference::to(static fn() => $color),
+                    '$property' => DynamicReference::to(static fn () => $color),
                 ],
             ]
         );
@@ -886,7 +886,7 @@ final class FactoryTest extends TestCase
 
     public function testClosureInMethod(): void
     {
-        $color = static fn(): ColorPink => new ColorPink();
+        $color = static fn (): ColorPink => new ColorPink();
 
         $factory = new Factory(
             null,
@@ -913,7 +913,7 @@ final class FactoryTest extends TestCase
             [
                 MethodTest::class => [
                     'class' => MethodTest::class,
-                    'setValue()' => [DynamicReference::to(static fn() => $color)],
+                    'setValue()' => [DynamicReference::to(static fn () => $color)],
                 ],
             ]
         );
