@@ -923,4 +923,52 @@ final class FactoryTest extends TestCase
 
         $this->assertSame($color, $object->getValue());
     }
+
+    public function testAlias(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => Reference::to('engine'),
+                'engine' => Reference::to('engine-mark-one'),
+                'engine-mark-one' => EngineMarkOne::class,
+            ]
+        );
+
+        $engine1 = $factory->create('engine-mark-one');
+        $engine2 = $factory->create('engine');
+        $engine3 = $factory->create(EngineInterface::class);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $engine1);
+        $this->assertNotSame($engine1, $engine2);
+        $this->assertNotSame($engine1, $engine3);
+        $this->assertNotSame($engine2, $engine3);
+    }
+
+    public function testUndefinedDependencies(): void
+    {
+        $factory = new Factory(
+            null,
+            ['car' => Car::class]
+        );
+
+        $this->expectException(NotInstantiableException::class);
+        $factory->create('car');
+    }
+
+    public function testDependencies(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'car' => Car::class,
+                EngineInterface::class => EngineMarkTwo::class,
+            ]
+        );
+
+        /** @var Car $car */
+        $car = $factory->create('car');
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
+    }
 }
