@@ -980,7 +980,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
-                'test' => static fn(ContainerInterface $container) => $container->get(EngineInterface::class),
+                'test' => static fn (ContainerInterface $container) => $container->get(EngineInterface::class),
             ]
         );
 
@@ -995,7 +995,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
-                'car' => static fn(CarFactory $carFactory, Injector $injector) => $injector->invoke([$carFactory, 'create']),
+                'car' => static fn (CarFactory $carFactory, Injector $injector) => $injector->invoke([$carFactory, 'create']),
             ]
         );
 
