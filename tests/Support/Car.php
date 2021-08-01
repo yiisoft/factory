@@ -8,10 +8,12 @@ final class Car
 {
     public ?ColorInterface $color = null;
     private EngineInterface $engine;
+    private array $moreEngines;
 
-    public function __construct(EngineInterface $engine)
+    public function __construct(EngineInterface $engine, array $moreEngines = [])
     {
         $this->engine = $engine;
+        $this->moreEngines = $moreEngines;
     }
 
     public function getEngine(): EngineInterface
@@ -33,5 +35,10 @@ final class Car
     public function getColor(): ?ColorInterface
     {
         return $this->color;
+    }
+
+    public function getMoreEngines(): array
+    {
+        return $this->moreEngines;
     }
 }

@@ -11,4 +11,9 @@ final class CarFactory
         $car = new Car(new EngineMarkOne());
         return $car->setColor($color);
     }
+
+    public static function create(EngineInterface $engine): Car
+    {
+        return new Car($engine);
+    }
 }
