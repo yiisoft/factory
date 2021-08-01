@@ -20,7 +20,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
     public function testDecorateFinalClass(): void
     {
         $dependencyResolver = TestHelper::createDependencyResolver();
-        $factory= new LazyLoadingValueHolderFactory();
+        $factory = new LazyLoadingValueHolderFactory();
 
         $class = Phone::class;
 
@@ -36,7 +36,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
     public function testDecorateNotFinalClass(): void
     {
         $dependencyResolver = TestHelper::createDependencyResolver();
-        $factory= new LazyLoadingValueHolderFactory();
+        $factory = new LazyLoadingValueHolderFactory();
 
         $class = NotFinalClass::class;
 
@@ -53,7 +53,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
     public function testDecorateInterface(): void
     {
         $dependencyResolver = TestHelper::createDependencyResolver();
-        $factory= new LazyLoadingValueHolderFactory();
+        $factory = new LazyLoadingValueHolderFactory();
 
         $class = EngineInterface::class;
 
