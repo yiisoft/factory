@@ -18,6 +18,7 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
+use Yiisoft\Factory\Tests\Support\CarFactory;
 use Yiisoft\Factory\Tests\Support\ExcessiveConstructorParameters;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
@@ -36,6 +37,7 @@ use Yiisoft\Factory\Tests\Support\SelfType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Factory\Tests\Support\VariadicClosures;
 use Yiisoft\Factory\Tests\Support\VariadicConstructor;
+use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function count;
@@ -970,5 +972,51 @@ final class FactoryTest extends TestCase
         $car = $factory->create('car');
 
         $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
+    }
+
+    public function testCallableDefinition(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                'test' => static fn(ContainerInterface $container) => $container->get(EngineInterface::class),
+            ]
+        );
+
+        $object = $factory->create('test');
+
+        $this->assertInstanceOf(EngineMarkOne::class, $object);
+    }
+
+    public function testCallableDefinitionWithInjector(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                'car' => static fn(CarFactory $carFactory, Injector $injector) => $injector->invoke([$carFactory, 'create']),
+            ]
+        );
+
+        $car = $factory->create('car');
+
+        $this->assertInstanceOf(Car::class, $car);
+    }
+
+    public function testArrayStaticCallableDefinition(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                'car' => [CarFactory::class, 'create'],
+            ]
+        );
+
+        $car = $factory->create('car');
+
+        $this->assertInstanceOf(Car::class, $car);
+        $this->assertInstanceOf(EngineMarkOne::class, $car->getEngine());
     }
 }
