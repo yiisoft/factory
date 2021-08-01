@@ -19,6 +19,7 @@ use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\CarFactory;
+use Yiisoft\Factory\Tests\Support\ColorInterface;
 use Yiisoft\Factory\Tests\Support\ExcessiveConstructorParameters;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
@@ -28,6 +29,7 @@ use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
+use Yiisoft\Factory\Tests\Support\InvokableCarFactory;
 use Yiisoft\Factory\Tests\Support\MethodTest;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\Phone;
@@ -1018,5 +1020,52 @@ final class FactoryTest extends TestCase
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertInstanceOf(EngineMarkOne::class, $car->getEngine());
+    }
+
+    public function testArrayDynamicCallableDefinition(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                ColorInterface::class => ColorPink::class,
+                'car' => [CarFactory::class, 'createWithColor'],
+            ]
+        );
+
+        $car = $factory->create('car');
+
+        $this->assertInstanceOf(Car::class, $car);
+        $this->assertInstanceOf(ColorPink::class, $car->getColor());
+    }
+
+    public function testArrayDynamicCallableDefinitionWithObject(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                ColorInterface::class => ColorPink::class,
+                'car' => [new CarFactory(), 'createWithColor'],
+            ]
+        );
+
+        $car = $factory->create('car');
+
+        $this->assertInstanceOf(Car::class, $car);
+        $this->assertInstanceOf(ColorPink::class, $car->getColor());
+    }
+
+    public function testInvokableDefinition(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'engine' => EngineMarkOne::class,
+                'invokable' => new InvokableCarFactory(),
+            ]
+        );
+
+        $object = $factory->create('invokable');
+
+        $this->assertInstanceOf(Car::class, $object);
     }
 }
