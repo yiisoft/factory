@@ -868,6 +868,25 @@ final class FactoryTest extends TestCase
         $this->assertSame($color, $object->property);
     }
 
+    public function testReferenceInProperty(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'color' => ColorPink::class,
+                PropertyTest::class => [
+                    'class' => PropertyTest::class,
+                    '$property' => Reference::to('color'),
+                ],
+            ]
+        );
+
+        /** @var PropertyTest $object */
+        $object = $factory->create(PropertyTest::class);
+
+        $this->assertInstanceOf(ColorPink::class, $object->property);
+    }
+
     public function testDynamicReferenceInProperty(): void
     {
         $color = new ColorPink();
@@ -906,6 +925,25 @@ final class FactoryTest extends TestCase
         $object = $factory->create(MethodTest::class);
 
         $this->assertSame($color, $object->getValue());
+    }
+
+    public function testReferenceInMethod(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'color' => ColorPink::class,
+                MethodTest::class => [
+                    'class' => MethodTest::class,
+                    'setValue()' => [Reference::to('color')],
+                ],
+            ]
+        );
+
+        /** @var MethodTest $object */
+        $object = $factory->create(MethodTest::class);
+
+        $this->assertInstanceOf(ColorInterface::class, $object->getValue());
     }
 
     public function testDynamicReferenceInMethod(): void
@@ -1067,5 +1105,67 @@ final class FactoryTest extends TestCase
         $object = $factory->create('invokable');
 
         $this->assertInstanceOf(Car::class, $object);
+    }
+
+    public function testReferencesInArrayInDependencies(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'engine1' => EngineMarkOne::class,
+                'engine2' => EngineMarkTwo::class,
+                'engine3' => EngineMarkTwo::class,
+                'engine4' => EngineMarkTwo::class,
+                'car' => [
+                    'class' => Car::class,
+                    '__construct()' => [
+                        Reference::to('engine1'),
+                        [
+                            'engine2' => Reference::to('engine2'),
+                            'more' => [
+                                'engine3' => Reference::to('engine3'),
+                                'more' => [
+                                    'engine4' => Reference::to('engine4'),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $car = $factory->create('car');
+        $this->assertInstanceOf(Car::class, $car);
+
+        $moreEngines = $car->getMoreEngines();
+        $this->assertInstanceOf(EngineMarkTwo::class, $moreEngines['engine2']);
+        $this->assertInstanceOf(EngineMarkTwo::class, $moreEngines['more']['engine3']);
+        $this->assertInstanceOf(EngineMarkTwo::class, $moreEngines['more']['more']['engine4']);
+    }
+
+    public function testCallableArrayValueInConstructor(): void
+    {
+        $array = [
+            [EngineMarkTwo::class, 'getNumber'],
+        ];
+
+        $factory = new Factory(
+            null,
+            [
+                EngineInterface::class => EngineMarkOne::class,
+                Car::class => [
+                    'class' => Car::class,
+                    '__construct()' => [
+                        Reference::to(EngineInterface::class),
+                        $array,
+                    ],
+                ],
+            ]
+        );
+
+        /** @var Car $object */
+        $object = $factory->create(Car::class);
+
+        $this->assertSame($array, $object->getMoreEngines());
     }
 }
