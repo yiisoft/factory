@@ -10,6 +10,7 @@ use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\Proxy\LazyLoadingInterface;
 use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\Decorator\LazyDefinitionDecorator;
+use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\NotFinalClass;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\TestHelper;
@@ -38,6 +39,23 @@ final class LazyDefinitionDecoratorTest extends TestCase
         $factory= new LazyLoadingValueHolderFactory();
 
         $class = NotFinalClass::class;
+
+        $definition = ArrayDefinition::fromConfig([
+            ArrayDefinition::CLASS_NAME => $class,
+        ]);
+        $definition = new LazyDefinitionDecorator($factory, $definition, $class);
+
+        $phone = $definition->resolve($dependencyResolver);
+
+        self::assertInstanceOf(LazyLoadingInterface::class, $phone);
+    }
+
+    public function testDecorateInterface(): void
+    {
+        $dependencyResolver = TestHelper::createDependencyResolver();
+        $factory= new LazyLoadingValueHolderFactory();
+
+        $class = EngineInterface::class;
 
         $definition = ArrayDefinition::fromConfig([
             ArrayDefinition::CLASS_NAME => $class,
