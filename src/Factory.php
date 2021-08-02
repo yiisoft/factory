@@ -86,6 +86,10 @@ final class Factory
      * @throws NotInstantiableException
      *
      * @return mixed|object The created object.
+     *
+     * @psalm-template T
+     * @psalm-param mixed|class-string<T> $config
+     * @psalm-return ($config is class-string ? T : mixed)
      */
     public function create($config)
     {
@@ -93,6 +97,7 @@ final class Factory
             DefinitionValidator::validate($config);
         }
 
+        /** @psalm-suppress MixedReturnStatement */
         return $this->container
             ->createDefinition($config)
             ->resolve($this->container);
