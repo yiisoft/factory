@@ -667,7 +667,7 @@ final class FactoryTest extends TestCase
         /** @var EngineMarkOne $engine */
         $engine = $factory->create(EngineInterface::class);
 
-        $this->assertSame(0, $engine->getNumber());
+        $this->assertSame(42, $engine->getNumber());
     }
 
     public function testOptionalInterfaceDependency(): void
@@ -1167,5 +1167,21 @@ final class FactoryTest extends TestCase
         $object = $factory->create(Car::class);
 
         $this->assertSame($array, $object->getMoreEngines());
+    }
+
+    public function testArrayDefinitionWithoutClass(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                Firefighter::class => [
+                    '__construct()' => ['Petr']
+                ],
+            ],
+        );
+
+        $object = $factory->create(Firefighter::class);
+
+        $this->assertSame('Petr', $object->getName());
     }
 }

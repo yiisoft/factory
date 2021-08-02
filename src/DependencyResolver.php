@@ -108,7 +108,8 @@ final class DependencyResolver implements DependencyResolverInterface
             return Normalizer::normalize(
                 is_object($this->definitions[$config])
                     ? clone $this->definitions[$config]
-                    : $this->definitions[$config]
+                    : $this->definitions[$config],
+                $config
             );
         }
 
