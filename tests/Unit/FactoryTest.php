@@ -1175,7 +1175,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 Firefighter::class => [
-                    '__construct()' => ['Petr']
+                    '__construct()' => ['Petr'],
                 ],
             ],
         );
