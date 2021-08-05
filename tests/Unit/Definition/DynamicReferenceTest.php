@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\DependencyResolver;
+use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
@@ -60,7 +61,7 @@ final class DynamicReferenceTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $ref->resolve($this->createDependencyResolver()));
     }
 
-    public static function callableDefinition(ContainerInterface $container)
+    public static function callableDefinition(ContainerInterface $container): EngineInterface
     {
         return $container->get(EngineInterface::class);
     }
@@ -71,5 +72,14 @@ final class DynamicReferenceTest extends TestCase
             'class' => EngineMarkOne::class,
         ]);
         $this->assertInstanceOf(EngineMarkOne::class, $ref->resolve($this->createDependencyResolver()));
+    }
+
+    public function testArrayWithoutClass(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessageMatches('/^Array definition should contain the key "class": /');
+        DynamicReference::to([
+            '__construct()' => [42],
+        ]);
     }
 }
