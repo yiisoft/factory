@@ -13,6 +13,7 @@ use Yiisoft\Factory\Definition\Normalizer;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Injector\Injector;
 
 use function is_object;
 use function is_string;
@@ -35,6 +36,8 @@ final class DependencyResolver implements DependencyResolverInterface
      * @psalm-var array<string, DefinitionInterface>
      */
     private array $definitionInstances = [];
+
+    private ?Injector $injector = null;
 
     public function __construct(?ContainerInterface $container)
     {
@@ -82,6 +85,14 @@ final class DependencyResolver implements DependencyResolverInterface
     public function resolve(string $id)
     {
         return $this->getFromFactory($id);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function invoke(callable $callable)
+    {
+        return $this->getInjector()->invoke($callable);
     }
 
     public function shouldCloneOnResolve(): bool
@@ -157,6 +168,14 @@ final class DependencyResolver implements DependencyResolverInterface
         }
 
         return $this->definitionInstances[$id];
+    }
+
+    private function getInjector(): Injector
+    {
+        if ($this->injector === null) {
+            $this->injector = new Injector($this);
+        }
+        return $this->injector;
     }
 
     private function canBeCreatedByFactory(string $id): bool

@@ -31,4 +31,9 @@ interface DependencyResolverInterface extends ContainerInterface
      * @return bool Whether resolved object should be cloned when returned.
      */
     public function shouldCloneOnResolve(): bool;
+
+    /**
+     * @return mixed
+     */
+    public function invoke(callable $callable);
 }
