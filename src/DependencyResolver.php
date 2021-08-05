@@ -24,6 +24,7 @@ use function is_string;
 final class DependencyResolver implements DependencyResolverInterface
 {
     private ?ContainerInterface $container;
+    private ?Injector $injector = null;
 
     /**
      * @var mixed[] Definitions
@@ -36,8 +37,6 @@ final class DependencyResolver implements DependencyResolverInterface
      * @psalm-var array<string, DefinitionInterface>
      */
     private array $definitionInstances = [];
-
-    private ?Injector $injector = null;
 
     public function __construct(?ContainerInterface $container)
     {
