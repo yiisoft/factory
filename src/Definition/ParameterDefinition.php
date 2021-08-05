@@ -7,8 +7,6 @@ namespace Yiisoft\Factory\Definition;
 use ReflectionParameter;
 use Yiisoft\Factory\DependencyResolverInterface;
 
-use function is_object;
-
 final class ParameterDefinition implements DefinitionInterface
 {
     private ReflectionParameter $parameter;
@@ -45,10 +43,6 @@ final class ParameterDefinition implements DefinitionInterface
 
     public function resolve(DependencyResolverInterface $container)
     {
-        if ($container->shouldCloneOnResolve() && is_object($this->value)) {
-            return clone $this->value;
-        }
-
         return $this->value;
     }
 }
