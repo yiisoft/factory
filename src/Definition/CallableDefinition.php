@@ -6,7 +6,6 @@ namespace Yiisoft\Factory\Definition;
 
 use ReflectionMethod;
 use Yiisoft\Factory\DependencyResolverInterface;
-use Yiisoft\Injector\Injector;
 
 use function is_array;
 use function is_object;
@@ -34,7 +33,7 @@ final class CallableDefinition implements DefinitionInterface
         $callable = $this->prepareCallable($this->method, $container);
 
         /** @psalm-suppress MixedMethodCall */
-        return $container->get(Injector::class)->invoke($callable);
+        return $container->invoke($callable);
     }
 
     /**
