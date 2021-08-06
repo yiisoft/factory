@@ -1184,4 +1184,26 @@ final class FactoryTest extends TestCase
 
         $this->assertSame('Petr', $object->getName());
     }
+
+    /**
+     * Factory don't should clone objects in constructor
+     */
+    public function testObjectInConstructor(): void
+    {
+        $color = new ColorPink();
+
+        $factory = new Factory(
+            null,
+            [
+                Cube::class => [
+                    'class' => Cube::class,
+                    '__construct()' => [$color],
+                ],
+            ],
+        );
+
+        $cube = $factory->create(Cube::class);
+
+        $this->assertSame($color, $cube->getColor());
+    }
 }
