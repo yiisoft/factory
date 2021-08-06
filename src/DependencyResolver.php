@@ -13,6 +13,7 @@ use Yiisoft\Factory\Definition\Normalizer;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Injector\Injector;
 
 use function is_object;
 use function is_string;
@@ -23,6 +24,7 @@ use function is_string;
 final class DependencyResolver implements DependencyResolverInterface
 {
     private ?ContainerInterface $container;
+    private ?Injector $injector = null;
 
     /**
      * @var mixed[] Definitions
@@ -70,18 +72,14 @@ final class DependencyResolver implements DependencyResolverInterface
         return $this->canBeCreatedByFactory($id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @throws InvalidConfigException
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     *
-     * @return mixed|object
-     */
     public function resolve(string $id)
     {
         return $this->getFromFactory($id);
+    }
+
+    public function invoke(callable $callable)
+    {
+        return $this->getInjector()->invoke($callable);
     }
 
     public function shouldCloneOnResolve(): bool
@@ -157,6 +155,11 @@ final class DependencyResolver implements DependencyResolverInterface
         }
 
         return $this->definitionInstances[$id];
+    }
+
+    private function getInjector(): Injector
+    {
+        return $this->injector ??= new Injector($this);
     }
 
     private function canBeCreatedByFactory(string $id): bool
