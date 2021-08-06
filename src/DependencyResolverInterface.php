@@ -28,7 +28,9 @@ interface DependencyResolverInterface extends ContainerInterface
     public function resolve(string $id);
 
     /**
-     * @return mixed
+     * Invoke a callable resolving dependencies based on its signature.
+     *
+     * @return mixed Invocation result.
      */
     public function invoke(callable $callable);
 
