@@ -30,16 +30,4 @@ final class ValueDefinitionTest extends TestCase
 
         $this->assertSame($object, $value);
     }
-
-    public function testCloneObjectFromFactory(): void
-    {
-        $dependencyResolver = TestHelper::createDependencyResolver();
-
-        $object = new stdClass();
-
-        $definition = new ValueDefinition($object, 'object');
-        $value = $definition->resolve($dependencyResolver);
-
-        $this->assertNotSame($object, $value);
-    }
 }

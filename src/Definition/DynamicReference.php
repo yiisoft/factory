@@ -7,6 +7,9 @@ namespace Yiisoft\Factory\Definition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\DependencyResolverInterface;
 
+use function is_callable;
+use function is_object;
+
 /**
  * Class DynamicReference allows us to define a dependency to a service not defined in the container.
  * Definition may be defined multiple ways {@see Normalizer}.
@@ -37,6 +40,10 @@ final class DynamicReference implements ReferenceInterface
      */
     private function __construct($definition)
     {
+        if (is_object($definition) && !is_callable($definition)) {
+            throw new InvalidConfigException('DynamicReference don\'t support object as definition.');
+        }
+
         $this->definition = Normalizer::normalize($definition);
     }
 

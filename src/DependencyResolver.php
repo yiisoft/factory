@@ -82,11 +82,6 @@ final class DependencyResolver implements DependencyResolverInterface
         return $this->getInjector()->invoke($callable);
     }
 
-    public function shouldCloneOnResolve(): bool
-    {
-        return $this->container === null;
-    }
-
     /**
      * @param mixed $definition
      */

@@ -6,8 +6,6 @@ namespace Yiisoft\Factory\Definition;
 
 use Yiisoft\Factory\DependencyResolverInterface;
 
-use function is_object;
-
 final class ValueDefinition implements DefinitionInterface
 {
     /**
@@ -33,10 +31,6 @@ final class ValueDefinition implements DefinitionInterface
 
     public function resolve(DependencyResolverInterface $container)
     {
-        if ($container->shouldCloneOnResolve() && is_object($this->value)) {
-            return clone $this->value;
-        }
-
         return $this->value;
     }
 }
