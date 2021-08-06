@@ -72,23 +72,11 @@ final class DependencyResolver implements DependencyResolverInterface
         return $this->canBeCreatedByFactory($id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @throws InvalidConfigException
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     *
-     * @return mixed|object
-     */
     public function resolve(string $id)
     {
         return $this->getFromFactory($id);
     }
 
-    /**
-     * @return mixed
-     */
     public function invoke(callable $callable)
     {
         return $this->getInjector()->invoke($callable);
