@@ -14,7 +14,7 @@ use Psr\Container\NotFoundExceptionInterface;
 interface DependencyResolverInterface extends ContainerInterface
 {
     /**
-     * Resolve a dependency with an ID specified.
+     * Resolve a reference with an ID specified.
      *
      * @param string $id Identifier of the entry to look for.
      *
@@ -25,7 +25,7 @@ interface DependencyResolverInterface extends ContainerInterface
      *
      * @psalm-suppress InvalidThrow
      */
-    public function resolve(string $id);
+    public function resolveReference(string $id);
 
     /**
      * Invoke a callable resolving dependencies based on its signature.

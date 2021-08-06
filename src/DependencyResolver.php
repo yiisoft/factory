@@ -72,7 +72,7 @@ final class DependencyResolver implements DependencyResolverInterface
         return $this->canBeCreatedByFactory($id);
     }
 
-    public function resolve(string $id)
+    public function resolveReference(string $id)
     {
         return $this->getFromFactory($id);
     }
