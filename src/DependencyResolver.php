@@ -171,10 +171,7 @@ final class DependencyResolver implements DependencyResolverInterface
 
     private function getInjector(): Injector
     {
-        if ($this->injector === null) {
-            $this->injector = new Injector($this);
-        }
-        return $this->injector;
+        return $this->injector ??= new Injector($this);
     }
 
     private function canBeCreatedByFactory(string $id): bool
