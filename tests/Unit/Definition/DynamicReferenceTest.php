@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Tests\Unit\Definition;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use stdClass;
 use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\DependencyResolver;
 use Yiisoft\Factory\Exception\InvalidConfigException;
@@ -81,5 +82,12 @@ final class DynamicReferenceTest extends TestCase
         DynamicReference::to([
             '__construct()' => [42],
         ]);
+    }
+
+    public function testObjectDefinition(): void
+    {
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('DynamicReference don\'t support object as definition.');
+        DynamicReference::to(new stdClass());
     }
 }
