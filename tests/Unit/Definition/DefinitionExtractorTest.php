@@ -8,6 +8,7 @@ use DateTime;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
+use Yiisoft\Factory\Definition\ParameterDefinition;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -49,8 +50,10 @@ final class DefinitionExtractorTest extends TestCase
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(Car::class);
 
-        $this->assertCount(1, $dependencies);
+        $this->assertCount(2, $dependencies);
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
+        $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
+
         $this->expectException(NotInstantiableException::class);
         $dependencies['engine']->resolve($container);
     }
