@@ -1238,7 +1238,7 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '~^Only references are allowed in constructor arguments, a definition object was provided: '            .
+            '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
             'Yiisoft\\\\Factory\\\\Definition\\\\ValueDefinition::~'
         );
         new Factory(null, ['test' => $definition]);
