@@ -10,6 +10,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\Normalizer;
+use Yiisoft\Factory\Exception\CircularReferenceException;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
@@ -37,6 +38,13 @@ final class DependencyResolver implements DependencyResolverInterface
      * @psalm-var array<string, DefinitionInterface>
      */
     private array $definitionInstances = [];
+
+    /**
+     * @var array used to collect IDs instantiated during build to detect circular references
+     *
+     * @psalm-var array<string,1>
+     */
+    private array $creatingIds = [];
 
     public function __construct(?ContainerInterface $container)
     {
@@ -93,9 +101,35 @@ final class DependencyResolver implements DependencyResolverInterface
     /**
      * @param mixed $config
      *
+     * @throws CircularReferenceException
+     * @throws NotFoundException
+     * @throws NotInstantiableException
+     * @throws InvalidConfigException
+     *
+     * @return mixed
+     */
+    public function resolve($config)
+    {
+        $definition = $this->createDefinition($config);
+
+        if ($definition instanceof ArrayDefinition) {
+            $this->creatingIds[$definition->getClass()] = 1;
+        }
+        try {
+            return $definition->resolve($this);
+        } finally {
+            if ($definition instanceof ArrayDefinition) {
+                unset($this->creatingIds[$definition->getClass()]);
+            }
+        }
+    }
+
+    /**
+     * @param mixed $config
+     *
      * @throws InvalidConfigException
      */
-    public function createDefinition($config): DefinitionInterface
+    private function createDefinition($config): DefinitionInterface
     {
         if (is_string($config) && isset($this->definitions[$config])) {
             return Normalizer::normalize(
@@ -124,15 +158,32 @@ final class DependencyResolver implements DependencyResolverInterface
     /**
      * @param string $id
      *
+     * @throws CircularReferenceException
      * @throws InvalidConfigException
      * @throws NotFoundException
      * @throws NotInstantiableException
      *
      * @return mixed|object
      */
-    private function getFromFactory($id)
+    private function getFromFactory(string $id)
     {
-        return $this->getDefinition($id)->resolve($this);
+        if (isset($this->creatingIds[$id])) {
+            if ($id === ContainerInterface::class) {
+                return $this;
+            }
+            throw new CircularReferenceException(sprintf(
+                'Circular reference to "%s" detected while creating: %s.',
+                $id,
+                implode(',', array_keys($this->creatingIds))
+            ));
+        }
+
+        $this->creatingIds[$id] = 1;
+        try {
+            return $this->getDefinition($id)->resolve($this);
+        } finally {
+            unset($this->creatingIds[$id]);
+        }
     }
 
     /**
