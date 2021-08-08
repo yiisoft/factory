@@ -23,7 +23,7 @@ final class DefinitionValidator
     public static function validate($definition, ?string $id = null): void
     {
         // Reference or ready object
-        if (is_object($definition)) {
+        if (is_object($definition) && self::isValidObject($definition)) {
             return;
         }
 
@@ -87,6 +87,15 @@ final class DefinitionValidator
                         )
                     );
                 }
+                /** @var mixed $argument */
+                foreach ($value as $argument) {
+                    if (is_object($argument) && !self::isValidObject($argument)) {
+                        throw new InvalidConfigException(
+                            'Only references are allowed in constructor arguments, a definition object was provided: ' .
+                            var_export($argument, true)
+                        );
+                    }
+                }
                 continue;
             }
 
@@ -138,6 +147,14 @@ final class DefinitionValidator
                 $preparedKey
             )
         );
+    }
+
+    /**
+     * Deny DefinitionInterface, exclude ReferenceInterface
+     */
+    private static function isValidObject(object $value): bool
+    {
+        return !($value instanceof DefinitionInterface) || $value instanceof ReferenceInterface;
     }
 
     /**
