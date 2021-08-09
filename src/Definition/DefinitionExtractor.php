@@ -11,6 +11,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use Yiisoft\Factory\Exception\NotFoundException;
+use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
@@ -54,7 +55,7 @@ final class DefinitionExtractor
         }
 
         if (!$reflectionClass->isInstantiable()) {
-            throw new NotInstantiableException($class);
+            throw new NotInstantiableClassException($class);
         }
 
         $constructor = $reflectionClass->getConstructor();
@@ -130,7 +131,7 @@ final class DefinitionExtractor
 
         if ($parameter->isDefaultValueAvailable()) {
             $definition->setValue($parameter->getDefaultValue());
-        } elseif (!$parameter->isVariadic()) {
+        } elseif (!$parameter->isVariadic() && $parameter->allowsNull()) {
             $definition->setValue(null);
         }
 

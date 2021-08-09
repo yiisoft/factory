@@ -30,7 +30,11 @@ final class DefinitionResolver
         $result = [];
         /** @var mixed $definition */
         foreach ($dependencies as $key => $definition) {
-            if ($definition instanceof ParameterDefinition && !$definition->hasValue()) {
+            if (
+                $definition instanceof ParameterDefinition &&
+                !$definition->hasValue() &&
+                ($definition->isOptional() || $definition->isVariadic())
+            ) {
                 continue;
             }
 

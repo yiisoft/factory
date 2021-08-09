@@ -6,6 +6,7 @@ namespace Yiisoft\Factory\Definition;
 
 use ReflectionParameter;
 use Yiisoft\Factory\DependencyResolverInterface;
+use Yiisoft\Factory\Exception\NotInstantiableScalarException;
 
 final class ParameterDefinition implements DefinitionInterface
 {
@@ -31,18 +32,27 @@ final class ParameterDefinition implements DefinitionInterface
         $this->value = $value;
     }
 
-    public function getParameter(): ReflectionParameter
-    {
-        return $this->parameter;
-    }
-
     public function hasValue(): bool
     {
         return $this->hasValue;
     }
 
+    public function isVariadic(): bool
+    {
+        return $this->parameter->isVariadic();
+    }
+
+    public function isOptional(): bool
+    {
+        return $this->parameter->isOptional();
+    }
+
     public function resolve(DependencyResolverInterface $container)
     {
+        if (!$this->hasValue) {
+            throw new NotInstantiableScalarException('XX');
+        }
+
         return $this->value;
     }
 }

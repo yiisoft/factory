@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\ParameterDefinition;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
@@ -54,7 +54,7 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException(NotInstantiableException::class);
+        $this->expectException(NotInstantiableClassException::class);
         $dependencies['engine']->resolve($container);
     }
 

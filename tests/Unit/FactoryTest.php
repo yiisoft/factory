@@ -14,7 +14,8 @@ use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Exception\NotInstantiableClassException;
+use Yiisoft\Factory\Exception\NotInstantiableScalarException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -32,9 +33,11 @@ use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\InvokableCarFactory;
 use Yiisoft\Factory\Tests\Support\MethodTest;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
+use Yiisoft\Factory\Tests\Support\NullableScalarConstructorArgument;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\PropertyTest;
 use Yiisoft\Factory\Tests\Support\Recorder;
+use Yiisoft\Factory\Tests\Support\ScalarConstructorArgument;
 use Yiisoft\Factory\Tests\Support\SelfType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Factory\Tests\Support\VariadicClosures;
@@ -342,7 +345,7 @@ final class FactoryTest extends TestCase
             ]
         );
 
-        $this->expectException(NotInstantiableException::class);
+        $this->expectException(NotInstantiableClassException::class);
         $this->expectExceptionMessage('Can not instantiate ' . EngineInterface::class . '.');
         $factory->create('engine');
     }
@@ -994,7 +997,7 @@ final class FactoryTest extends TestCase
             ['car' => Car::class]
         );
 
-        $this->expectException(NotInstantiableException::class);
+        $this->expectException(NotInstantiableClassException::class);
         $factory->create('car');
     }
 
@@ -1255,5 +1258,22 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $factory->create('test');
+    }
+
+    public function testNullableScalarConstructorArgument(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(NullableScalarConstructorArgument::class);
+
+        $this->assertNull($object->getName());
+    }
+
+    public function testScalarConstructorArgument(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(NotInstantiableScalarException::class);
+        $factory->create(ScalarConstructorArgument::class);
     }
 }
