@@ -32,8 +32,10 @@ final class DefinitionResolver
         foreach ($dependencies as $key => $definition) {
             if (
                 $definition instanceof ParameterDefinition &&
-                !$definition->hasValue() &&
-                ($definition->isOptional() || $definition->isVariadic())
+                (
+                    $definition->isVariadic() ||
+                    ($definition->isOptional() && !$definition->hasValue())
+                )
             ) {
                 continue;
             }

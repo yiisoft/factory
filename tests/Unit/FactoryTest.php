@@ -15,7 +15,7 @@ use Yiisoft\Factory\Definition\ValueDefinition;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableClassException;
-use Yiisoft\Factory\Exception\NotInstantiableScalarException;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -1273,7 +1273,7 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
-        $this->expectException(NotInstantiableScalarException::class);
+        $this->expectException(NotInstantiableException::class);
         $factory->create(ScalarConstructorArgument::class);
     }
 }

@@ -11,6 +11,6 @@ use Psr\Container\ContainerExceptionInterface;
  * NotInstantiableException represents an exception caused by incorrect dependency injection container
  * configuration or usage.
  */
-abstract class NotInstantiableException extends Exception implements ContainerExceptionInterface
+class NotInstantiableException extends Exception implements ContainerExceptionInterface
 {
 }

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Tests\Php8;
 
 use PHPUnit\Framework\TestCase;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Factory\Tests\Support\SelfUnionType;
+use Yiisoft\Factory\Tests\Support\UnionBuiltInTypes;
 use Yiisoft\Factory\Tests\Support\VariadicUnionType;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -47,5 +49,13 @@ final class FactoryTest extends TestCase
         $object = $factory->create(SelfUnionType::class);
 
         $this->assertSame('pink', $object->getColor());
+    }
+
+    public function testUnionBuiltInTypesDependency(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(NotInstantiableException::class);
+        $factory->create(UnionBuiltInTypes::class);
     }
 }
