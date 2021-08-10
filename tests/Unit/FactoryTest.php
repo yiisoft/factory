@@ -546,7 +546,7 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '/^Only references are allowed in parameters, a definition object was provided:/'
+            '/^Only references are allowed in constructor arguments, a definition object was provided:/'
         );
         $factory->create([
             'class' => Car::class,
@@ -583,7 +583,7 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '~^Only references are allowed in parameters, a definition object was provided: ' .
+            '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
             'Yiisoft\\\\Factory\\\\Definition\\\\ArrayDefinition::~'
         );
         $factory->create([
@@ -1205,5 +1205,55 @@ final class FactoryTest extends TestCase
         $cube = $factory->create(Cube::class);
 
         $this->assertSame($color, $cube->getColor());
+    }
+
+    public function testDefinitionInterfaceAsDefinition(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            'class' => stdClass::class,
+        ]);
+
+        $this->expectException(InvalidConfigException::class);
+        new Factory(null, ['test' => $definition]);
+    }
+
+    public function testDefinitionInterfaceAsDefinitionWithoutValidation(): void
+    {
+        $definition = ArrayDefinition::fromConfig([
+            'class' => stdClass::class,
+        ]);
+
+        $factory = new Factory(null, ['test' => $definition], false);
+
+        $this->expectException(InvalidConfigException::class);
+        $factory->create('test');
+    }
+
+    public function testDefinitionInterfaceAsDefinitionInConstructorArguments(): void
+    {
+        $definition = [
+            'class' => Cube::class,
+            '__construct()' => [new ValueDefinition(new ColorPink())],
+        ];
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessageMatches(
+            '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
+            'Yiisoft\\\\Factory\\\\Definition\\\\ValueDefinition::~'
+        );
+        new Factory(null, ['test' => $definition]);
+    }
+
+    public function testDefinitionInterfaceAsDefinitionInConstructorArgumentsWithoutValidation(): void
+    {
+        $definition = [
+            'class' => Cube::class,
+            '__construct()' => [new ValueDefinition(new ColorPink())],
+        ];
+
+        $factory = new Factory(null, ['test' => $definition], false);
+
+        $this->expectException(InvalidConfigException::class);
+        $factory->create('test');
     }
 }
