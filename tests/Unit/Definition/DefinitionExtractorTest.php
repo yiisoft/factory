@@ -12,6 +12,7 @@ use Yiisoft\Factory\Definition\ParameterDefinition;
 use Yiisoft\Factory\Exception\NotDetermineDefaultValueOfPhpInternalException;
 use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
@@ -35,7 +36,11 @@ final class DefinitionExtractorTest extends TestCase
         $dependencies = $resolver->fromClassName(DateTime::class);
 
         // Since reflection for built in classes does not get default values.
-        $this->expectException(NotDetermineDefaultValueOfPhpInternalException::class);
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine default value of parameter "time" when instantinate' .
+            ' "DateTime::__construct()" because it is PHP internal. Please specify argument explicitly.'
+        );
         $dependencies['time']->resolve($container);
     }
 

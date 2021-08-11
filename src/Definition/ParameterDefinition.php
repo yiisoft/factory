@@ -7,7 +7,6 @@ namespace Yiisoft\Factory\Definition;
 use ReflectionParameter;
 use Yiisoft\Factory\DependencyResolverInterface;
 use Yiisoft\Factory\Exception\NotInstantiableException;
-use Yiisoft\Factory\Exception\NotDetermineDefaultValueOfPhpInternalException;
 
 final class ParameterDefinition implements DefinitionInterface
 {
@@ -44,9 +43,29 @@ final class ParameterDefinition implements DefinitionInterface
         }
 
         if ($this->isOptional()) {
-            throw new NotDetermineDefaultValueOfPhpInternalException($this->parameter);
+            throw new NotInstantiableException(
+                sprintf(
+                    'Can not determine default value of parameter "%s" when instantinate "%s" ' .
+                    'because it is PHP internal. Please specify argument explicitly.',
+                    $this->parameter->getName(),
+                    $this->getCallable(),
+                )
+            );
         }
 
         throw new NotInstantiableException('Parameter definition does not contain a value.');
+    }
+
+    private function getCallable(): string
+    {
+        $callable = [];
+
+        $class = $this->parameter->getDeclaringClass();
+        if ($class !== null) {
+            $callable[] = $class->getName();
+        }
+        $callable[] = $this->parameter->getDeclaringFunction()->getName() . '()';
+
+        return implode('::', $callable);
     }
 }
