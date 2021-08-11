@@ -7,6 +7,7 @@ namespace Yiisoft\Factory\Definition;
 use ReflectionParameter;
 use Yiisoft\Factory\DependencyResolverInterface;
 use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Exception\NotDetermineDefaultValueOfPhpInternalException;
 
 final class ParameterDefinition implements DefinitionInterface
 {
@@ -40,6 +41,10 @@ final class ParameterDefinition implements DefinitionInterface
 
         if ($this->parameter->allowsNull()) {
             return null;
+        }
+
+        if ($this->isOptional()) {
+            throw new NotDetermineDefaultValueOfPhpInternalException($this->parameter);
         }
 
         throw new NotInstantiableException('Parameter definition does not contain a value.');

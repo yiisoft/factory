@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\ParameterDefinition;
+use Yiisoft\Factory\Exception\NotDetermineDefaultValueOfPhpInternalException;
 use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -32,15 +33,9 @@ final class DefinitionExtractorTest extends TestCase
 
         $this->assertCount(2, $dependencies);
 
-
         // Since reflection for built in classes does not get default values.
-        if (PHP_VERSION_ID >= 80000) {
-            $this->assertEquals('now', $dependencies['datetime']->resolve($container));
-        } else {
-            $this->assertEquals(null, $dependencies['time']->resolve($container));
-        }
-
-        $this->assertEquals(null, $dependencies['timezone']->resolve($container));
+        $this->expectException(NotDetermineDefaultValueOfPhpInternalException::class);
+        $dependencies['time']->resolve($container);
     }
 
     public function testResolveCarConstructor(): void
