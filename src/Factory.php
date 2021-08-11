@@ -100,7 +100,7 @@ final class Factory
         }
 
         /** @psalm-suppress MixedReturnStatement */
-        return $this->container->resolve($config);
+        return $this->container->create($config);
     }
 
     /**

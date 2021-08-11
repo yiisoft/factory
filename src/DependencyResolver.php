@@ -108,7 +108,7 @@ final class DependencyResolver implements DependencyResolverInterface
      *
      * @return mixed
      */
-    public function resolve($config)
+    public function create($config)
     {
         $definition = $this->createDefinition($config);
 
