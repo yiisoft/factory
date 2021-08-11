@@ -25,7 +25,7 @@ final class DefinitionExtractorTest extends TestCase
     public function testResolveConstructor(): void
     {
         if (PHP_VERSION_ID >= 80000) {
-            $this->markTestSkipped('Can not determine default value of PHP internal only in PHP 7.4.');
+            $this->markTestSkipped('Can not determine default value of PHP internal parameters in PHP < 8.0.');
         }
 
         $resolver = DefinitionExtractor::getInstance();
@@ -37,7 +37,7 @@ final class DefinitionExtractorTest extends TestCase
         // Since reflection for built in classes does not get default values.
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine default value of parameter "time" when instantinate' .
+            'Can not determine default value of parameter "time" when instantiating' .
             ' "DateTime::__construct()" because it is PHP internal. Please specify argument explicitly.'
         );
         $dependencies['time']->resolve($container);

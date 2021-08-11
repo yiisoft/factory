@@ -1386,7 +1386,7 @@ final class FactoryTest extends TestCase
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine value of the "string" type parameter "name" when instantinate ' .
+            'Can not determine value of the "name" parameter of type "string" when instantiating ' .
             '"Yiisoft\Factory\Tests\Support\ScalarConstructorArgument::__construct()". ' .
             'Please specify argument explicitly.'
         );
