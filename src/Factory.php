@@ -6,6 +6,7 @@ namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Factory\Definition\DefinitionValidator;
+use Yiisoft\Factory\Exception\CircularReferenceException;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
@@ -82,6 +83,7 @@ final class Factory
      *   (`[$class or $object, $method]`). The callable should return a new instance of the object being created.
      *
      * @throws InvalidConfigException If the configuration is invalid.
+     * @throws CircularReferenceException
      * @throws NotFoundException
      * @throws NotInstantiableException
      *
@@ -98,9 +100,7 @@ final class Factory
         }
 
         /** @psalm-suppress MixedReturnStatement */
-        return $this->container
-            ->createDefinition($config)
-            ->resolve($this->container);
+        return $this->container->create($config);
     }
 
     /**

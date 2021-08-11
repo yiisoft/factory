@@ -12,6 +12,7 @@ use Yiisoft\Factory\Definition\ArrayDefinition;
 use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Factory\Definition\ValueDefinition;
+use Yiisoft\Factory\Exception\CircularReferenceException;
 use Yiisoft\Factory\Exception\InvalidConfigException;
 use Yiisoft\Factory\Exception\NotFoundException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
@@ -19,7 +20,12 @@ use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\CarFactory;
+use Yiisoft\Factory\Tests\Support\Circular\Chicken;
+use Yiisoft\Factory\Tests\Support\Circular\CircularA;
+use Yiisoft\Factory\Tests\Support\Circular\CircularB;
+use Yiisoft\Factory\Tests\Support\Circular\TreeItem;
 use Yiisoft\Factory\Tests\Support\ColorInterface;
+use Yiisoft\Factory\Tests\Support\Circular\Egg;
 use Yiisoft\Factory\Tests\Support\ExcessiveConstructorParameters;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
@@ -1255,5 +1261,110 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $factory->create('test');
+    }
+
+    public function testOptionalCircularClassDependency(): void
+    {
+        $factory = new Factory();
+
+        $a = $factory->create(CircularA::class);
+
+        $this->assertInstanceOf(CircularB::class, $a->b);
+        $this->assertNull($a->b->a);
+    }
+
+    public function testCircularClassDependency(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                Chicken::class => Chicken::class,
+                Egg::class => Egg::class,
+            ]
+        );
+
+        $this->expectException(CircularReferenceException::class);
+        $factory->create(Chicken::class);
+    }
+
+    public function testCircularClassDependencyWithoutDefinition(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(CircularReferenceException::class);
+        $factory->create(Chicken::class);
+    }
+
+    public function testCircularReferences(): void
+    {
+        $factory = new Factory(
+            null,
+            [
+                'engine-1' => Reference::to('engine-2'),
+                'engine-2' => Reference::to('engine-3'),
+                'engine-3' => Reference::to('engine-1'),
+            ]
+        );
+
+        $this->expectException(CircularReferenceException::class);
+        $factory->create('engine-1');
+    }
+
+    public function testCircularReference(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(CircularReferenceException::class);
+        $factory->create(TreeItem::class);
+    }
+
+    /**
+     * @link https://github.com/yiisoft/di/pull/189
+     */
+    public function testFalsePositiveCircularReferenceWithClassID(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $factory = new Factory();
+
+        // Build an object
+        $factory->create(ColorPink::class);
+
+        // set definition to container
+        (fn (string $id, $definition) => $this->set($id, $definition))->call(
+            $factory,
+            ColorPink::class,
+            ColorPink::class
+        );
+
+        try {
+            $factory->create(ColorPink::class);
+        } catch (CircularReferenceException $e) {
+            $this->fail('Circular reference detected false positively.');
+        }
+    }
+
+    /**
+     * @link https://github.com/yiisoft/di/pull/189
+     */
+    public function testFalsePositiveCircularReferenceWithStringID(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $factory = new Factory();
+        try {
+            $factory->create('test');
+        } catch (NotFoundException $e) {
+            // It is expected
+        }
+
+        // set definition to container
+        (fn (string $id, $definition) => $this->set($id, $definition))->call($factory, 'test', ColorPink::class);
+
+        try {
+            $factory->create('test');
+        } catch (CircularReferenceException $e) {
+            $this->fail('Circular reference detected false positively.');
+        }
     }
 }
