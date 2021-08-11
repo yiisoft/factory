@@ -24,14 +24,15 @@ final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->markTestSkipped('Can not determine default value of PHP internal only in PHP 7.4.');
+        }
+
         $resolver = DefinitionExtractor::getInstance();
         $container = TestHelper::createDependencyResolver();
 
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(DateTime::class);
-
-
-        $this->assertCount(2, $dependencies);
 
         // Since reflection for built in classes does not get default values.
         $this->expectException(NotDetermineDefaultValueOfPhpInternalException::class);
