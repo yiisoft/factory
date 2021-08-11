@@ -76,7 +76,7 @@ final class ParameterDefinition implements DefinitionInterface
 
         if ($type instanceof ReflectionUnionType) {
             $names = array_map(
-                static fn(ReflectionNamedType $t) => $t->getName(),
+                static fn (ReflectionNamedType $t) => $t->getName(),
                 $type->getTypes()
             );
             return implode('|', $names);
