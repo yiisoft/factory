@@ -78,7 +78,7 @@ final class ParameterDefinition implements DefinitionInterface
             /** @var ReflectionNamedType[] */
             $namedTypes = $type->getTypes();
             $names = array_map(
-                static fn(ReflectionNamedType $t) => $t->getName(),
+                static fn (ReflectionNamedType $t) => $t->getName(),
                 $namedTypes
             );
             return implode('|', $names);
