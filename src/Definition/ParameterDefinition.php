@@ -74,6 +74,7 @@ final class ParameterDefinition implements DefinitionInterface
             return 'undefined';
         }
 
+        /** @psalm-suppress UndefinedClass, TypeDoesNotContainType */
         if ($type instanceof ReflectionUnionType) {
             /** @var ReflectionNamedType[] */
             $namedTypes = $type->getTypes();
