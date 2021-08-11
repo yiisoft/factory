@@ -56,6 +56,11 @@ final class FactoryTest extends TestCase
         $factory = new Factory();
 
         $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "string|int" type parameter "values" when instantinate ' .
+            '"Yiisoft\Factory\Tests\Support\UnionBuiltInTypes::__construct()". ' .
+            'Please specify argument explicitly.'
+        );
         $factory->create(UnionBuiltInTypes::class);
     }
 }

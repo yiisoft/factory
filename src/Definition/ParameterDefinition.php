@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Definition;
 
+use ReflectionNamedType;
 use ReflectionParameter;
+use ReflectionUnionType;
 use Yiisoft\Factory\DependencyResolverInterface;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
@@ -53,7 +55,36 @@ final class ParameterDefinition implements DefinitionInterface
             );
         }
 
-        throw new NotInstantiableException('Parameter definition does not contain a value.');
+        throw new NotInstantiableException(
+            sprintf(
+                'Can not determine value of the "%s" type parameter "%s" when instantinate "%s". ' .
+                'Please specify argument explicitly.',
+                $this->getType(),
+                $this->parameter->getName(),
+                $this->getCallable(),
+            )
+        );
+    }
+
+    private function getType(): string
+    {
+        $type = $this->parameter->getType();
+
+        if ($type === null) {
+            return 'undefined';
+        }
+
+        if ($type instanceof ReflectionUnionType) {
+            $names = array_map(
+                static fn(ReflectionNamedType $t) => $t->getName(),
+                $type->getTypes()
+            );
+            return implode('|', $names);
+        }
+
+        /** @var ReflectionNamedType $type */
+
+        return $type->getName();
     }
 
     private function getCallable(): string
