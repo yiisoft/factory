@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\ParameterDefinition;
-use Yiisoft\Factory\Exception\NotDetermineDefaultValueOfPhpInternalException;
 use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
 use Yiisoft\Factory\Exception\NotInstantiableException;
