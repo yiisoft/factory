@@ -11,14 +11,12 @@ use function is_callable;
 use function is_object;
 
 /**
- * Class DynamicReference allows us to define a dependency to a service not defined in the container.
- * Definition may be defined multiple ways {@see Normalizer}.
- * For example:
+ * The `DynamicReference` defines a dependency to a service not defined in the container.
+ * Definition may be defined multiple ways ({@see Normalizer}). For example:
+ *
  * ```php
  * [
- *    InterfaceA::class => ConcreteA::class,
- *    'alternativeForA' => ConcreteB::class,
- *    Service1::class => [
+ *    MyService::class => [
  *        '__construct()' => [
  *            DynamicReference::to([
  *                'class' => SomeClass::class,
@@ -50,9 +48,9 @@ final class DynamicReference implements ReferenceInterface
     /**
      * @see Normalizer
      *
-     * @throws InvalidConfigException
+     * @throws InvalidConfigException If definition is not valid.
      */
-    public static function to($id): ReferenceInterface
+    public static function to($id): self
     {
         return new self($id);
     }
