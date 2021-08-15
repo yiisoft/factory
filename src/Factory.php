@@ -19,7 +19,7 @@ use Yiisoft\Factory\Exception\NotInstantiableException;
  */
 final class Factory
 {
-    private DependencyResolver $container;
+    private DependencyResolver $dependencyResolver;
 
     /**
      * @var bool $validate Validate definitions when set
@@ -38,7 +38,7 @@ final class Factory
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->container = new DependencyResolver($container);
+        $this->dependencyResolver = new DependencyResolver($container);
         $this->validate = $validate;
         $this->setDefaultDefinitions();
         $this->setMultiple($definitions);
@@ -100,7 +100,7 @@ final class Factory
         }
 
         /** @psalm-suppress MixedReturnStatement */
-        return $this->container->create($config);
+        return $this->dependencyResolver->create($config);
     }
 
     /**
@@ -116,7 +116,7 @@ final class Factory
             DefinitionValidator::validate($definition, $id);
         }
 
-        $this->container->setFactoryDefinition($id, $definition);
+        $this->dependencyResolver->setFactoryDefinition($id, $definition);
     }
 
     /**
@@ -141,6 +141,6 @@ final class Factory
      */
     private function setDefaultDefinitions(): void
     {
-        $this->set(ContainerInterface::class, $this->container);
+        $this->set(ContainerInterface::class, $this->dependencyResolver);
     }
 }
