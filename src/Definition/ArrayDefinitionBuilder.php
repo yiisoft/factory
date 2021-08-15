@@ -89,7 +89,7 @@ final class ArrayDefinitionBuilder
         $usedArguments = [];
         $isVariadic = false;
         foreach ($dependencies as $key => &$value) {
-            if ($value instanceof ParameterDefinition && $value->getParameter()->isVariadic()) {
+            if ($value instanceof ParameterDefinition && $value->isVariadic()) {
                 $isVariadic = true;
             }
             $index = $isIntegerIndexed ? $dependencyIndex : $key;

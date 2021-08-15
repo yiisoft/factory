@@ -11,6 +11,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use Yiisoft\Factory\Exception\NotFoundException;
+use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Exception\NotInstantiableException;
 
 /**
@@ -54,7 +55,7 @@ final class DefinitionExtractor
         }
 
         if (!$reflectionClass->isInstantiable()) {
-            throw new NotInstantiableException($class);
+            throw new NotInstantiableClassException($class);
         }
 
         $constructor = $reflectionClass->getConstructor();
@@ -78,8 +79,8 @@ final class DefinitionExtractor
     {
         $type = $parameter->getType();
 
-        if ($parameter->isVariadic()) {
-            return $this->createParameterDefinition($parameter);
+        if ($type === null || $parameter->isVariadic()) {
+            return new ParameterDefinition($parameter);
         }
 
         // PHP 8 union type is used as type hint
@@ -101,14 +102,18 @@ final class DefinitionExtractor
                 }
             }
 
+            if ($types === []) {
+                return new ParameterDefinition($parameter);
+            }
+
             /** @psalm-suppress MixedArgument */
             return new ClassDefinition(implode('|', $types), $type->allowsNull());
         }
 
-        /** @var ReflectionNamedType|null $type */
+        /** @var ReflectionNamedType $type */
 
         // Our parameter has a class type hint
-        if ($type !== null && !$type->isBuiltin()) {
+        if (!$type->isBuiltin()) {
             $typeName = $type->getName();
             if ($typeName === 'self') {
                 // If type name is "self", it means that called class and
@@ -120,20 +125,7 @@ final class DefinitionExtractor
             return new ClassDefinition($typeName, $type->allowsNull());
         }
 
-        // Our parameter does not have a class type hint and either has a default value or is nullable.
-        return $this->createParameterDefinition($parameter);
-    }
-
-    private function createParameterDefinition(ReflectionParameter $parameter): ParameterDefinition
-    {
-        $definition = new ParameterDefinition($parameter);
-
-        if ($parameter->isDefaultValueAvailable()) {
-            $definition->setValue($parameter->getDefaultValue());
-        } elseif (!$parameter->isVariadic()) {
-            $definition->setValue(null);
-        }
-
-        return $definition;
+        // Our parameter does have a built-in type hint
+        return new ParameterDefinition($parameter);
     }
 }

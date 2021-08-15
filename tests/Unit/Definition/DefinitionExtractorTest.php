@@ -9,8 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Factory\Definition\ClassDefinition;
 use Yiisoft\Factory\Definition\DefinitionInterface;
 use Yiisoft\Factory\Definition\ParameterDefinition;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Factory\Exception\NotInstantiableClassException;
 use Yiisoft\Factory\Definition\DefinitionExtractor;
+use Yiisoft\Factory\Exception\NotInstantiableException;
 use Yiisoft\Factory\Tests\Support\Car;
 use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
@@ -23,24 +24,23 @@ final class DefinitionExtractorTest extends TestCase
 {
     public function testResolveConstructor(): void
     {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->markTestSkipped('Can not determine default value of PHP internal parameters in PHP < 8.0.');
+        }
+
         $resolver = DefinitionExtractor::getInstance();
         $container = TestHelper::createDependencyResolver();
 
         /** @var DefinitionInterface[] $dependencies */
         $dependencies = $resolver->fromClassName(DateTime::class);
 
-
-        $this->assertCount(2, $dependencies);
-
-
         // Since reflection for built in classes does not get default values.
-        if (PHP_VERSION_ID >= 80000) {
-            $this->assertEquals('now', $dependencies['datetime']->resolve($container));
-        } else {
-            $this->assertEquals(null, $dependencies['time']->resolve($container));
-        }
-
-        $this->assertEquals(null, $dependencies['timezone']->resolve($container));
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine default value of parameter "time" when instantiating' .
+            ' "DateTime::__construct()" because it is PHP internal. Please specify argument explicitly.'
+        );
+        $dependencies['time']->resolve($container);
     }
 
     public function testResolveCarConstructor(): void
@@ -54,7 +54,7 @@ final class DefinitionExtractorTest extends TestCase
         $this->assertInstanceOf(ClassDefinition::class, $dependencies['engine']);
         $this->assertInstanceOf(ParameterDefinition::class, $dependencies['moreEngines']);
 
-        $this->expectException(NotInstantiableException::class);
+        $this->expectException(NotInstantiableClassException::class);
         $dependencies['engine']->resolve($container);
     }
 
