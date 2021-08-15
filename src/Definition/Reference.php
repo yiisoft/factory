@@ -10,17 +10,18 @@ use Yiisoft\Factory\DependencyResolverInterface;
 use function is_string;
 
 /**
- * Class Reference allows us to define a dependency to a service in the container in another service definition.
+ * The `Reference` defines a dependency to a service in the container or factory in another service definition.
  * For example:
+ *
  * ```php
  * [
  *    InterfaceA::class => ConcreteA::class,
  *    'alternativeForA' => ConcreteB::class,
- *    Service1::class => [
+ *    MyService::class => [
  *        '__construct()' => [
- *            Reference::to('alternativeForA')
- *        ]
- *    ]
+ *            Reference::to('alternativeForA'),
+ *        ],
+ *    ],
  * ]
  * ```
  */
@@ -33,20 +34,13 @@ final class Reference implements ReferenceInterface
         $this->id = $id;
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
     /**
-     * @param mixed $id
-     *
-     * @throws InvalidConfigException
+     * @throws InvalidConfigException If ID is not string.
      */
-    public static function to($id): ReferenceInterface
+    public static function to($id): self
     {
         if (!is_string($id)) {
-            throw new InvalidConfigException('Reference id must be string.');
+            throw new InvalidConfigException('Reference ID must be string.');
         }
 
         return new self($id);
