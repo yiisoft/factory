@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definition\DefinitionValidator;
-use Yiisoft\Factory\Exception\CircularReferenceException;
-use Yiisoft\Factory\Exception\InvalidConfigException;
-use Yiisoft\Factory\Exception\NotFoundException;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Definitions\Infrastructure\DefinitionValidator;
+use Yiisoft\Definitions\Exception\CircularReferenceException;
+use Yiisoft\Definitions\Exception\InvalidConfigException;
+use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 
 /**
  * Factory allows creating objects passing arguments runtime.

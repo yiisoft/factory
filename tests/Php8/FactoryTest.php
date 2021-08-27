@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Tests\Php8;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Factory\Tests\Support\SelfUnionType;

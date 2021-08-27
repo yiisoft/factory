@@ -8,15 +8,15 @@ use ArrayIterator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
-use Yiisoft\Factory\Definition\ArrayDefinition;
-use Yiisoft\Factory\Definition\DynamicReference;
-use Yiisoft\Factory\Definition\Reference;
-use Yiisoft\Factory\Definition\ValueDefinition;
-use Yiisoft\Factory\Exception\CircularReferenceException;
-use Yiisoft\Factory\Exception\InvalidConfigException;
-use Yiisoft\Factory\Exception\NotFoundException;
-use Yiisoft\Factory\Exception\NotInstantiableClassException;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Definitions\ArrayDefinition;
+use Yiisoft\Definitions\DynamicReference;
+use Yiisoft\Definitions\Reference;
+use Yiisoft\Definitions\ValueDefinition;
+use Yiisoft\Definitions\Exception\CircularReferenceException;
+use Yiisoft\Definitions\Exception\InvalidConfigException;
+use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Definitions\Exception\NotInstantiableClassException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\CallableDependency;
 use Yiisoft\Factory\Tests\Support\Car;
@@ -593,7 +593,7 @@ final class FactoryTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
             '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
-            'Yiisoft\\\\Factory\\\\Definition\\\\ArrayDefinition::~'
+            'Yiisoft\\\\Definitions\\\\ArrayDefinition::~'
         );
         $factory->create([
             'class' => Cube::class,
@@ -1248,7 +1248,7 @@ final class FactoryTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
             '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
-            'Yiisoft\\\\Factory\\\\Definition\\\\ValueDefinition::~'
+            'Yiisoft\\\\Definitions\\\\ValueDefinition::~'
         );
         new Factory(null, ['test' => $definition]);
     }
