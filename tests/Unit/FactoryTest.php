@@ -1058,7 +1058,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
-                'test' => static fn(EngineInterface $engine) => $engine,
+                'test' => static fn (EngineInterface $engine) => $engine,
             ]
         );
 
