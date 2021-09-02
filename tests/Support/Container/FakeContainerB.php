@@ -12,7 +12,7 @@ final class FakeContainerB implements ContainerInterface
     {
     }
 
-    public function has($id)
+    public function has($id): bool
     {
     }
 }
