@@ -116,7 +116,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateClassNotDefinedInConfig(): void
     {
-        $factory = new Factory(null);
+        $factory = new Factory();
 
         $one = $factory->create(EngineMarkOne::class);
         $two = $factory->create(EngineMarkOne::class);
@@ -234,7 +234,7 @@ final class FactoryTest extends TestCase
                 'firstParameter' => 'date',
                 'secondParameter' => 'time',
             ],
-        ], );
+        ]);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('date', $object->getFirstParameter());
@@ -632,7 +632,7 @@ final class FactoryTest extends TestCase
         $factory->create('NonExistsClass');
     }
 
-    public function testCreateContainerInterfaceWithoutContainer(): void
+    public function testShouldNotCreateUnspecifiedInterfaceWithoutContainer(): void
     {
         $factory = new Factory();
 
@@ -640,53 +640,43 @@ final class FactoryTest extends TestCase
         $factory->create(ContainerInterface::class);
     }
 
-    public function testCreateContainerInterfaceWithContainerWithoutContainerInterface(): void
+    public function testShouldNotCreateUnspecifiedInterfaceWithContainer(): void
     {
-        $factory = new Factory(new SimpleContainer());
-
-        $this->expectException(NotFoundException::class);
-        $factory->create(ContainerInterface::class);
-    }
-
-    public function testCreateContainerInterfaceWithDefinitionWithoutContainer(): void
-    {
-        $factory = new Factory(null, [
-            ContainerInterface::class => new SimpleContainer(),
-        ]);
-
-        $containerFromFactory = $factory->create(ContainerInterface::class);
-
-        $this->assertInstanceOf(SimpleContainer::class, $containerFromFactory);
-    }
-
-    public function testCreateContainerInterfaceWithContainerWithContainerInterface(): void
-    {
-        $container = new SimpleContainer(
-            [],
-            static function (string $id) use (&$container) {
-                if ($id === ContainerInterface::class) {
-                    return $container;
-                }
-                throw new \Yiisoft\Test\Support\Container\Exception\NotFoundException($id);
-            }
+        $factory = new Factory(
+            new SimpleContainer([
+                ContainerInterface::class => new SimpleContainer(),
+            ])
         );
 
-        $factory = new Factory($container);
-
         $this->expectException(NotFoundException::class);
         $factory->create(ContainerInterface::class);
     }
 
-    public function testCreateContainerInterfaceWithDefinitionAndContainer(): void
+    public function testShouldCreateSpecifiedInterfaceWithoutContainer(): void
     {
-        $containerA = new FakeContainerA();
-        $containerB = new FakeContainerB();
+        $factory = new Factory(null, [
+            EngineInterface::class => new EngineMarkOne(),
+        ]);
 
-        $factory = new Factory($containerA, [ContainerInterface::class => $containerB]);
+        $engine = $factory->create(EngineInterface::class);
 
-        $containerFromFactory = $factory->create(ContainerInterface::class);
+        $this->assertInstanceOf(EngineMarkOne::class, $engine);
+    }
 
-        $this->assertInstanceOf(FakeContainerB::class, $containerFromFactory);
+    public function testCreateObjectWithDefinitionAndContainer(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+            ]
+        );
+
+        $engine = $factory->create(EngineInterface::class);
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $engine);
     }
 
     public function testDefinitionEqualId(): void
