@@ -27,8 +27,6 @@ use Yiisoft\Factory\Tests\Support\Circular\CircularB;
 use Yiisoft\Factory\Tests\Support\Circular\TreeItem;
 use Yiisoft\Factory\Tests\Support\ColorInterface;
 use Yiisoft\Factory\Tests\Support\Circular\Egg;
-use Yiisoft\Factory\Tests\Support\Container\FakeContainerA;
-use Yiisoft\Factory\Tests\Support\Container\FakeContainerB;
 use Yiisoft\Factory\Tests\Support\ExcessiveConstructorParameters;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
