@@ -10,9 +10,11 @@ use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\DependencyResolverInterface;
+use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotFoundException;
+use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\Normalizer;
 use Yiisoft\Injector\Injector;
@@ -64,10 +66,19 @@ final class DependencyResolver implements DependencyResolverInterface
      */
     public function get($id)
     {
-        if ($this->container !== null) {
+        if (isset($this->definitions[$id])) {
+            return $this->getFromFactory($id);
+        }
+
+        if ($this->container !== null && $this->container->has($id)) {
             return $this->container->get($id);
         }
-        return $this->getFromFactory($id);
+
+        if (class_exists($id)) {
+            return $this->getFromFactory($id);
+        }
+
+        throw new NotInstantiableClassException($id);
     }
 
     /**
@@ -111,6 +122,13 @@ final class DependencyResolver implements DependencyResolverInterface
      */
     public function create($config)
     {
+        if (is_string($config)) {
+            if ($this->canBeCreatedByFactory($config)) {
+                return $this->getFromFactory($config);
+            }
+            throw new NotFoundException($config);
+        }
+
         $definition = $this->createDefinition($config);
 
         if ($definition instanceof ArrayDefinition) {
@@ -132,15 +150,6 @@ final class DependencyResolver implements DependencyResolverInterface
      */
     private function createDefinition($config): DefinitionInterface
     {
-        if (is_string($config) && isset($this->definitions[$config])) {
-            return Normalizer::normalize(
-                is_object($this->definitions[$config])
-                    ? clone $this->definitions[$config]
-                    : $this->definitions[$config],
-                $config
-            );
-        }
-
         $definition = Normalizer::normalize($config);
 
         if (
@@ -169,9 +178,6 @@ final class DependencyResolver implements DependencyResolverInterface
     private function getFromFactory(string $id)
     {
         if (isset($this->creatingIds[$id])) {
-            if ($id === ContainerInterface::class) {
-                return $this;
-            }
             throw new CircularReferenceException(sprintf(
                 'Circular reference to "%s" detected while creating: %s.',
                 $id,
@@ -194,6 +200,9 @@ final class DependencyResolver implements DependencyResolverInterface
     {
         if (!isset($this->definitionInstances[$id])) {
             if (isset($this->definitions[$id])) {
+                if (is_object($this->definitions[$id]) && !($this->definitions[$id] instanceof ReferenceInterface)) {
+                    return Normalizer::normalize(clone $this->definitions[$id], $id);
+                }
                 $this->definitionInstances[$id] = Normalizer::normalize($this->definitions[$id], $id);
             } else {
                 /** @psalm-var class-string $id */

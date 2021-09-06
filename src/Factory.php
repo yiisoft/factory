@@ -40,7 +40,6 @@ final class Factory
     ) {
         $this->dependencyResolver = new DependencyResolver($container);
         $this->validate = $validate;
-        $this->setDefaultDefinitions();
         $this->setMultiple($definitions);
     }
 
@@ -134,13 +133,5 @@ final class Factory
         foreach ($definitions as $id => $definition) {
             $this->set($id, $definition);
         }
-    }
-
-    /**
-     * @throws InvalidConfigException
-     */
-    private function setDefaultDefinitions(): void
-    {
-        $this->set(ContainerInterface::class, $this->dependencyResolver);
     }
 }

@@ -41,6 +41,7 @@ use Yiisoft\Factory\Tests\Support\MethodTest;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\NullableScalarConstructorArgument;
 use Yiisoft\Factory\Tests\Support\Phone;
+use Yiisoft\Factory\Tests\Support\PinkCircle;
 use Yiisoft\Factory\Tests\Support\PropertyTest;
 use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\ScalarConstructorArgument;
@@ -48,7 +49,6 @@ use Yiisoft\Factory\Tests\Support\SelfType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
 use Yiisoft\Factory\Tests\Support\VariadicClosures;
 use Yiisoft\Factory\Tests\Support\VariadicConstructor;
-use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function count;
@@ -114,8 +114,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateClassNotDefinedInConfig(): void
     {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
+        $factory = new Factory();
 
         $one = $factory->create(EngineMarkOne::class);
         $two = $factory->create(EngineMarkOne::class);
@@ -184,8 +183,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithConstructor(): void
     {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
+        $factory = new Factory();
 
         $one = $factory->create([
             'class' => Car::class,
@@ -205,8 +203,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithNamedParametersInConstructor(): void
     {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
+        $factory = new Factory();
 
         $one = $factory->create([
             'class' => Car::class,
@@ -235,7 +232,7 @@ final class FactoryTest extends TestCase
                 'firstParameter' => 'date',
                 'secondParameter' => 'time',
             ],
-        ], );
+        ]);
 
         $this->assertInstanceOf(TwoParametersDependency::class, $object);
         $this->assertSame('date', $object->getFirstParameter());
@@ -356,13 +353,9 @@ final class FactoryTest extends TestCase
         $factory->create('engine');
     }
 
-    /**
-     * When resolving dependencies, factory should rely on container only
-     */
-    public function testDoNotResolveDependenciesFromFactory(): void
+    public function testResolveDependenciesFromFactory(): void
     {
-        $container = new SimpleContainer([EngineInterface::class => new EngineMarkOne()]);
-        $factory = new Factory($container, [
+        $factory = new Factory(null, [
             EngineInterface::class => [
                 'class' => EngineMarkOne::class,
                 'setNumber()' => [42],
@@ -373,17 +366,16 @@ final class FactoryTest extends TestCase
 
         $this->assertInstanceOf(Car::class, $instance);
         $this->assertInstanceOf(EngineMarkOne::class, $instance->getEngine());
-        $this->assertEquals(0, $instance->getEngine()->getNumber());
+        $this->assertEquals(42, $instance->getEngine()->getNumber());
     }
 
     public function testCreateFactory(): void
     {
-        $container = new SimpleContainer([ContainerInterface::class => &$container]);
-        $factory = new Factory($container, [
+        $factory = new Factory(null, [
             'factoryObject' => [
                 'class' => Factory::class,
                 '__construct()' => [
-                    'container' => Reference::to(ContainerInterface::class),
+                    'container' => new SimpleContainer(),
                     'definitions' => [],
                 ],
             ],
@@ -638,26 +630,51 @@ final class FactoryTest extends TestCase
         $factory->create('NonExistsClass');
     }
 
-    public function testContainerInterfaceWithFactory(): void
+    public function testShouldNotCreateUnspecifiedInterfaceWithoutContainer(): void
     {
-        $factory = new Factory(null, ['x' => new stdClass()]);
+        $factory = new Factory();
 
-        $container = $factory->create(ContainerInterface::class);
-
-        $this->assertTrue($container->has('x'));
-        $this->assertFalse($container->has('y'));
+        $this->expectException(NotFoundException::class);
+        $factory->create(ContainerInterface::class);
     }
 
-    public function testContainerInterfaceWithContainer(): void
+    public function testShouldNotCreateUnspecifiedInterfaceWithContainer(): void
     {
         $factory = new Factory(
-            new SimpleContainer(['x' => new stdClass()])
+            new SimpleContainer([
+                ContainerInterface::class => new SimpleContainer(),
+            ])
         );
 
-        $container = $factory->create(ContainerInterface::class);
+        $this->expectException(NotFoundException::class);
+        $factory->create(ContainerInterface::class);
+    }
 
-        $this->assertTrue($container->has('x'));
-        $this->assertFalse($container->has('y'));
+    public function testShouldCreateSpecifiedInterfaceWithoutContainer(): void
+    {
+        $factory = new Factory(null, [
+            EngineInterface::class => new EngineMarkOne(),
+        ]);
+
+        $engine = $factory->create(EngineInterface::class);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $engine);
+    }
+
+    public function testCreateObjectWithDefinitionAndContainer(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+            ]
+        );
+
+        $engine = $factory->create(EngineInterface::class);
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $engine);
     }
 
     public function testDefinitionEqualId(): void
@@ -1029,28 +1046,13 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
-                'test' => static fn (ContainerInterface $container) => $container->get(EngineInterface::class),
+                'test' => static fn (EngineInterface $engine) => $engine,
             ]
         );
 
         $object = $factory->create('test');
 
         $this->assertInstanceOf(EngineMarkOne::class, $object);
-    }
-
-    public function testCallableDefinitionWithInjector(): void
-    {
-        $factory = new Factory(
-            null,
-            [
-                EngineInterface::class => EngineMarkOne::class,
-                'car' => static fn (CarFactory $carFactory, Injector $injector) => $injector->invoke([$carFactory, 'create']),
-            ]
-        );
-
-        $car = $factory->create('car');
-
-        $this->assertInstanceOf(Car::class, $car);
     }
 
     public function testArrayStaticCallableDefinition(): void
@@ -1106,7 +1108,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                'engine' => EngineMarkOne::class,
+                EngineInterface::class => EngineMarkOne::class,
                 'invokable' => new InvokableCarFactory(),
             ]
         );
@@ -1391,5 +1393,14 @@ final class FactoryTest extends TestCase
             'Please specify argument explicitly.'
         );
         $factory->create(ScalarConstructorArgument::class);
+    }
+
+    public function testCreateWithDependecyNonExistInContainer(): void
+    {
+        $factory = new Factory(new SimpleContainer(), []);
+
+        $circle = $factory->create(PinkCircle::class);
+
+        $this->assertInstanceOf(ColorPink::class, $circle->getColor());
     }
 }
