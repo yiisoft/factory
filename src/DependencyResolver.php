@@ -17,7 +17,6 @@ use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\Normalizer;
-use Yiisoft\Injector\Injector;
 
 use function is_object;
 use function is_string;
@@ -28,7 +27,6 @@ use function is_string;
 final class DependencyResolver implements DependencyResolverInterface
 {
     private ?ContainerInterface $container;
-    private ?Injector $injector = null;
 
     /**
      * @var mixed[] Definitions
@@ -55,8 +53,6 @@ final class DependencyResolver implements DependencyResolverInterface
     }
 
     /**
-     * @param string $id
-     *
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      *
@@ -64,7 +60,7 @@ final class DependencyResolver implements DependencyResolverInterface
      *
      * @psalm-suppress InvalidThrow
      */
-    public function get($id)
+    public function resolve(string $id)
     {
         if (isset($this->definitions[$id])) {
             return $this->getFromFactory($id);
@@ -81,25 +77,9 @@ final class DependencyResolver implements DependencyResolverInterface
         throw new NotInstantiableClassException($id);
     }
 
-    /**
-     * @param string $id
-     */
-    public function has($id): bool
-    {
-        if ($this->container !== null) {
-            return $this->container->has($id);
-        }
-        return $this->canBeCreatedByFactory($id);
-    }
-
     public function resolveReference(string $id)
     {
         return $this->getFromFactory($id);
-    }
-
-    public function invoke(callable $callable)
-    {
-        return $this->getInjector()->invoke($callable);
     }
 
     /**
@@ -211,11 +191,6 @@ final class DependencyResolver implements DependencyResolverInterface
         }
 
         return $this->definitionInstances[$id];
-    }
-
-    private function getInjector(): Injector
-    {
-        return $this->injector ??= new Injector($this);
     }
 
     private function canBeCreatedByFactory(string $id): bool
