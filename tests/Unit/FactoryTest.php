@@ -30,6 +30,7 @@ use Yiisoft\Factory\Tests\Support\Circular\Egg;
 use Yiisoft\Factory\Tests\Support\ExcessiveConstructorParameters;
 use Yiisoft\Factory\Tests\Support\Firefighter;
 use Yiisoft\Factory\Tests\Support\ColorPink;
+use Yiisoft\Factory\Tests\Support\ColorRed;
 use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
@@ -335,6 +336,47 @@ final class FactoryTest extends TestCase
 
         $engine = $factory->create('engine');
         $this->assertInstanceOf(EngineMarkTwo::class, $engine);
+    }
+
+    public function testDoNotFallbackToContainerForReferenceInConstructorOfArrayDefinition(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                Car::class => [
+                    '__construct()' => [
+                        Reference::to(EngineInterface::class)
+                    ],
+                ],
+            ]
+        );
+
+        $car = $factory->create(Car::class);
+        $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
+    }
+
+    public function testDoNotFallbackToContainerForReferenceInMethodOfArrayDefinition(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+                ColorInterface::class => new ColorRed(),
+            ]),
+            [
+                ColorInterface::class => new ColorPink(),
+                Car::class => [
+                    'setColor()' => [
+                        Reference::to(ColorInterface::class)
+                    ],
+                ],
+            ]
+        );
+
+        $car = $factory->create(Car::class);
+        $this->assertInstanceOf(ColorPink::class, $car->getColor());
     }
 
     public function testExceptionAndDoNotFallbackToContainerForReference(): void
