@@ -60,7 +60,7 @@ final class DependencyResolver implements ContainerInterface
      *
      * @psalm-suppress InvalidThrow
      */
-    public function get(string $id)
+    public function get($id)
     {
         if (isset($this->definitions[$id])) {
             return $this->getFromFactory($id);
@@ -73,7 +73,7 @@ final class DependencyResolver implements ContainerInterface
         throw new NotInstantiableClassException($id);
     }
 
-    public function has(string $id): bool
+    public function has($id): bool
     {
         return isset($this->definitions[$id]) || ($this->container !== null && $this->container->has($id)) || class_exists($id);
     }
