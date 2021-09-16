@@ -174,6 +174,10 @@ final class DependencyResolver implements ContainerInterface
             try {
                 return $definition->resolve($container);
             } catch (NotFoundExceptionInterface $e) {
+                if ($container === $this) {
+                    throw $e;
+                }
+
                 return $definition->resolve($this);
             }
         } finally {
