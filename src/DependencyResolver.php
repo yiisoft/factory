@@ -170,7 +170,7 @@ final class DependencyResolver implements ContainerInterface
         }
         $this->creatingIds[$id] = 1;
         try {
-            $container = $this->container === null || $definition instanceof ReferenceInterface ? $this : $this->container;
+            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this : $this->container;
             try {
                 return $definition->resolve($container);
             } catch (NotFoundExceptionInterface $e) {
