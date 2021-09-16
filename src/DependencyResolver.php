@@ -112,7 +112,7 @@ final class DependencyResolver implements ContainerInterface
             $this->creatingIds[$definition->getClass()] = 1;
         }
         try {
-            $container = $this->container === null || $definition instanceof ReferenceInterface ? $this : $this->container;
+            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this : $this->container;
             return $definition->resolve($container);
         } finally {
             if ($definition instanceof ArrayDefinition) {
