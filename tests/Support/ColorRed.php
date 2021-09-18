@@ -16,4 +16,3 @@ final class ColorRed implements ColorInterface
         return self::COLOR_RED;
     }
 }
-

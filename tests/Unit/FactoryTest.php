@@ -348,7 +348,7 @@ final class FactoryTest extends TestCase
                 EngineInterface::class => new EngineMarkTwo(),
                 Car::class => [
                     '__construct()' => [
-                        Reference::to(EngineInterface::class)
+                        Reference::to(EngineInterface::class),
                     ],
                 ],
             ]
@@ -369,7 +369,7 @@ final class FactoryTest extends TestCase
                 ColorInterface::class => new ColorPink(),
                 Car::class => [
                     'setColor()' => [
-                        Reference::to(ColorInterface::class)
+                        Reference::to(ColorInterface::class),
                     ],
                 ],
             ]
