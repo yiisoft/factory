@@ -24,7 +24,7 @@ use function is_string;
 /**
  * @internal
  */
-final class DependencyResolver implements DependencyResolverInterface
+final class DependencyResolver implements ContainerInterface
 {
     private ?ContainerInterface $container;
 
@@ -60,14 +60,10 @@ final class DependencyResolver implements DependencyResolverInterface
      *
      * @psalm-suppress InvalidThrow
      */
-    public function resolve(string $id)
+    public function get($id)
     {
         if (isset($this->definitions[$id])) {
             return $this->getFromFactory($id);
-        }
-
-        if ($this->container !== null && $this->container->has($id)) {
-            return $this->container->get($id);
         }
 
         if (class_exists($id)) {
@@ -77,9 +73,9 @@ final class DependencyResolver implements DependencyResolverInterface
         throw new NotInstantiableClassException($id);
     }
 
-    public function resolveReference(string $id)
+    public function has($id): bool
     {
-        return $this->getFromFactory($id);
+        return isset($this->definitions[$id]) || ($this->container !== null && $this->container->has($id)) || class_exists($id);
     }
 
     /**
@@ -112,13 +108,16 @@ final class DependencyResolver implements DependencyResolverInterface
         $definition = $this->createDefinition($config);
 
         if ($definition instanceof ArrayDefinition) {
+            $definition->setReferenceContainer($this);
             $this->creatingIds[$definition->getClass()] = 1;
         }
         try {
-            return $definition->resolve($this);
+            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this : $this->container;
+            return $definition->resolve($container);
         } finally {
             if ($definition instanceof ArrayDefinition) {
                 unset($this->creatingIds[$definition->getClass()]);
+                $definition->setReferenceContainer(null);
             }
         }
     }
@@ -165,11 +164,27 @@ final class DependencyResolver implements DependencyResolverInterface
             ));
         }
 
+        $definition = $this->getDefinition($id);
+        if ($definition instanceof ArrayDefinition) {
+            $definition->setReferenceContainer($this);
+        }
         $this->creatingIds[$id] = 1;
         try {
-            return $this->getDefinition($id)->resolve($this);
+            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this : $this->container;
+            try {
+                return $definition->resolve($container);
+            } catch (NotFoundExceptionInterface $e) {
+                if ($container === $this) {
+                    throw $e;
+                }
+
+                return $definition->resolve($this);
+            }
         } finally {
             unset($this->creatingIds[$id]);
+            if ($definition instanceof ArrayDefinition) {
+                $definition->setReferenceContainer(null);
+            }
         }
     }
 
