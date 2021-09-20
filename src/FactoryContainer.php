@@ -51,6 +51,7 @@ final class FactoryContainer implements ContainerInterface
     }
 
     /**
+     * @param string $id
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      *
@@ -67,6 +68,10 @@ final class FactoryContainer implements ContainerInterface
         throw new NotInstantiableClassException($id);
     }
 
+    /**
+     * @param string $id
+     * @return bool
+     */
     public function has($id): bool
     {
         return isset($this->definitions[$id]) || ($this->container !== null && $this->container->has($id)) || class_exists($id);
@@ -104,8 +109,6 @@ final class FactoryContainer implements ContainerInterface
     {
         $this->definitions[$id] = $definition;
     }
-
-
 
     /**
      * @param string $id

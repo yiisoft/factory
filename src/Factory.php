@@ -97,6 +97,7 @@ final class Factory
      * @psalm-template T
      * @psalm-param mixed|class-string<T> $config
      * @psalm-return ($config is class-string ? T : mixed)
+     * @psalm-suppress MixedReturnStatement
      */
     public function create($config)
     {
