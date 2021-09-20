@@ -52,6 +52,7 @@ final class FactoryContainer implements ContainerInterface
 
     /**
      * @param string $id
+     *
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      *
@@ -70,6 +71,7 @@ final class FactoryContainer implements ContainerInterface
 
     /**
      * @param string $id
+     *
      * @return bool
      */
     public function has($id): bool
