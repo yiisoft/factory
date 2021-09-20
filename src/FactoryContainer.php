@@ -18,12 +18,11 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\Normalizer;
 
 use function is_object;
-use function is_string;
 
 /**
  * @internal
  */
-final class DependencyResolver implements ContainerInterface
+final class FactoryContainer implements ContainerInterface
 {
     private ?ContainerInterface $container;
 
@@ -61,12 +60,8 @@ final class DependencyResolver implements ContainerInterface
      */
     public function get($id)
     {
-        if (isset($this->definitions[$id])) {
-            return $this->getFromFactory($id);
-        }
-
-        if (class_exists($id)) {
-            return $this->getFromFactory($id);
+        if (isset($this->definitions[$id]) || class_exists($id)) {
+            return $this->build($id);
         }
 
         throw new NotInstantiableClassException($id);
@@ -78,70 +73,39 @@ final class DependencyResolver implements ContainerInterface
     }
 
     /**
+     * @throws InvalidConfigException
+     */
+    public function getDefinition(string $id): DefinitionInterface
+    {
+        if (!isset($this->definitionInstances[$id])) {
+            if (isset($this->definitions[$id])) {
+                if (is_object($this->definitions[$id]) && !($this->definitions[$id] instanceof ReferenceInterface)) {
+                    return Normalizer::normalize(clone $this->definitions[$id], $id);
+                }
+                $this->definitionInstances[$id] = Normalizer::normalize($this->definitions[$id], $id);
+            } else {
+                /** @psalm-var class-string $id */
+                $this->definitionInstances[$id] = ArrayDefinition::fromPreparedData($id);
+            }
+        }
+
+        return $this->definitionInstances[$id];
+    }
+
+    public function hasDefinition(string $id): bool
+    {
+        return isset($this->definitions[$id]) || class_exists($id);
+    }
+
+    /**
      * @param mixed $definition
      */
-    public function setFactoryDefinition(string $id, $definition): void
+    public function setDefinition(string $id, $definition): void
     {
         $this->definitions[$id] = $definition;
     }
 
-    /**
-     * @param mixed $config
-     *
-     * @throws CircularReferenceException
-     * @throws NotFoundException
-     * @throws NotInstantiableException
-     * @throws InvalidConfigException
-     *
-     * @return mixed
-     */
-    public function create($config)
-    {
-        if (is_string($config)) {
-            if ($this->canBeCreatedByFactory($config)) {
-                return $this->getFromFactory($config);
-            }
-            throw new NotFoundException($config);
-        }
 
-        $definition = $this->createDefinition($config);
-
-        if ($definition instanceof ArrayDefinition) {
-            $definition->setReferenceContainer($this);
-            $this->creatingIds[$definition->getClass()] = 1;
-        }
-        try {
-            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this : $this->container;
-            return $definition->resolve($container);
-        } finally {
-            if ($definition instanceof ArrayDefinition) {
-                unset($this->creatingIds[$definition->getClass()]);
-                $definition->setReferenceContainer(null);
-            }
-        }
-    }
-
-    /**
-     * @param mixed $config
-     *
-     * @throws InvalidConfigException
-     */
-    private function createDefinition($config): DefinitionInterface
-    {
-        $definition = Normalizer::normalize($config);
-
-        if (
-            ($definition instanceof ArrayDefinition) &&
-            isset($this->definitions[$definition->getClass()])
-        ) {
-            $definition = $this->mergeDefinitions(
-                $this->getDefinition($definition->getClass()),
-                $definition
-            );
-        }
-
-        return $definition;
-    }
 
     /**
      * @param string $id
@@ -153,7 +117,7 @@ final class DependencyResolver implements ContainerInterface
      *
      * @return mixed|object
      */
-    private function getFromFactory(string $id)
+    private function build(string $id)
     {
         if (isset($this->creatingIds[$id])) {
             throw new CircularReferenceException(sprintf(
@@ -185,35 +149,5 @@ final class DependencyResolver implements ContainerInterface
                 $definition->setReferenceContainer(null);
             }
         }
-    }
-
-    /**
-     * @throws InvalidConfigException
-     */
-    private function getDefinition(string $id): DefinitionInterface
-    {
-        if (!isset($this->definitionInstances[$id])) {
-            if (isset($this->definitions[$id])) {
-                if (is_object($this->definitions[$id]) && !($this->definitions[$id] instanceof ReferenceInterface)) {
-                    return Normalizer::normalize(clone $this->definitions[$id], $id);
-                }
-                $this->definitionInstances[$id] = Normalizer::normalize($this->definitions[$id], $id);
-            } else {
-                /** @psalm-var class-string $id */
-                $this->definitionInstances[$id] = ArrayDefinition::fromPreparedData($id);
-            }
-        }
-
-        return $this->definitionInstances[$id];
-    }
-
-    private function canBeCreatedByFactory(string $id): bool
-    {
-        return isset($this->definitions[$id]) || class_exists($id);
-    }
-
-    private function mergeDefinitions(DefinitionInterface $one, ArrayDefinition $two): DefinitionInterface
-    {
-        return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 }
