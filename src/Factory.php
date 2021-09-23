@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
+use Yiisoft\Definitions\ArrayDefinition;
+use Yiisoft\Definitions\Contract\DefinitionInterface;
+use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Infrastructure\DefinitionValidator;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
+use Yiisoft\Definitions\Infrastructure\Normalizer;
+
+use function is_string;
 
 /**
  * Factory allows creating objects passing arguments runtime.
@@ -19,7 +25,8 @@ use Yiisoft\Definitions\Exception\NotInstantiableException;
  */
 final class Factory
 {
-    private DependencyResolver $dependencyResolver;
+    private ?ContainerInterface $container;
+    private FactoryContainer $factoryContainer;
 
     /**
      * @var bool $validate Validate definitions when set
@@ -38,7 +45,8 @@ final class Factory
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->dependencyResolver = new DependencyResolver($container);
+        $this->container = $container;
+        $this->factoryContainer = new FactoryContainer($container);
         $this->validate = $validate;
         $this->setMultiple($definitions);
     }
@@ -91,6 +99,7 @@ final class Factory
      * @psalm-template T
      * @psalm-param mixed|class-string<T> $config
      * @psalm-return ($config is class-string ? T : mixed)
+     * @psalm-suppress MixedReturnStatement
      */
     public function create($config)
     {
@@ -98,8 +107,26 @@ final class Factory
             DefinitionValidator::validate($config);
         }
 
-        /** @psalm-suppress MixedReturnStatement */
-        return $this->dependencyResolver->create($config);
+        if (is_string($config)) {
+            if ($this->factoryContainer->hasDefinition($config)) {
+                return $this->factoryContainer->get($config);
+            }
+            throw new NotFoundException($config);
+        }
+
+        $definition = $this->createDefinition($config);
+
+        if ($definition instanceof ArrayDefinition) {
+            $definition->setReferenceContainer($this->factoryContainer);
+        }
+        try {
+            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this->factoryContainer : $this->container;
+            return $definition->resolve($container);
+        } finally {
+            if ($definition instanceof ArrayDefinition) {
+                $definition->setReferenceContainer(null);
+            }
+        }
     }
 
     /**
@@ -115,7 +142,7 @@ final class Factory
             DefinitionValidator::validate($definition, $id);
         }
 
-        $this->dependencyResolver->setFactoryDefinition($id, $definition);
+        $this->factoryContainer->setDefinition($id, $definition);
     }
 
     /**
@@ -133,5 +160,33 @@ final class Factory
         foreach ($definitions as $id => $definition) {
             $this->set($id, $definition);
         }
+    }
+
+    /**
+     * @param mixed $config
+     *
+     * @throws InvalidConfigException
+     */
+    private function createDefinition($config): DefinitionInterface
+    {
+        $definition = Normalizer::normalize($config);
+
+        if (
+            ($definition instanceof ArrayDefinition) &&
+            $this->factoryContainer->hasDefinition($definition->getClass()) &&
+            ($containerDefinition = $this->factoryContainer->getDefinition($definition->getClass())) instanceof ArrayDefinition
+        ) {
+            $definition = $this->mergeDefinitions(
+                $containerDefinition,
+                $definition
+            );
+        }
+
+        return $definition;
+    }
+
+    private function mergeDefinitions(DefinitionInterface $one, ArrayDefinition $two): DefinitionInterface
+    {
+        return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 }

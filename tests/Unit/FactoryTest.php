@@ -358,6 +358,26 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
     }
 
+    public function testDoNotFallbackToContainerForReferenceInConstructorOfArrayDefinitionInCreateMethod(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+            ]),
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+            ]
+        );
+
+        $car = $factory->create([
+            'class' => Car::class,
+            '__construct()' => [
+                Reference::to(EngineInterface::class),
+            ],
+        ]);
+        $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
+    }
+
     public function testDoNotFallbackToContainerForReferenceInMethodOfArrayDefinition(): void
     {
         $factory = new Factory(
@@ -376,6 +396,27 @@ final class FactoryTest extends TestCase
         );
 
         $car = $factory->create(Car::class);
+        $this->assertInstanceOf(ColorPink::class, $car->getColor());
+    }
+
+    public function testDoNotFallbackToContainerForReferenceInMethodOfArrayDefinitionInCreateMethod(): void
+    {
+        $factory = new Factory(
+            new SimpleContainer([
+                EngineInterface::class => new EngineMarkOne(),
+                ColorInterface::class => new ColorRed(),
+            ]),
+            [
+                ColorInterface::class => new ColorPink(),
+            ]
+        );
+
+        $car = $factory->create([
+            'class' => Car::class,
+            'setColor()' => [
+                Reference::to(ColorInterface::class),
+            ],
+        ]);
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
     }
 
