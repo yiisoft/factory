@@ -15,6 +15,8 @@ use Yiisoft\Definitions\Exception\NotFoundException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Infrastructure\Normalizer;
 
+use function is_string;
+
 /**
  * Factory allows creating objects passing arguments runtime.
  * A factory will try to use a PSR-11 compliant container to get dependencies,
@@ -171,10 +173,11 @@ final class Factory
 
         if (
             ($definition instanceof ArrayDefinition) &&
-            $this->factoryContainer->hasDefinition($definition->getClass())
+            $this->factoryContainer->hasDefinition($definition->getClass()) &&
+            ($containerDefinition = $this->factoryContainer->getDefinition($definition->getClass())) instanceof ArrayDefinition
         ) {
             $definition = $this->mergeDefinitions(
-                $this->factoryContainer->getDefinition($definition->getClass()),
+                $containerDefinition,
                 $definition
             );
         }

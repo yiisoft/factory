@@ -101,7 +101,16 @@ final class FactoryContainer implements ContainerInterface
 
     public function hasDefinition(string $id): bool
     {
-        return isset($this->definitions[$id]) || class_exists($id);
+        if (isset($this->definitions[$id])) {
+            return true;
+        }
+
+        if (class_exists($id)) {
+            $this->definitions[$id] = $id;
+            return true;
+        }
+
+        return false;
     }
 
     /**
