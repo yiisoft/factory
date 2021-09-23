@@ -373,7 +373,7 @@ final class FactoryTest extends TestCase
             'class' => Car::class,
             '__construct()' => [
                 Reference::to(EngineInterface::class),
-            ]
+            ],
         ]);
         $this->assertInstanceOf(EngineMarkTwo::class, $car->getEngine());
     }
