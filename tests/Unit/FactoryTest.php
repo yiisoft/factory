@@ -700,9 +700,8 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
+        $this->expectException(NotInstantiableException::class);
         $object = $factory->create(Firefighter::class);
-
-        $this->assertNull($object->getName());
     }
 
     public function testCreateNonExistsClass(): void
@@ -783,9 +782,8 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
+        $this->expectException(NotInstantiableClassException::class);
         $object = $factory->create(NullableInterfaceDependency::class);
-
-        $this->assertNull($object->getEngine());
     }
 
     public function testOptionalInterfaceDependencyWithDefiniion(): void
@@ -1460,9 +1458,8 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
+        $this->expectException(NotInstantiableException::class);
         $object = $factory->create(NullableScalarConstructorArgument::class);
-
-        $this->assertNull($object->getName());
     }
 
     public function testScalarConstructorArgument(): void
