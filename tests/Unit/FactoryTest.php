@@ -40,7 +40,12 @@ use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\InvokableCarFactory;
 use Yiisoft\Factory\Tests\Support\MethodTest;
 use Yiisoft\Factory\Tests\Support\NullableInterfaceDependency;
+use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
+use Yiisoft\Factory\Tests\Support\NullableOptionalInterfaceDependency;
+use Yiisoft\Factory\Tests\Support\NullableOptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\NullableScalarConstructorArgument;
+use Yiisoft\Factory\Tests\Support\OptionalInterfaceDependency;
+use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\PinkCircle;
 use Yiisoft\Factory\Tests\Support\PropertyTest;
@@ -782,17 +787,66 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
+        $object = $factory->create(OptionalInterfaceDependency::class);
+        $this->assertInstanceOf(OptionalInterfaceDependency::class, $object);
+    }
+
+    public function testOptionalConcreteDependency(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(OptionalConcreteDependency::class);
+        $this->assertInstanceOf(OptionalConcreteDependency::class, $object);
+    }
+
+    public function testNullableOptionalInterfaceDependency(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(NullableOptionalInterfaceDependency::class);
+        $this->assertInstanceOf(NullableOptionalInterfaceDependency::class, $object);
+    }
+
+    public function testNullableOptionalConcreteDependency(): void
+    {
+        $factory = new Factory();
+
+        $object = $factory->create(NullableOptionalConcreteDependency::class);
+        $this->assertInstanceOf(NullableOptionalConcreteDependency::class, $object);
+    }
+
+    public function testNullableInterfaceDependency(): void
+    {
+        $factory = new Factory();
+
         $this->expectException(NotInstantiableClassException::class);
         $object = $factory->create(NullableInterfaceDependency::class);
     }
 
-    public function testOptionalInterfaceDependencyWithDefiniion(): void
+    public function testNullableConcreteDependency(): void
+    {
+        $factory = new Factory();
+
+        $this->expectException(NotInstantiableClassException::class);
+        $object = $factory->create(NullableConcreteDependency::class);
+    }
+
+    public function testNullableInterfaceDependencyWithDefinition(): void
     {
         $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
 
         $object = $factory->create(NullableInterfaceDependency::class);
 
         $this->assertInstanceOf(EngineMarkOne::class, $object->getEngine());
+    }
+
+    public function testNullableConcreteDependencyWithDefinition(): void
+    {
+        $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
+
+        $object = $factory->create(NullableConcreteDependency::class);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $object->getCar()->getEngine());
     }
 
     public function testIntegerIndexedConstructorArguments(): void
