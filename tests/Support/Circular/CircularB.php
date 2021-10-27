@@ -8,7 +8,7 @@ final class CircularB
 {
     public ?CircularA $a;
 
-    public function __construct(?CircularA $a)
+    public function __construct(?CircularA $a = null)
     {
         $this->a = $a;
     }
