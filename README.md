@@ -66,7 +66,7 @@ configuration overriding its keys when the key name is the same.
 
 ### Tuning for production
 
-By default, the factory validates definitions right when they are set. In production environment, it makes sense not
+By default, the factory validates definitions right when they are set. In production environment, it makes sense to
 turn it off by passing `false` as a third constructor argument:
 
 ```php
