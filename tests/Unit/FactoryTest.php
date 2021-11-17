@@ -116,7 +116,7 @@ final class FactoryTest extends TestCase
     }
 
     /**
-     * If class name is used as ID, factory must try create given class.
+     * If class name is used as ID, factory must try to create given class.
      */
     public function testCreateClassNotDefinedInConfig(): void
     {

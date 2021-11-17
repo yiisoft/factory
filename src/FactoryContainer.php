@@ -20,44 +20,51 @@ use Yiisoft\Definitions\Infrastructure\Normalizer;
 use function is_object;
 
 /**
+ * Factory's primary container.
+ *
  * @internal
  */
 final class FactoryContainer implements ContainerInterface
 {
+    /**
+     * @var ContainerInterface|null Container to use for resolving dependencies. When null, only definitions
+     * are used.
+     */
     private ?ContainerInterface $container;
 
     /**
-     * @var mixed[] Definitions
+     * @var array Definitions to create objects with.
      * @psalm-var array<string, mixed>
      */
     private array $definitions = [];
 
     /**
-     * @var DefinitionInterface[] object definitions indexed by their types
+     * @var DefinitionInterface[] Object created from definitions indexed by their types.
      * @psalm-var array<string, DefinitionInterface>
      */
     private array $definitionInstances = [];
 
     /**
-     * @var array used to collect IDs instantiated during build to detect circular references
+     * @var array Used to collect IDs instantiated during build to detect circular references.
      *
      * @psalm-var array<string,1>
      */
     private array $creatingIds = [];
 
+    /**
+     * @param ContainerInterface|null $container Container to use for resolving dependencies. When null, only definitions
+     * are used.
+     */
     public function __construct(?ContainerInterface $container)
     {
         $this->container = $container;
     }
 
     /**
+     * @inheritDoc
+     *
      * @param string $id
-     *
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     *
      * @return mixed|object
-     *
      * @psalm-suppress InvalidThrow
      */
     public function get($id)
@@ -69,17 +76,13 @@ final class FactoryContainer implements ContainerInterface
         throw new NotInstantiableClassException($id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return bool
-     */
     public function has($id): bool
     {
         return isset($this->definitions[$id]) || ($this->container !== null && $this->container->has($id)) || class_exists($id);
     }
 
     /**
+     * Get definition by identifier provided.
      * @throws InvalidConfigException
      */
     public function getDefinition(string $id): DefinitionInterface
@@ -99,6 +102,12 @@ final class FactoryContainer implements ContainerInterface
         return $this->definitionInstances[$id];
     }
 
+    /**
+     * Check if there is a definition with a given identifier.
+     *
+     * @param string $id Identifier to look for.
+     * @return bool If there is a definition with a given identifier.
+     */
     public function hasDefinition(string $id): bool
     {
         if (isset($this->definitions[$id])) {
@@ -114,7 +123,10 @@ final class FactoryContainer implements ContainerInterface
     }
 
     /**
-     * @param mixed $definition
+     * Set definition for a given identifier.
+     *
+     * @param string $id Identifier to set definition for.
+     * @param mixed $definition Definition to set.
      */
     public function setDefinition(string $id, $definition): void
     {

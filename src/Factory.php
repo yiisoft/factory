@@ -25,18 +25,26 @@ use function is_string;
  */
 final class Factory
 {
+    /**
+     * @var ContainerInterface|null Container to use for resolving dependencies. When null, only definitions
+     * are used.
+     */
     private ?ContainerInterface $container;
     private FactoryContainer $factoryContainer;
 
     /**
-     * @var bool $validate Validate definitions when set
+     * @var bool $validate If definitions should be validated when set.
      */
     private bool $validate;
 
     /**
      * Factory constructor.
      *
+     * @param ContainerInterface|null $container Container to use for resolving dependencies. When null, only definitions
+     * are used.
+     * @param array $definitions Definitions to create objects with.
      * @psalm-param array<string, mixed> $definitions
+     * @param bool $validate If definitions should be validated when set.
      *
      * @throws InvalidConfigException
      */
