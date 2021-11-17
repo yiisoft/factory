@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory;
 
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\ArrayDefinition;
@@ -64,6 +63,7 @@ final class FactoryContainer implements ContainerInterface
      * @inheritDoc
      *
      * @param string $id
+     *
      * @return mixed|object
      * @psalm-suppress InvalidThrow
      */
@@ -83,6 +83,7 @@ final class FactoryContainer implements ContainerInterface
 
     /**
      * Get definition by identifier provided.
+     *
      * @throws InvalidConfigException
      */
     public function getDefinition(string $id): DefinitionInterface
@@ -106,6 +107,7 @@ final class FactoryContainer implements ContainerInterface
      * Check if there is a definition with a given identifier.
      *
      * @param string $id Identifier to look for.
+     *
      * @return bool If there is a definition with a given identifier.
      */
     public function hasDefinition(string $id): bool

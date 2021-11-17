@@ -44,6 +44,7 @@ final class Factory
      * are used.
      * @param array $definitions Definitions to create objects with.
      * @psalm-param array<string, mixed> $definitions
+     *
      * @param bool $validate If definitions should be validated when set.
      *
      * @throws InvalidConfigException
