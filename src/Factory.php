@@ -8,11 +8,11 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
-use Yiisoft\Definitions\Infrastructure\DefinitionValidator;
+use Yiisoft\Definitions\Helpers\DefinitionValidator;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
-use Yiisoft\Definitions\Infrastructure\Normalizer;
+use Yiisoft\Definitions\Helpers\Normalizer;
 
 use function is_string;
 
