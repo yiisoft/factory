@@ -13,7 +13,7 @@ use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
 use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
-use Yiisoft\Definitions\Infrastructure\Normalizer;
+use Yiisoft\Definitions\Helpers\Normalizer;
 
 use function is_object;
 
