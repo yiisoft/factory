@@ -14,12 +14,10 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/factory"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "^7.4|^8.0",
         "psr/container": "^1.0|^2.0",
-        "yiisoft/definitions": "3.0.x-dev"
+        "yiisoft/definitions": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
