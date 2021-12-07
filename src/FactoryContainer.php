@@ -72,6 +72,10 @@ final class FactoryContainer implements ContainerInterface
             return $this->build($id);
         }
 
+        if ($this->container !== null && $this->container->has($id)) {
+            return $this->container->get($id);
+        }
+
         throw new NotInstantiableClassException($id);
     }
 

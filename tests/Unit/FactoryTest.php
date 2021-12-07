@@ -425,7 +425,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(ColorPink::class, $car->getColor());
     }
 
-    public function testExceptionAndDoNotFallbackToContainerForReference(): void
+    public function testFallbackToContainerForReference(): void
     {
         $factory = new Factory(
             new SimpleContainer([
@@ -436,9 +436,7 @@ final class FactoryTest extends TestCase
             ]
         );
 
-        $this->expectException(NotInstantiableClassException::class);
-        $this->expectExceptionMessage('Can not instantiate ' . EngineInterface::class . '.');
-        $factory->create('engine');
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
     }
 
     public function testResolveDependenciesFromFactory(): void
