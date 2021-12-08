@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
 use Yiisoft\Definitions\Contract\ReferenceInterface;
@@ -15,6 +14,7 @@ use Yiisoft\Definitions\Exception\NotInstantiableClassException;
 use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Definitions\Helpers\Normalizer;
 
+use function array_key_exists;
 use function is_object;
 
 /**
@@ -68,11 +68,11 @@ final class FactoryContainer implements ContainerInterface
      */
     public function get($id)
     {
-        if (isset($this->definitions[$id]) || class_exists($id)) {
+        if ($this->hasDefinition($id)) {
             return $this->build($id);
         }
 
-        if ($this->container !== null && $this->container->has($id)) {
+        if ($this->hasInContainer($id)) {
             return $this->container->get($id);
         }
 
@@ -81,7 +81,25 @@ final class FactoryContainer implements ContainerInterface
 
     public function has($id): bool
     {
-        return isset($this->definitions[$id]) || ($this->container !== null && $this->container->has($id)) || class_exists($id);
+        return $this->hasDefinition($id) || $this->hasInContainer($id);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function create(DefinitionInterface $definition)
+    {
+        if ($definition instanceof ArrayDefinition) {
+            $this->creatingIds[$definition->getClass()] = 1;
+        }
+
+        try {
+            return $definition->resolve($this);
+        } finally {
+            if ($definition instanceof ArrayDefinition) {
+                unset($this->creatingIds[$definition->getClass()]);
+            }
+        }
     }
 
     /**
@@ -115,16 +133,7 @@ final class FactoryContainer implements ContainerInterface
      */
     public function hasDefinition(string $id): bool
     {
-        if (isset($this->definitions[$id])) {
-            return true;
-        }
-
-        if (class_exists($id)) {
-            $this->definitions[$id] = $id;
-            return true;
-        }
-
-        return false;
+        return array_key_exists($id, $this->definitions);
     }
 
     /**
@@ -159,26 +168,20 @@ final class FactoryContainer implements ContainerInterface
         }
 
         $definition = $this->getDefinition($id);
-        if ($definition instanceof ArrayDefinition) {
-            $definition->setReferenceContainer($this);
-        }
+
         $this->creatingIds[$id] = 1;
         try {
-            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this : $this->container;
-            try {
-                return $definition->resolve($container);
-            } catch (NotFoundExceptionInterface $e) {
-                if ($container === $this) {
-                    throw $e;
-                }
-
-                return $definition->resolve($this);
-            }
+            return $definition->resolve($this);
         } finally {
             unset($this->creatingIds[$id]);
-            if ($definition instanceof ArrayDefinition) {
-                $definition->setReferenceContainer(null);
-            }
         }
+    }
+
+    /**
+     * @psalm-assert ContainerInterface $this->container
+     */
+    private function hasInContainer(string $id): bool
+    {
+        return $this->container !== null && $this->container->has($id);
     }
 }

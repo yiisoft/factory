@@ -7,7 +7,6 @@ namespace Yiisoft\Factory;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
-use Yiisoft\Definitions\Contract\ReferenceInterface;
 use Yiisoft\Definitions\Helpers\DefinitionValidator;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Exception\InvalidConfigException;
@@ -117,24 +116,17 @@ final class Factory
 
         if (is_string($config)) {
             if ($this->factoryContainer->hasDefinition($config)) {
-                return $this->factoryContainer->get($config);
+                $definition = $this->factoryContainer->getDefinition($config);
+            } elseif (class_exists($config)) {
+                $definition = ArrayDefinition::fromPreparedData($config);
+            } else {
+                throw new NotFoundException($config);
             }
-            throw new NotFoundException($config);
+        } else {
+            $definition = $this->createDefinition($config);
         }
 
-        $definition = $this->createDefinition($config);
-
-        if ($definition instanceof ArrayDefinition) {
-            $definition->setReferenceContainer($this->factoryContainer);
-        }
-        try {
-            $container = ($this->container === null || $definition instanceof ReferenceInterface) ? $this->factoryContainer : $this->container;
-            return $definition->resolve($container);
-        } finally {
-            if ($definition instanceof ArrayDefinition) {
-                $definition->setReferenceContainer(null);
-            }
-        }
+        return $this->factoryContainer->create($definition);
     }
 
     /**

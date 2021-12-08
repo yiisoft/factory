@@ -64,7 +64,10 @@ final class FactoryTest extends TestCase
     public function testCanCreateByAlias(): void
     {
         $container = new SimpleContainer();
-        $factory = new Factory($container, ['engine' => EngineMarkOne::class]);
+        $factory = new Factory($container, [
+            EngineMarkOne::class => EngineMarkOne::class,
+            'engine' => EngineMarkOne::class,
+        ]);
 
         $one = $factory->create('engine');
         $two = $factory->create('engine');
@@ -77,7 +80,10 @@ final class FactoryTest extends TestCase
     public function testCanCreateByInterfaceAsStringDefinition(): void
     {
         $container = new SimpleContainer();
-        $factory = new Factory($container, [EngineInterface::class => EngineMarkOne::class]);
+        $factory = new Factory($container, [
+            EngineMarkOne::class => EngineMarkOne::class,
+            EngineInterface::class => EngineMarkOne::class,
+        ]);
 
         $one = $factory->create(EngineInterface::class);
         $two = $factory->create(EngineInterface::class);
@@ -89,7 +95,10 @@ final class FactoryTest extends TestCase
 
     public function testCanCreateByInterfaceAsReferenceDefinition(): void
     {
-        $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
+        $factory = new Factory(null, [
+            EngineInterface::class => EngineMarkOne::class,
+            EngineMarkOne::class => EngineMarkOne::class,
+        ]);
 
         $one = $factory->create(Reference::to(EngineInterface::class));
         $two = $factory->create(Reference::to(EngineInterface::class));
@@ -649,7 +658,7 @@ final class FactoryTest extends TestCase
 
         $factory->setMultiple([
             'object1' => [$this, 'createStdClass'],
-            'object2' => GearBox::class,
+            'object2' => new GearBox(),
         ]);
 
         $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
@@ -831,7 +840,10 @@ final class FactoryTest extends TestCase
 
     public function testNullableInterfaceDependencyWithDefinition(): void
     {
-        $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
+        $factory = new Factory(null, [
+            EngineInterface::class => EngineMarkOne::class,
+            EngineMarkOne::class => EngineMarkOne::class,
+        ]);
 
         $object = $factory->create(NullableInterfaceDependency::class);
 
@@ -840,7 +852,11 @@ final class FactoryTest extends TestCase
 
     public function testNullableConcreteDependencyWithDefinition(): void
     {
-        $factory = new Factory(null, [EngineInterface::class => EngineMarkOne::class]);
+        $factory = new Factory(null, [
+            Car::class => Car::class,
+            EngineMarkOne::class => EngineMarkOne::class,
+            EngineInterface::class => EngineMarkOne::class,
+        ]);
 
         $object = $factory->create(NullableConcreteDependency::class);
 
@@ -906,6 +922,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
+                EngineMarkOne::class => EngineMarkOne::class,
                 EngineInterface::class => EngineMarkOne::class,
                 'test' => [
                     'class' => VariadicConstructor::class,
@@ -975,7 +992,7 @@ final class FactoryTest extends TestCase
     public function testReferenceInConstructor(): void
     {
         $factory = new Factory(null, [
-            'color' => ColorPink::class,
+            'color' => new ColorPink(),
             Cube::class => [
                 'class' => Cube::class,
                 '__construct()' => [
@@ -1030,7 +1047,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                'color' => ColorPink::class,
+                'color' => new ColorPink(),
                 PropertyTest::class => [
                     'class' => PropertyTest::class,
                     '$property' => Reference::to('color'),
@@ -1089,7 +1106,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                'color' => ColorPink::class,
+                'color' => new ColorPink(),
                 MethodTest::class => [
                     'class' => MethodTest::class,
                     'setValue()' => [Reference::to('color')],
@@ -1131,6 +1148,7 @@ final class FactoryTest extends TestCase
                 EngineInterface::class => Reference::to('engine'),
                 'engine' => Reference::to('engine-mark-one'),
                 'engine-mark-one' => EngineMarkOne::class,
+                EngineMarkOne::class => EngineMarkOne::class,
             ]
         );
 
@@ -1161,7 +1179,8 @@ final class FactoryTest extends TestCase
             null,
             [
                 'car' => Car::class,
-                EngineInterface::class => EngineMarkTwo::class,
+                Car::class => Car::class,
+                EngineInterface::class => new EngineMarkTwo(),
             ]
         );
 
@@ -1177,6 +1196,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
+                EngineMarkOne::class => EngineMarkOne::class,
                 'test' => static fn (EngineInterface $engine) => $engine,
             ]
         );
@@ -1191,6 +1211,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
+                EngineMarkOne::class => EngineMarkOne::class,
                 EngineInterface::class => EngineMarkOne::class,
                 'car' => [CarFactory::class, 'create'],
             ]
@@ -1207,7 +1228,8 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                ColorInterface::class => ColorPink::class,
+                ColorInterface::class => new ColorPink(),
+                CarFactory::class => CarFactory::class,
                 'car' => [CarFactory::class, 'createWithColor'],
             ]
         );
@@ -1223,7 +1245,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                ColorInterface::class => ColorPink::class,
+                ColorInterface::class => new ColorPink(),
                 'car' => [new CarFactory(), 'createWithColor'],
             ]
         );
@@ -1239,6 +1261,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
+                EngineMarkOne::class => EngineMarkOne::class,
                 EngineInterface::class => EngineMarkOne::class,
                 'invokable' => new InvokableCarFactory(),
             ]
@@ -1254,6 +1277,8 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
+                EngineMarkOne::class => EngineMarkOne::class,
+                EngineMarkTwo::class => EngineMarkTwo::class,
                 'engine1' => EngineMarkOne::class,
                 'engine2' => EngineMarkTwo::class,
                 'engine3' => EngineMarkTwo::class,
@@ -1295,6 +1320,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
+                EngineMarkOne::class => EngineMarkOne::class,
                 Car::class => [
                     'class' => Car::class,
                     '__construct()' => [
@@ -1401,7 +1427,10 @@ final class FactoryTest extends TestCase
 
     public function testOptionalCircularClassDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(null, [
+            CircularA::class => CircularA::class,
+            CircularB::class => CircularB::class,
+        ]);
 
         $a = $factory->create(CircularA::class);
 
@@ -1425,7 +1454,10 @@ final class FactoryTest extends TestCase
 
     public function testCircularClassDependencyWithoutDefinition(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(null, [
+            Egg::class => Egg::class,
+            Chicken::class => Chicken::class,
+        ]);
 
         $this->expectException(CircularReferenceException::class);
         $factory->create(Chicken::class);
@@ -1448,7 +1480,7 @@ final class FactoryTest extends TestCase
 
     public function testCircularReference(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(null, [TreeItem::class => TreeItem::class]);
 
         $this->expectException(CircularReferenceException::class);
         $factory->create(TreeItem::class);
@@ -1487,7 +1519,7 @@ final class FactoryTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $factory = new Factory();
+        $factory = new Factory(null, [ColorPink::class => ColorPink::class]);
         try {
             $factory->create('test');
         } catch (NotFoundException $e) {
@@ -1527,10 +1559,243 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithDependecyNonExistInContainer(): void
     {
-        $factory = new Factory(new SimpleContainer(), []);
+        $factory = new Factory(new SimpleContainer(), [
+            ColorPink::class => new ColorPink(),
+        ]);
 
         $circle = $factory->create(PinkCircle::class);
 
         $this->assertInstanceOf(ColorPink::class, $circle->getColor());
+    }
+
+    public function test1(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                'e' => fn (ContainerInterface $c) => $c->get(EngineInterface::class),
+                'engine' => Reference::to('e'),
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
+    }
+
+    public function test2(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                'engine' => DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class)),
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
+    }
+
+    public function test3(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                'engine' => DynamicReference::to(fn (EngineInterface $e) => $e),
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
+    }
+
+    public function test4(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                'engine' => DynamicReference::to(fn (EngineInterface $e) => $e),
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $factory->create('engine'));
+    }
+
+    public function test5(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                'engine' => Reference::to(EngineInterface::class),
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
+    }
+
+    public function test6(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                Car::class => [
+                    '__construct()' => [Reference::to(EngineInterface::class)]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test7(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                Car::class => [
+                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test8(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                Car::class => [
+                    '__construct()' => [Reference::to(EngineInterface::class)]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test9(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                Car::class => [
+                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test10(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                Car::class => [
+                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test11(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                Car::class => [
+                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test12(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                Car::class => [
+                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)]
+                ],
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $factory->create(Car::class)->getEngine());
+    }
+
+    public function test13(): void
+    {
+        $container = new SimpleContainer([
+            EngineInterface::class => new EngineMarkOne(),
+            ContainerInterface::class => &$container,
+        ]);
+        $factory = new Factory(
+            $container,
+            [
+                EngineInterface::class => new EngineMarkTwo(),
+                'e' => fn (EngineInterface $e) => $e,
+                'engine' => Reference::to('e'),
+            ]
+        );
+
+        $this->assertInstanceOf(EngineMarkTwo::class, $factory->create('engine'));
     }
 }
