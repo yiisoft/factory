@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Unit;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -37,5 +38,14 @@ final class FactoryContainerTest extends TestCase
     {
         $factoryContainer = new FactoryContainer($container);
         $this->assertSame($expected, $factoryContainer->has('test'));
+    }
+
+    public function testGetNonExistsDefinition(): void
+    {
+        $factoryContainer = new FactoryContainer(null);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('No definition found for "non-exists".');
+        $factoryContainer->getDefinition('non-exists');
     }
 }

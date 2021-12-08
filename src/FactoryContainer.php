@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory;
 
+use LogicException;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Definitions\Contract\DefinitionInterface;
@@ -116,8 +117,9 @@ final class FactoryContainer implements ContainerInterface
                 }
                 $this->definitionInstances[$id] = Normalizer::normalize($this->definitions[$id], $id);
             } else {
-                /** @psalm-var class-string $id */
-                $this->definitionInstances[$id] = ArrayDefinition::fromPreparedData($id);
+                throw new LogicException(
+                    sprintf('No definition found for "%s".', $id)
+                );
             }
         }
 
