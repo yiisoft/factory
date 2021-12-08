@@ -1662,7 +1662,7 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [Reference::to(EngineInterface::class)]
+                    '__construct()' => [Reference::to(EngineInterface::class)],
                 ],
             ]
         );
@@ -1680,7 +1680,7 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)]
+                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
                 ],
             ]
         );
@@ -1699,7 +1699,7 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => new EngineMarkTwo(),
                 Car::class => [
-                    '__construct()' => [Reference::to(EngineInterface::class)]
+                    '__construct()' => [Reference::to(EngineInterface::class)],
                 ],
             ]
         );
@@ -1717,7 +1717,7 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)]
+                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
                 ],
             ]
         );
@@ -1735,7 +1735,7 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))]
+                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))],
                 ],
             ]
         );
@@ -1754,7 +1754,7 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => new EngineMarkTwo(),
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))]
+                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))],
                 ],
             ]
         );
@@ -1773,7 +1773,7 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => new EngineMarkTwo(),
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)]
+                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
                 ],
             ]
         );
