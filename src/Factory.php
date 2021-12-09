@@ -23,11 +23,6 @@ use function is_string;
  */
 final class Factory
 {
-    /**
-     * @var ContainerInterface|null Container to use for resolving dependencies. When null, only definitions
-     * are used.
-     */
-    private ?ContainerInterface $container;
     private FactoryContainer $factoryContainer;
 
     /**
@@ -52,7 +47,6 @@ final class Factory
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->container = $container;
         $this->factoryContainer = new FactoryContainer($container);
         $this->validate = $validate;
         $this->setMultiple($definitions);
