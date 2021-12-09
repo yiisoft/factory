@@ -16,15 +16,15 @@ final class FactoryContainerTest extends TestCase
     public function dataHas(): array
     {
         return [
-            [
+            'no "test" in the factory without container' => [
                 false,
                 null,
             ],
-            [
+            'no "test" in the factory with empty container' => [
                 false,
                 new SimpleContainer(),
             ],
-            [
+            '"test" is in the factory with container that has "test"' => [
                 true,
                 new SimpleContainer(['test' => new stdClass()]),
             ],
