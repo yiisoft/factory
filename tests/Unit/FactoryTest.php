@@ -655,7 +655,7 @@ final class FactoryTest extends TestCase
 
         $factory->setMultiple([
             'object1' => [$this, 'createStdClass'],
-            'object2' => new GearBox(),
+            'object2' => GearBox::class,
         ]);
 
         $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
@@ -986,7 +986,7 @@ final class FactoryTest extends TestCase
     public function testReferenceInConstructor(): void
     {
         $factory = new Factory(null, [
-            'color' => new ColorPink(),
+            'color' => ColorPink::class,
             Cube::class => [
                 'class' => Cube::class,
                 '__construct()' => [
@@ -1041,7 +1041,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                'color' => new ColorPink(),
+                'color' => ColorPink::class,
                 PropertyTest::class => [
                     'class' => PropertyTest::class,
                     '$property' => Reference::to('color'),
@@ -1100,7 +1100,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                'color' => new ColorPink(),
+                'color' => ColorPink::class,
                 MethodTest::class => [
                     'class' => MethodTest::class,
                     'setValue()' => [Reference::to('color')],
@@ -1172,7 +1172,7 @@ final class FactoryTest extends TestCase
             null,
             [
                 'car' => Car::class,
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
             ]
         );
 
@@ -1563,7 +1563,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
                 'e' => fn (ContainerInterface $c) => $c->get(EngineInterface::class),
                 'engine' => Reference::to('e'),
             ]
@@ -1581,7 +1581,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
                 'engine' => DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class)),
             ]
         );
@@ -1683,7 +1683,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
                 Car::class => [
                     '__construct()' => [Reference::to(EngineInterface::class)],
                 ],
@@ -1738,7 +1738,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
                 Car::class => [
                     '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))],
                 ],
@@ -1757,7 +1757,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
                 Car::class => [
                     '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
                 ],
@@ -1776,7 +1776,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                EngineInterface::class => new EngineMarkTwo(),
+                EngineInterface::class => EngineMarkTwo::class,
                 'e' => fn (EngineInterface $e) => $e,
                 'engine' => Reference::to('e'),
             ]
