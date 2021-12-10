@@ -16,10 +16,6 @@ final class FactoryContainerTest extends TestCase
     public function dataHas(): array
     {
         return [
-            'no "test" in the factory without container' => [
-                false,
-                null,
-            ],
             'no "test" in the factory with empty container' => [
                 false,
                 new SimpleContainer(),
@@ -42,7 +38,7 @@ final class FactoryContainerTest extends TestCase
 
     public function testGetNonExistsDefinition(): void
     {
-        $factoryContainer = new FactoryContainer(null);
+        $factoryContainer = new FactoryContainer(new SimpleContainer());
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No definition found for "non-exists".');

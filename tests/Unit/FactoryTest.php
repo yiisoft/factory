@@ -93,7 +93,7 @@ final class FactoryTest extends TestCase
 
     public function testCanCreateByInterfaceAsReferenceDefinition(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             EngineInterface::class => EngineMarkOne::class,
         ]);
 
@@ -126,7 +126,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateClassNotDefinedInConfig(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $one = $factory->create(EngineMarkOne::class);
         $two = $factory->create(EngineMarkOne::class);
@@ -195,7 +195,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithConstructor(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $one = $factory->create([
             'class' => Car::class,
@@ -215,7 +215,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithNamedParametersInConstructor(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $one = $factory->create([
             'class' => Car::class,
@@ -253,7 +253,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithCallableParametersInConstructor(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $object = $factory->create([
             'class' => CallableDependency::class,
@@ -447,7 +447,7 @@ final class FactoryTest extends TestCase
 
     public function testResolveDependenciesFromFactory(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             EngineInterface::class => [
                 'class' => EngineMarkOne::class,
                 'setNumber()' => [42],
@@ -463,7 +463,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateFactory(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             'factoryObject' => [
                 'class' => Factory::class,
                 '__construct()' => [
@@ -550,7 +550,7 @@ final class FactoryTest extends TestCase
         $factoryDefinition,
         $createDefinition
     ): void {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             Phone::class => $factoryDefinition,
         ]);
 
@@ -575,7 +575,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateObjectWithVariadicClosuresInConstructor(array $closures, string $expectedConcat): void
     {
-        $object = (new Factory())->create([
+        $object = (new Factory(new SimpleContainer()))->create([
             'class' => VariadicClosures::class,
             '__construct()' => $closures,
         ]);
@@ -591,7 +591,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithInvalidFactoryDefinitionWithoutValidation(): void
     {
-        $factory = new Factory(null, ['x' => 42], false);
+        $factory = new Factory(new SimpleContainer(), ['x' => 42], false);
 
         $this->expectException(InvalidConfigException::class);
         $factory->create('x');
@@ -614,7 +614,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateFromCallable(): void
     {
-        $object = (new Factory())->create([$this, 'createStdClass']);
+        $object = (new Factory(new SimpleContainer()))->create([$this, 'createStdClass']);
 
         $this->assertInstanceOf(stdClass::class, $object);
     }
@@ -626,7 +626,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithInvalidConfig(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: 42');
@@ -635,7 +635,7 @@ final class FactoryTest extends TestCase
 
     public function testDefinitionInConstructor(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
@@ -651,7 +651,7 @@ final class FactoryTest extends TestCase
 
     public function testSetMultiple(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $factory->setMultiple([
             'object1' => [$this, 'createStdClass'],
@@ -664,7 +664,7 @@ final class FactoryTest extends TestCase
 
     public function testSetInvalidDefinition(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
         $factory->set('test', 42);
@@ -672,7 +672,7 @@ final class FactoryTest extends TestCase
 
     public function testDefinitionAsConstructorArgument(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
@@ -687,7 +687,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithInvalidDefinitionWithValidation(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage(
@@ -698,7 +698,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateWithInvalidDefinitionWithoutValidation(): void
     {
-        $factory = new Factory(null, [], false);
+        $factory = new Factory(new SimpleContainer(), [], false);
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('Invalid definition: 42');
@@ -707,7 +707,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateObjectWithNullableStringConstructorArgument(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableException::class);
         $object = $factory->create(Firefighter::class);
@@ -715,7 +715,7 @@ final class FactoryTest extends TestCase
 
     public function testCreateNonExistsClass(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotFoundException::class);
         $factory->create('NonExistsClass');
@@ -723,13 +723,13 @@ final class FactoryTest extends TestCase
 
     public function testShouldNotCreateUnspecifiedInterfaceWithoutContainer(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotFoundException::class);
         $factory->create(ContainerInterface::class);
     }
 
-    public function testShouldNotCreateUnspecifiedInterfaceWithContainer(): void
+    public function testShouldNotCreateUnspecifiedInterface(): void
     {
         $factory = new Factory(
             new SimpleContainer([
@@ -739,17 +739,6 @@ final class FactoryTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         $factory->create(ContainerInterface::class);
-    }
-
-    public function testShouldCreateSpecifiedInterfaceWithoutContainer(): void
-    {
-        $factory = new Factory(null, [
-            EngineInterface::class => new EngineMarkOne(),
-        ]);
-
-        $engine = $factory->create(EngineInterface::class);
-
-        $this->assertInstanceOf(EngineMarkOne::class, $engine);
     }
 
     public function testCreateObjectWithDefinitionAndContainer(): void
@@ -771,7 +760,7 @@ final class FactoryTest extends TestCase
     public function testDefinitionEqualId(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 EngineMarkOne::class => [
@@ -789,7 +778,7 @@ final class FactoryTest extends TestCase
 
     public function testOptionalInterfaceDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $object = $factory->create(OptionalInterfaceDependency::class);
         $this->assertInstanceOf(OptionalInterfaceDependency::class, $object);
@@ -797,7 +786,7 @@ final class FactoryTest extends TestCase
 
     public function testOptionalConcreteDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $object = $factory->create(OptionalConcreteDependency::class);
         $this->assertInstanceOf(OptionalConcreteDependency::class, $object);
@@ -805,7 +794,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableOptionalInterfaceDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $object = $factory->create(NullableOptionalInterfaceDependency::class);
         $this->assertInstanceOf(NullableOptionalInterfaceDependency::class, $object);
@@ -813,7 +802,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableOptionalConcreteDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $object = $factory->create(NullableOptionalConcreteDependency::class);
         $this->assertInstanceOf(NullableOptionalConcreteDependency::class, $object);
@@ -821,7 +810,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableInterfaceDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableClassException::class);
         $object = $factory->create(NullableInterfaceDependency::class);
@@ -829,7 +818,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableConcreteDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableClassException::class);
         $object = $factory->create(NullableConcreteDependency::class);
@@ -837,7 +826,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableInterfaceDependencyWithDefinition(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             EngineInterface::class => EngineMarkOne::class,
         ]);
 
@@ -848,7 +837,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableConcreteDependencyWithDefinition(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             Car::class => Car::class,
             EngineInterface::class => EngineMarkOne::class,
         ]);
@@ -861,7 +850,7 @@ final class FactoryTest extends TestCase
     public function testIntegerIndexedConstructorArguments(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'items' => [
                     'class' => ArrayIterator::class,
@@ -882,7 +871,7 @@ final class FactoryTest extends TestCase
     public function testExcessiveConstructorParametersIgnored(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'test' => [
                     'class' => ExcessiveConstructorParameters::class,
@@ -915,7 +904,7 @@ final class FactoryTest extends TestCase
     public function testVariadicConstructorStringIndexedParameters(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'test' => [
@@ -938,7 +927,7 @@ final class FactoryTest extends TestCase
     public function testVariadicConstructorIntegerIndexedParameters(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'test' => [
@@ -964,7 +953,7 @@ final class FactoryTest extends TestCase
     public function testClassProperties(): void
     {
         /** @var Phone $object */
-        $object = (new Factory())->create([
+        $object = (new Factory(new SimpleContainer()))->create([
             'class' => Phone::class,
             '$dev' => true,
         ]);
@@ -975,7 +964,7 @@ final class FactoryTest extends TestCase
     public function testClassMethods(): void
     {
         /** @var Phone $object */
-        $object = (new Factory())->create([
+        $object = (new Factory(new SimpleContainer()))->create([
             'class' => Phone::class,
             'setId()' => ['42'],
         ]);
@@ -985,7 +974,7 @@ final class FactoryTest extends TestCase
 
     public function testReferenceInConstructor(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             'color' => ColorPink::class,
             Cube::class => [
                 'class' => Cube::class,
@@ -1002,7 +991,7 @@ final class FactoryTest extends TestCase
 
     public function testDynamicReferenceInConstructor(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             Cube::class => [
                 'class' => Cube::class,
                 '__construct()' => [
@@ -1021,7 +1010,7 @@ final class FactoryTest extends TestCase
         $color = static fn (): ColorPink => new ColorPink();
 
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 PropertyTest::class => [
                     'class' => PropertyTest::class,
@@ -1039,7 +1028,7 @@ final class FactoryTest extends TestCase
     public function testReferenceInProperty(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'color' => ColorPink::class,
                 PropertyTest::class => [
@@ -1060,7 +1049,7 @@ final class FactoryTest extends TestCase
         $color = new ColorPink();
 
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 PropertyTest::class => [
                     'class' => PropertyTest::class,
@@ -1080,7 +1069,7 @@ final class FactoryTest extends TestCase
         $color = static fn (): ColorPink => new ColorPink();
 
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 MethodTest::class => [
                     'class' => MethodTest::class,
@@ -1098,7 +1087,7 @@ final class FactoryTest extends TestCase
     public function testReferenceInMethod(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'color' => ColorPink::class,
                 MethodTest::class => [
@@ -1119,7 +1108,7 @@ final class FactoryTest extends TestCase
         $color = new ColorPink();
 
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 MethodTest::class => [
                     'class' => MethodTest::class,
@@ -1137,7 +1126,7 @@ final class FactoryTest extends TestCase
     public function testAlias(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => Reference::to('engine'),
                 'engine' => Reference::to('engine-mark-one'),
@@ -1158,7 +1147,7 @@ final class FactoryTest extends TestCase
     public function testUndefinedDependencies(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             ['car' => Car::class]
         );
 
@@ -1169,7 +1158,7 @@ final class FactoryTest extends TestCase
     public function testDependencies(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'car' => Car::class,
                 EngineInterface::class => EngineMarkTwo::class,
@@ -1185,7 +1174,7 @@ final class FactoryTest extends TestCase
     public function testCallableDefinition(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'test' => static fn (EngineInterface $engine) => $engine,
@@ -1200,7 +1189,7 @@ final class FactoryTest extends TestCase
     public function testArrayStaticCallableDefinition(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'car' => [CarFactory::class, 'create'],
@@ -1216,7 +1205,7 @@ final class FactoryTest extends TestCase
     public function testArrayDynamicCallableDefinition(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 ColorInterface::class => ColorPink::class,
                 CarFactory::class => CarFactory::class,
@@ -1233,7 +1222,7 @@ final class FactoryTest extends TestCase
     public function testArrayDynamicCallableDefinitionWithObject(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 ColorInterface::class => ColorPink::class,
                 'car' => [new CarFactory(), 'createWithColor'],
@@ -1249,7 +1238,7 @@ final class FactoryTest extends TestCase
     public function testInvokableDefinition(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'invokable' => new InvokableCarFactory(),
@@ -1264,7 +1253,7 @@ final class FactoryTest extends TestCase
     public function testReferencesInArrayInDependencies(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'engine1' => EngineMarkOne::class,
                 'engine2' => EngineMarkTwo::class,
@@ -1304,7 +1293,7 @@ final class FactoryTest extends TestCase
         ];
 
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
                 Car::class => [
@@ -1326,7 +1315,7 @@ final class FactoryTest extends TestCase
     public function testArrayDefinitionWithoutClass(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 Firefighter::class => [
                     '__construct()' => ['Petr'],
@@ -1347,7 +1336,7 @@ final class FactoryTest extends TestCase
         $color = new ColorPink();
 
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 Cube::class => [
                     'class' => Cube::class,
@@ -1368,7 +1357,7 @@ final class FactoryTest extends TestCase
         ]);
 
         $this->expectException(InvalidConfigException::class);
-        new Factory(null, ['test' => $definition]);
+        new Factory(new SimpleContainer(), ['test' => $definition]);
     }
 
     public function testDefinitionInterfaceAsDefinitionWithoutValidation(): void
@@ -1377,7 +1366,7 @@ final class FactoryTest extends TestCase
             'class' => stdClass::class,
         ]);
 
-        $factory = new Factory(null, ['test' => $definition], false);
+        $factory = new Factory(new SimpleContainer(), ['test' => $definition], false);
 
         $this->expectException(InvalidConfigException::class);
         $factory->create('test');
@@ -1395,7 +1384,7 @@ final class FactoryTest extends TestCase
             '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
             'Yiisoft\\\\Definitions\\\\ValueDefinition::~'
         );
-        new Factory(null, ['test' => $definition]);
+        new Factory(new SimpleContainer(), ['test' => $definition]);
     }
 
     public function testDefinitionInterfaceAsDefinitionInConstructorArgumentsWithoutValidation(): void
@@ -1405,7 +1394,7 @@ final class FactoryTest extends TestCase
             '__construct()' => [new ValueDefinition(new ColorPink())],
         ];
 
-        $factory = new Factory(null, ['test' => $definition], false);
+        $factory = new Factory(new SimpleContainer(), ['test' => $definition], false);
 
         $this->expectException(InvalidConfigException::class);
         $factory->create('test');
@@ -1413,7 +1402,7 @@ final class FactoryTest extends TestCase
 
     public function testOptionalCircularClassDependency(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             CircularA::class => CircularA::class,
             CircularB::class => CircularB::class,
         ]);
@@ -1427,7 +1416,7 @@ final class FactoryTest extends TestCase
     public function testCircularClassDependency(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 Chicken::class => Chicken::class,
                 Egg::class => Egg::class,
@@ -1440,7 +1429,7 @@ final class FactoryTest extends TestCase
 
     public function testCircularClassDependencyWithoutDefinition(): void
     {
-        $factory = new Factory(null, [
+        $factory = new Factory(new SimpleContainer(), [
             Egg::class => Egg::class,
             Chicken::class => Chicken::class,
         ]);
@@ -1452,7 +1441,7 @@ final class FactoryTest extends TestCase
     public function testCircularReferences(): void
     {
         $factory = new Factory(
-            null,
+            new SimpleContainer(),
             [
                 'engine-1' => Reference::to('engine-2'),
                 'engine-2' => Reference::to('engine-3'),
@@ -1466,7 +1455,7 @@ final class FactoryTest extends TestCase
 
     public function testCircularReference(): void
     {
-        $factory = new Factory(null, [TreeItem::class => TreeItem::class]);
+        $factory = new Factory(new SimpleContainer(), [TreeItem::class => TreeItem::class]);
 
         $this->expectException(CircularReferenceException::class);
         $factory->create(TreeItem::class);
@@ -1479,7 +1468,7 @@ final class FactoryTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         // Build an object
         $factory->create(ColorPink::class);
@@ -1505,7 +1494,7 @@ final class FactoryTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
         try {
             $factory->create('test');
         } catch (NotFoundException $e) {
@@ -1524,7 +1513,7 @@ final class FactoryTest extends TestCase
 
     public function testNullableScalarConstructorArgument(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableException::class);
         $object = $factory->create(NullableScalarConstructorArgument::class);
@@ -1532,7 +1521,7 @@ final class FactoryTest extends TestCase
 
     public function testScalarConstructorArgument(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(

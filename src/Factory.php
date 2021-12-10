@@ -33,8 +33,7 @@ final class Factory
     /**
      * Factory constructor.
      *
-     * @param ContainerInterface|null $container Container to use for resolving dependencies. When null, only definitions
-     * are used.
+     * @param ContainerInterface $container Container to use for resolving dependencies.
      * @param array $definitions Definitions to create objects with.
      * @psalm-param array<string, mixed> $definitions
      *
@@ -43,7 +42,7 @@ final class Factory
      * @throws InvalidConfigException
      */
     public function __construct(
-        ContainerInterface $container = null,
+        ContainerInterface $container,
         array $definitions = [],
         bool $validate = true
     ) {

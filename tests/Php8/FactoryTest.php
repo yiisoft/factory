@@ -29,7 +29,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateObjectWithVariadicUnionTypeInConstructor(array $items): void
     {
-        $object = (new Factory())->create([
+        $object = (new Factory(new SimpleContainer()))->create([
             'class' => VariadicUnionType::class,
             '__construct()' => $items,
         ]);
@@ -53,7 +53,7 @@ final class FactoryTest extends TestCase
 
     public function testUnionBuiltInTypesDependency(): void
     {
-        $factory = new Factory();
+        $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(

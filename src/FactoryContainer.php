@@ -27,10 +27,9 @@ use function is_string;
 final class FactoryContainer implements ContainerInterface
 {
     /**
-     * @var ContainerInterface|null Container to use for resolving dependencies. When null, only definitions
-     * are used.
+     * @var ContainerInterface Container to use for resolving dependencies.
      */
-    private ?ContainerInterface $container;
+    private ContainerInterface $container;
 
     /**
      * @var array Definitions to create objects with.
@@ -52,10 +51,9 @@ final class FactoryContainer implements ContainerInterface
     private array $creatingIds = [];
 
     /**
-     * @param ContainerInterface|null $container Container to use for resolving dependencies. When null, only definitions
-     * are used.
+     * @param ContainerInterface $container Container to use for resolving dependencies.
      */
-    public function __construct(?ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -74,7 +72,7 @@ final class FactoryContainer implements ContainerInterface
             return $this->build($id);
         }
 
-        if ($this->hasInContainer($id)) {
+        if ($this->container->has($id)) {
             return $this->container->get($id);
         }
 
@@ -83,7 +81,7 @@ final class FactoryContainer implements ContainerInterface
 
     public function has($id): bool
     {
-        return $this->hasDefinition($id) || $this->hasInContainer($id);
+        return $this->hasDefinition($id) || $this->container->has($id);
     }
 
     /**
@@ -192,13 +190,5 @@ final class FactoryContainer implements ContainerInterface
         } finally {
             unset($this->creatingIds[$id]);
         }
-    }
-
-    /**
-     * @psalm-assert ContainerInterface $this->container
-     */
-    private function hasInContainer(string $id): bool
-    {
-        return $this->container !== null && $this->container->has($id);
     }
 }
