@@ -120,15 +120,13 @@ final class FactoryContainer implements ContainerInterface
                     && $this->hasDefinition($this->definitions[$id])
                     && $this->definitions[$id] !== $this->definitions[$this->definitions[$id]]
                 ) {
-                    return $this->getDefinition($this->definitions[$id]);
+                    $this->definitionInstances[$id] = $this->getDefinition($this->definitions[$id]);
+                } else {
+                    $this->definitionInstances[$id] =
+                        (is_string($this->definitions[$id]) && class_exists($this->definitions[$id]))
+                            ? ArrayDefinition::fromPreparedData($this->definitions[$id])
+                            : Normalizer::normalize($this->definitions[$id], $id);
                 }
-
-                $this->definitionInstances[$id] = Normalizer::normalize(
-                    is_string($this->definitions[$id]) && class_exists($this->definitions[$id])
-                        ? ['class' => $this->definitions[$id]]
-                        : $this->definitions[$id],
-                    $id
-                );
             } else {
                 throw new LogicException(
                     sprintf('No definition found for "%s".', $id)
@@ -160,6 +158,16 @@ final class FactoryContainer implements ContainerInterface
     public function setDefinition(string $id, $definition): void
     {
         $this->definitions[$id] = $definition;
+    }
+
+    /**
+     * Set definition for a given identifier.
+     *
+     * @psalm-param array<string,mixed> $definitions
+     */
+    public function setDefinitions(array $definitions): void
+    {
+        $this->definitions = $definitions;
     }
 
     /**

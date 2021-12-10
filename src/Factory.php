@@ -48,7 +48,11 @@ final class Factory
     ) {
         $this->factoryContainer = new FactoryContainer($container);
         $this->validate = $validate;
-        $this->setMultiple($definitions);
+        if ($this->validate) {
+            $this->setMultiple($definitions);
+        } else {
+            $this->factoryContainer->setDefinitions($definitions);
+        }
     }
 
     /**
