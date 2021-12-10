@@ -1218,7 +1218,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                ColorInterface::class => new ColorPink(),
+                ColorInterface::class => ColorPink::class,
                 CarFactory::class => CarFactory::class,
                 'car' => [CarFactory::class, 'createWithColor'],
             ]
@@ -1235,7 +1235,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                ColorInterface::class => new ColorPink(),
+                ColorInterface::class => ColorPink::class,
                 'car' => [new CarFactory(), 'createWithColor'],
             ]
         );
@@ -1505,7 +1505,7 @@ final class FactoryTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $factory = new Factory(null, [ColorPink::class => ColorPink::class]);
+        $factory = new Factory();
         try {
             $factory->create('test');
         } catch (NotFoundException $e) {
@@ -1546,7 +1546,7 @@ final class FactoryTest extends TestCase
     public function testCreateWithDependecyNonExistInContainer(): void
     {
         $factory = new Factory(new SimpleContainer(), [
-            ColorPink::class => new ColorPink(),
+            ColorPink::class => ColorPink::class,
         ]);
 
         $circle = $factory->create(PinkCircle::class);
