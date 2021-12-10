@@ -1450,6 +1450,9 @@ final class FactoryTest extends TestCase
         );
 
         $this->expectException(CircularReferenceException::class);
+        $this->expectExceptionMessage(
+            'Circular reference to "engine-2" detected while creating: engine-2, engine-3, engine-1.'
+        );
         $factory->create('engine-1');
     }
 

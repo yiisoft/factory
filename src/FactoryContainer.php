@@ -178,7 +178,7 @@ final class FactoryContainer implements ContainerInterface
             throw new CircularReferenceException(sprintf(
                 'Circular reference to "%s" detected while creating: %s.',
                 $id,
-                implode(',', array_keys($this->creatingIds))
+                implode(', ', array_keys($this->creatingIds))
             ));
         }
 
