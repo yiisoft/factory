@@ -17,6 +17,7 @@ use Yiisoft\Definitions\Helpers\Normalizer;
 
 use function array_key_exists;
 use function is_object;
+use function is_string;
 
 /**
  * Factory's primary container.
@@ -115,7 +116,21 @@ final class FactoryContainer implements ContainerInterface
                 if (is_object($this->definitions[$id]) && !($this->definitions[$id] instanceof ReferenceInterface)) {
                     return Normalizer::normalize(clone $this->definitions[$id], $id);
                 }
-                $this->definitionInstances[$id] = Normalizer::normalize($this->definitions[$id], $id);
+
+                if (
+                    is_string($this->definitions[$id])
+                    && $this->hasDefinition($this->definitions[$id])
+                    && $this->definitions[$id] !== $this->definitions[$this->definitions[$id]]
+                ) {
+                    return $this->getDefinition($this->definitions[$id]);
+                }
+
+                $this->definitionInstances[$id] = Normalizer::normalize(
+                    is_string($this->definitions[$id]) && class_exists($this->definitions[$id])
+                        ? ['class' => $this->definitions[$id]]
+                        : $this->definitions[$id],
+                    $id
+                );
             } else {
                 throw new LogicException(
                     sprintf('No definition found for "%s".', $id)

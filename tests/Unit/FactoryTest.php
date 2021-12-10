@@ -65,7 +65,6 @@ final class FactoryTest extends TestCase
     {
         $container = new SimpleContainer();
         $factory = new Factory($container, [
-            EngineMarkOne::class => EngineMarkOne::class,
             'engine' => EngineMarkOne::class,
         ]);
 
@@ -81,7 +80,6 @@ final class FactoryTest extends TestCase
     {
         $container = new SimpleContainer();
         $factory = new Factory($container, [
-            EngineMarkOne::class => EngineMarkOne::class,
             EngineInterface::class => EngineMarkOne::class,
         ]);
 
@@ -97,7 +95,6 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory(null, [
             EngineInterface::class => EngineMarkOne::class,
-            EngineMarkOne::class => EngineMarkOne::class,
         ]);
 
         $one = $factory->create(Reference::to(EngineInterface::class));
@@ -842,7 +839,6 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory(null, [
             EngineInterface::class => EngineMarkOne::class,
-            EngineMarkOne::class => EngineMarkOne::class,
         ]);
 
         $object = $factory->create(NullableInterfaceDependency::class);
@@ -854,7 +850,6 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory(null, [
             Car::class => Car::class,
-            EngineMarkOne::class => EngineMarkOne::class,
             EngineInterface::class => EngineMarkOne::class,
         ]);
 
@@ -922,7 +917,6 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                EngineMarkOne::class => EngineMarkOne::class,
                 EngineInterface::class => EngineMarkOne::class,
                 'test' => [
                     'class' => VariadicConstructor::class,
@@ -1148,7 +1142,6 @@ final class FactoryTest extends TestCase
                 EngineInterface::class => Reference::to('engine'),
                 'engine' => Reference::to('engine-mark-one'),
                 'engine-mark-one' => EngineMarkOne::class,
-                EngineMarkOne::class => EngineMarkOne::class,
             ]
         );
 
@@ -1179,7 +1172,6 @@ final class FactoryTest extends TestCase
             null,
             [
                 'car' => Car::class,
-                Car::class => Car::class,
                 EngineInterface::class => new EngineMarkTwo(),
             ]
         );
@@ -1196,7 +1188,6 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
-                EngineMarkOne::class => EngineMarkOne::class,
                 'test' => static fn (EngineInterface $engine) => $engine,
             ]
         );
@@ -1211,7 +1202,6 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                EngineMarkOne::class => EngineMarkOne::class,
                 EngineInterface::class => EngineMarkOne::class,
                 'car' => [CarFactory::class, 'create'],
             ]
@@ -1261,7 +1251,6 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                EngineMarkOne::class => EngineMarkOne::class,
                 EngineInterface::class => EngineMarkOne::class,
                 'invokable' => new InvokableCarFactory(),
             ]
@@ -1277,8 +1266,6 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             null,
             [
-                EngineMarkOne::class => EngineMarkOne::class,
-                EngineMarkTwo::class => EngineMarkTwo::class,
                 'engine1' => EngineMarkOne::class,
                 'engine2' => EngineMarkTwo::class,
                 'engine3' => EngineMarkTwo::class,
@@ -1320,7 +1307,6 @@ final class FactoryTest extends TestCase
             null,
             [
                 EngineInterface::class => EngineMarkOne::class,
-                EngineMarkOne::class => EngineMarkOne::class,
                 Car::class => [
                     'class' => Car::class,
                     '__construct()' => [
