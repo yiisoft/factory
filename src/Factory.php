@@ -60,6 +60,7 @@ final class Factory
 
     /**
      * @param array $definitions Definitions to create objects with.
+     * @psalm-param array<string, mixed> $definitions
      *
      * @throws InvalidConfigException
      *

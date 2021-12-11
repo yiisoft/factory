@@ -63,7 +63,7 @@ final class FactoryInternalContainer implements ContainerInterface
 
     /**
      * @param array $definitions Definitions to create objects with.
-     *
+     * @psalm-param array<string, mixed> $definitions
      * @return self
      */
     public function withDefinitions(array $definitions): self
