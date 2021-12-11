@@ -8,13 +8,11 @@ use PHPUnit\Framework\TestCase;
 use Yiisoft\Definitions\Exception\CircularReferenceException;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Factory\Factory;
-use Yiisoft\Factory\NotFoundException;
 use Yiisoft\Factory\Tests\Support\Circular\Chicken;
 use Yiisoft\Factory\Tests\Support\Circular\CircularA;
 use Yiisoft\Factory\Tests\Support\Circular\CircularB;
 use Yiisoft\Factory\Tests\Support\Circular\Egg;
 use Yiisoft\Factory\Tests\Support\Circular\TreeItem;
-use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class FactoryCircularReferencesTest extends TestCase

@@ -29,7 +29,6 @@ use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
-use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\InvokableCarFactory;
 use Yiisoft\Factory\Tests\Support\MethodTest;

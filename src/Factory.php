@@ -56,7 +56,6 @@ final class Factory
         }
 
         $this->internalContainer = new FactoryInternalContainer($container, $definitions);
-
     }
 
     /**
