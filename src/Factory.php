@@ -60,8 +60,10 @@ final class Factory
 
     /**
      * @param array $definitions Definitions to create objects with.
-     * @return self
+     *
      * @throws InvalidConfigException
+     *
+     * @return self
      */
     public function withDefinitions(array $definitions): self
     {
