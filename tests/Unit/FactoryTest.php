@@ -54,6 +54,21 @@ use function count;
 
 final class FactoryTest extends TestCase
 {
+    public function testWithDefinitions(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [
+            'engine' => EngineMarkOne::class,
+        ]);
+
+        $newFactory = $factory->withDefinitions([
+            'engine' => EngineMarkTwo::class,
+        ]);
+
+        $this->assertNotSame($factory, $newFactory);
+        $this->assertInstanceOf(EngineMarkTwo::class, $newFactory->create('engine'));
+    }
+
     public function testCanCreateByAlias(): void
     {
         $container = new SimpleContainer();

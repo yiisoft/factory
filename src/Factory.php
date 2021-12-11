@@ -59,6 +59,25 @@ final class Factory
     }
 
     /**
+     * @param array $definitions Definitions to create objects with.
+     * @return self
+     * @throws InvalidConfigException
+     */
+    public function withDefinitions(array $definitions): self
+    {
+        if ($this->validate) {
+            /** @var mixed $definition */
+            foreach ($definitions as $id => $definition) {
+                DefinitionValidator::validate($definition, $id);
+            }
+        }
+
+        $new = clone $this;
+        $new->internalContainer = $this->internalContainer->withDefinitions($definitions);
+        return $new;
+    }
+
+    /**
      * Creates a new object using the given configuration.
      *
      * You may view this method as an enhanced version of the `new` operator.

@@ -35,7 +35,7 @@ final class FactoryInternalContainer implements ContainerInterface
      * @var array Definitions to create objects with.
      * @psalm-var array<string, mixed>
      */
-    private array $definitions = [];
+    private array $definitions;
 
     /**
      * @var DefinitionInterface[] Object created from definitions indexed by their types.
@@ -59,6 +59,19 @@ final class FactoryInternalContainer implements ContainerInterface
     {
         $this->container = $container;
         $this->definitions = $definitions;
+    }
+
+    /**
+     * @param array $definitions Definitions to create objects with.
+     * @return self
+     */
+    public function withDefinitions(array $definitions): self
+    {
+        $new = clone $this;
+        $new->definitions = $definitions;
+        $new->definitionInstances = [];
+        $new->creatingIds = [];
+        return $new;
     }
 
     /**
