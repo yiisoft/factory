@@ -24,7 +24,7 @@ use function is_string;
  *
  * @internal
  */
-final class FactoryContainer implements ContainerInterface
+final class FactoryInternalContainer implements ContainerInterface
 {
     /**
      * @var ContainerInterface Container to use for resolving dependencies.

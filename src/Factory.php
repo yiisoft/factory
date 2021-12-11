@@ -23,7 +23,7 @@ use function is_string;
  */
 final class Factory
 {
-    private FactoryContainer $factoryContainer;
+    private FactoryInternalContainer $internalContainer;
 
     /**
      * @var bool $validate If definitions should be validated when set.
@@ -46,12 +46,12 @@ final class Factory
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->factoryContainer = new FactoryContainer($container);
+        $this->internalContainer = new FactoryInternalContainer($container);
         $this->validate = $validate;
         if ($this->validate) {
             $this->setMultiple($definitions);
         } else {
-            $this->factoryContainer->setDefinitions($definitions);
+            $this->internalContainer->setDefinitions($definitions);
         }
     }
 
@@ -112,8 +112,8 @@ final class Factory
         }
 
         if (is_string($config)) {
-            if ($this->factoryContainer->hasDefinition($config)) {
-                $definition = $this->factoryContainer->getDefinition($config);
+            if ($this->internalContainer->hasDefinition($config)) {
+                $definition = $this->internalContainer->getDefinition($config);
             } elseif (class_exists($config)) {
                 $definition = ArrayDefinition::fromPreparedData($config);
             } else {
@@ -123,7 +123,7 @@ final class Factory
             $definition = $this->createDefinition($config);
         }
 
-        return $this->factoryContainer->create($definition);
+        return $this->internalContainer->create($definition);
     }
 
     /**
@@ -139,7 +139,7 @@ final class Factory
             DefinitionValidator::validate($definition, $id);
         }
 
-        $this->factoryContainer->setDefinition($id, $definition);
+        $this->internalContainer->setDefinition($id, $definition);
     }
 
     /**
@@ -170,8 +170,8 @@ final class Factory
 
         if (
             ($definition instanceof ArrayDefinition) &&
-            $this->factoryContainer->hasDefinition($definition->getClass()) &&
-            ($containerDefinition = $this->factoryContainer->getDefinition($definition->getClass())) instanceof ArrayDefinition
+            $this->internalContainer->hasDefinition($definition->getClass()) &&
+            ($containerDefinition = $this->internalContainer->getDefinition($definition->getClass())) instanceof ArrayDefinition
         ) {
             $definition = $this->mergeDefinitions(
                 $containerDefinition,
