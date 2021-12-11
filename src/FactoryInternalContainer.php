@@ -35,7 +35,7 @@ final class FactoryInternalContainer implements ContainerInterface
      * @var array Definitions to create objects with.
      * @psalm-var array<string, mixed>
      */
-    private array $definitions = [];
+    private array $definitions;
 
     /**
      * @var DefinitionInterface[] Object created from definitions indexed by their types.
@@ -52,10 +52,28 @@ final class FactoryInternalContainer implements ContainerInterface
 
     /**
      * @param ContainerInterface $container Container to use for resolving dependencies.
+     * @param array $definitions Definitions to create objects with.
+     * @psalm-param array<string, mixed> $definitions
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, array $definitions = [])
     {
         $this->container = $container;
+        $this->definitions = $definitions;
+    }
+
+    /**
+     * @param array $definitions Definitions to create objects with.
+     * @psalm-param array<string, mixed> $definitions
+     *
+     * @return self
+     */
+    public function withDefinitions(array $definitions): self
+    {
+        $new = clone $this;
+        $new->definitions = $definitions;
+        $new->definitionInstances = [];
+        $new->creatingIds = [];
+        return $new;
     }
 
     /**
@@ -94,7 +112,9 @@ final class FactoryInternalContainer implements ContainerInterface
         }
 
         try {
-            return $definition->resolve($this);
+            /** @var mixed $result */
+            $result = $definition->resolve($this);
+            return is_object($result) ? clone $result : $result;
         } finally {
             if ($definition instanceof ArrayDefinition) {
                 unset($this->creatingIds[$definition->getClass()]);
@@ -112,7 +132,7 @@ final class FactoryInternalContainer implements ContainerInterface
         if (!isset($this->definitionInstances[$id])) {
             if (isset($this->definitions[$id])) {
                 if (is_object($this->definitions[$id]) && !($this->definitions[$id] instanceof ReferenceInterface)) {
-                    return Normalizer::normalize(clone $this->definitions[$id], $id);
+                    return Normalizer::normalize($this->definitions[$id], $id);
                 }
 
                 if (
@@ -147,27 +167,6 @@ final class FactoryInternalContainer implements ContainerInterface
     public function hasDefinition(string $id): bool
     {
         return array_key_exists($id, $this->definitions);
-    }
-
-    /**
-     * Set definition for a given identifier.
-     *
-     * @param string $id Identifier to set definition for.
-     * @param mixed $definition Definition to set.
-     */
-    public function setDefinition(string $id, $definition): void
-    {
-        $this->definitions[$id] = $definition;
-    }
-
-    /**
-     * Set definitions for a given identifier.
-     *
-     * @psalm-param array<string,mixed> $definitions
-     */
-    public function setDefinitions(array $definitions): void
-    {
-        $this->definitions = $definitions;
     }
 
     /**

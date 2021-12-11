@@ -46,12 +46,41 @@ final class Factory
         array $definitions = [],
         bool $validate = true
     ) {
-        $this->internalContainer = new FactoryInternalContainer($container);
         $this->validate = $validate;
+        $this->validateDefinitions($definitions);
+        $this->internalContainer = new FactoryInternalContainer($container, $definitions);
+    }
+
+    /**
+     * @param array $definitions Definitions to create objects with.
+     * @psalm-param array<string, mixed> $definitions
+     *
+     * @throws InvalidConfigException
+     *
+     * @return self
+     */
+    public function withDefinitions(array $definitions): self
+    {
+        $this->validateDefinitions($definitions);
+
+        $new = clone $this;
+        $new->internalContainer = $this->internalContainer->withDefinitions($definitions);
+        return $new;
+    }
+
+    /**
+     * @param array $definitions Definitions to validate.
+     * @psalm-param array<string, mixed> $definitions
+     *
+     * @throws InvalidConfigException
+     */
+    private function validateDefinitions(array $definitions): void
+    {
         if ($this->validate) {
-            $this->setMultiple($definitions);
-        } else {
-            $this->internalContainer->setDefinitions($definitions);
+            /** @var mixed $definition */
+            foreach ($definitions as $id => $definition) {
+                DefinitionValidator::validate($definition, $id);
+            }
         }
     }
 
@@ -124,39 +153,6 @@ final class Factory
         }
 
         return $this->internalContainer->create($definition);
-    }
-
-    /**
-     * Sets a definition to the factory.
-     *
-     * @param mixed $definition
-     *
-     * @throws InvalidConfigException
-     */
-    public function set(string $id, $definition): void
-    {
-        if ($this->validate) {
-            DefinitionValidator::validate($definition, $id);
-        }
-
-        $this->internalContainer->setDefinition($id, $definition);
-    }
-
-    /**
-     * Sets multiple definitions at once.
-     *
-     * @param array $definitions definitions indexed by their ids
-     *
-     * @psalm-param array<string, mixed> $definitions
-     *
-     * @throws InvalidConfigException
-     */
-    public function setMultiple(array $definitions): void
-    {
-        /** @var mixed $definition */
-        foreach ($definitions as $id => $definition) {
-            $this->set($id, $definition);
-        }
     }
 
     /**

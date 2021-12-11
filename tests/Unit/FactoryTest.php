@@ -29,7 +29,6 @@ use Yiisoft\Factory\Tests\Support\Cube;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\EngineMarkOne;
 use Yiisoft\Factory\Tests\Support\EngineMarkTwo;
-use Yiisoft\Factory\Tests\Support\GearBox;
 use Yiisoft\Factory\Tests\Support\Immutable;
 use Yiisoft\Factory\Tests\Support\InvokableCarFactory;
 use Yiisoft\Factory\Tests\Support\MethodTest;
@@ -55,6 +54,21 @@ use function count;
 
 final class FactoryTest extends TestCase
 {
+    public function testWithDefinitions(): void
+    {
+        $container = new SimpleContainer();
+        $factory = new Factory($container, [
+            'engine' => EngineMarkOne::class,
+        ]);
+
+        $newFactory = $factory->withDefinitions([
+            'engine' => EngineMarkTwo::class,
+        ]);
+
+        $this->assertNotSame($factory, $newFactory);
+        $this->assertInstanceOf(EngineMarkTwo::class, $newFactory->create('engine'));
+    }
+
     public function testCanCreateByAlias(): void
     {
         $container = new SimpleContainer();
@@ -171,20 +185,6 @@ final class FactoryTest extends TestCase
 
         $this->assertInstanceOf(EngineMarkOne::class, $instance);
         $this->assertEquals(43, $instance->getNumber());
-    }
-
-    public function testTrivialDefinition(): void
-    {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
-        $factory->set(EngineMarkOne::class, EngineMarkOne::class);
-
-        $one = $factory->create(EngineMarkOne::class);
-        $two = $factory->create(EngineMarkOne::class);
-
-        $this->assertNotSame($one, $two);
-        $this->assertInstanceOf(EngineMarkOne::class, $one);
-        $this->assertInstanceOf(EngineMarkOne::class, $two);
     }
 
     public function testCreateWithConstructor(): void
@@ -641,27 +641,6 @@ final class FactoryTest extends TestCase
                 new ValueDefinition(new EngineMarkTwo(), 'object'),
             ],
         ]);
-    }
-
-    public function testSetMultiple(): void
-    {
-        $factory = new Factory(new SimpleContainer());
-
-        $factory->setMultiple([
-            'object1' => [$this, 'createStdClass'],
-            'object2' => GearBox::class,
-        ]);
-
-        $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
-        $this->assertInstanceOf(GearBox::class, $factory->create('object2'));
-    }
-
-    public function testSetInvalidDefinition(): void
-    {
-        $factory = new Factory(new SimpleContainer());
-
-        $this->expectException(InvalidConfigException::class);
-        $factory->set('test', 42);
     }
 
     public function testDefinitionAsConstructorArgument(): void
@@ -1525,7 +1504,11 @@ final class FactoryTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+        $object1 = $factory->create(Car::class);
+        $object2 = $factory->create(Car::class);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $object1->getEngine());
+        $this->assertSame($object2->getEngine(), $object1->getEngine());
     }
 
     public function testDynamicReferenceInConstructorInFactoryWithContainer(): void
@@ -1663,5 +1646,22 @@ final class FactoryTest extends TestCase
         );
 
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create('engine'));
+    }
+
+    public function testTrivialDefinitionWithReference(): void
+    {
+        $container = new SimpleContainer([
+            EngineMarkOne::class => new EngineMarkOne(),
+        ]);
+
+        $factory = new Factory($container, [
+            EngineInterface::class => Reference::to(EngineMarkOne::class),
+        ]);
+
+        $one = $factory->create(EngineInterface::class);
+        $two = $factory->create(EngineInterface::class);
+        $this->assertInstanceOf(EngineInterface::class, $one);
+        $this->assertInstanceOf(EngineInterface::class, $two);
+        $this->assertNotSame($one, $two);
     }
 }
