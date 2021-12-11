@@ -71,6 +71,7 @@ final class Factory
     /**
      * @param array $definitions Definitions to validate.
      * @psalm-param array<string, mixed> $definitions
+     *
      * @throws InvalidConfigException
      */
     private function validateDefinitions(array $definitions): void
