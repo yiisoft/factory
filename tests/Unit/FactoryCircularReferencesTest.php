@@ -96,7 +96,7 @@ final class FactoryCircularReferencesTest extends TestCase
         $factory->create(ColorPink::class);
 
         // set definition to container
-        (fn(string $id, $definition) => $this->set($id, $definition))->call(
+        (fn (string $id, $definition) => $this->set($id, $definition))->call(
             $factory,
             ColorPink::class,
             ColorPink::class
@@ -124,7 +124,7 @@ final class FactoryCircularReferencesTest extends TestCase
         }
 
         // set definition to container
-        (fn(string $id, $definition) => $this->set($id, $definition))->call($factory, 'test', ColorPink::class);
+        (fn (string $id, $definition) => $this->set($id, $definition))->call($factory, 'test', ColorPink::class);
 
         try {
             $factory->create('test');
