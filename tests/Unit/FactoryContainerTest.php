@@ -36,7 +36,7 @@ final class FactoryContainerTest extends TestCase
         $this->assertSame($expected, $factoryContainer->has('test'));
     }
 
-    public function testGetNonExistsDefinition(): void
+    public function testGetNonExistingDefinition(): void
     {
         $factoryContainer = new FactoryContainer(new SimpleContainer());
 
