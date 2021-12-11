@@ -1504,7 +1504,11 @@ final class FactoryTest extends TestCase
             ]
         );
 
-        $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
+        $object1 = $factory->create(Car::class);
+        $object2 = $factory->create(Car::class);
+
+        $this->assertInstanceOf(EngineMarkOne::class, $object1->getEngine());
+        $this->assertSame($object2->getEngine(), $object1->getEngine());
     }
 
     public function testDynamicReferenceInConstructorInFactoryWithContainer(): void
