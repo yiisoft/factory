@@ -1546,7 +1546,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(ColorPink::class, $circle->getColor());
     }
 
-    public function test1(): void
+    public function testContainerInterfaceInDynamicReferenceWorkWithContainerViaAliasToReference(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1564,7 +1564,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
     }
 
-    public function test2(): void
+    public function testContainerInterfaceInDynamicReferenceWorkWithContainerViaAlias(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1597,7 +1597,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
     }
 
-    public function testFactoryHasPriorityInDynamicReference(): void
+    public function testAliasedFactoryHasPriorityInDynamicReference(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1685,7 +1685,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create(Car::class)->getEngine());
     }
 
-    public function test9(): void
+    public function testAliasedDynamicReferenceInConstructor(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1703,7 +1703,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
     }
 
-    public function test10(): void
+    public function testContainerInterfaceDynamicReferenceInConstructor(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1713,7 +1713,11 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))],
+                    '__construct()' => [
+                        DynamicReference::to(
+                            static fn (ContainerInterface $c) => $c->get(EngineInterface::class)
+                        )
+                    ],
                 ],
             ]
         );
@@ -1721,7 +1725,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
     }
 
-    public function test11(): void
+    public function testContainerInterfaceInDynamicReferenceWorkWithContainer(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1732,7 +1736,11 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => EngineMarkTwo::class,
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class))],
+                    '__construct()' => [
+                        DynamicReference::to(
+                            static fn (ContainerInterface $c) => $c->get(EngineInterface::class)
+                        )
+                    ],
                 ],
             ]
         );
@@ -1740,7 +1748,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
     }
 
-    public function test12(): void
+    public function testFactoryHasPriorityInDynamicReference(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
@@ -1759,7 +1767,7 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create(Car::class)->getEngine());
     }
 
-    public function test13(): void
+    public function testFactoryHasPriorityInClosureViaReference(): void
     {
         $container = new SimpleContainer([
             EngineInterface::class => new EngineMarkOne(),
