@@ -260,7 +260,7 @@ final class FactoryTest extends TestCase
         $this->assertSame(42, $object->get());
     }
 
-    public function testCreateWithInvalidParametersInCosntructor(): void
+    public function testCreateWithInvalidParametersInConstructor(): void
     {
         $container = new SimpleContainer();
         $factory = new Factory($container);
@@ -1394,7 +1394,7 @@ final class FactoryTest extends TestCase
         $factory->create(ScalarConstructorArgument::class);
     }
 
-    public function testCreateWithDependecyNonExistInContainer(): void
+    public function testCreateWithNonExistingDependencyInContainer(): void
     {
         $factory = new Factory(new SimpleContainer(), [
             ColorPink::class => ColorPink::class,
