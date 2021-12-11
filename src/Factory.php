@@ -47,14 +47,7 @@ final class Factory
         bool $validate = true
     ) {
         $this->validate = $validate;
-
-        if ($this->validate) {
-            /** @var mixed $definition */
-            foreach ($definitions as $id => $definition) {
-                DefinitionValidator::validate($definition, $id);
-            }
-        }
-
+        $this->validateDefinitions($definitions);
         $this->internalContainer = new FactoryInternalContainer($container, $definitions);
     }
 
@@ -68,16 +61,26 @@ final class Factory
      */
     public function withDefinitions(array $definitions): self
     {
+        $this->validateDefinitions($definitions);
+
+        $new = clone $this;
+        $new->internalContainer = $this->internalContainer->withDefinitions($definitions);
+        return $new;
+    }
+
+    /**
+     * @param array $definitions Definitions to validate.
+     * @psalm-param array<string, mixed> $definitions
+     * @throws InvalidConfigException
+     */
+    private function validateDefinitions(array $definitions): void
+    {
         if ($this->validate) {
             /** @var mixed $definition */
             foreach ($definitions as $id => $definition) {
                 DefinitionValidator::validate($definition, $id);
             }
         }
-
-        $new = clone $this;
-        $new->internalContainer = $this->internalContainer->withDefinitions($definitions);
-        return $new;
     }
 
     /**
