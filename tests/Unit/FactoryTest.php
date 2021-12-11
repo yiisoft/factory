@@ -173,20 +173,6 @@ final class FactoryTest extends TestCase
         $this->assertEquals(43, $instance->getNumber());
     }
 
-    public function testTrivialDefinition(): void
-    {
-        $container = new SimpleContainer();
-        $factory = new Factory($container);
-        $factory->set(EngineMarkOne::class, EngineMarkOne::class);
-
-        $one = $factory->create(EngineMarkOne::class);
-        $two = $factory->create(EngineMarkOne::class);
-
-        $this->assertNotSame($one, $two);
-        $this->assertInstanceOf(EngineMarkOne::class, $one);
-        $this->assertInstanceOf(EngineMarkOne::class, $two);
-    }
-
     public function testCreateWithConstructor(): void
     {
         $factory = new Factory(new SimpleContainer());
@@ -641,27 +627,6 @@ final class FactoryTest extends TestCase
                 new ValueDefinition(new EngineMarkTwo(), 'object'),
             ],
         ]);
-    }
-
-    public function testSetMultiple(): void
-    {
-        $factory = new Factory(new SimpleContainer());
-
-        $factory->setMultiple([
-            'object1' => [$this, 'createStdClass'],
-            'object2' => GearBox::class,
-        ]);
-
-        $this->assertInstanceOf(stdClass::class, $factory->create('object1'));
-        $this->assertInstanceOf(GearBox::class, $factory->create('object2'));
-    }
-
-    public function testSetInvalidDefinition(): void
-    {
-        $factory = new Factory(new SimpleContainer());
-
-        $this->expectException(InvalidConfigException::class);
-        $factory->set('test', 42);
     }
 
     public function testDefinitionAsConstructorArgument(): void

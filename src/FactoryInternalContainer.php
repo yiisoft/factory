@@ -52,10 +52,13 @@ final class FactoryInternalContainer implements ContainerInterface
 
     /**
      * @param ContainerInterface $container Container to use for resolving dependencies.
+     * @param array $definitions Definitions to create objects with.
+     * @psalm-param array<string, mixed> $definitions
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, array $definitions = [])
     {
         $this->container = $container;
+        $this->definitions = $definitions;
     }
 
     /**
@@ -147,27 +150,6 @@ final class FactoryInternalContainer implements ContainerInterface
     public function hasDefinition(string $id): bool
     {
         return array_key_exists($id, $this->definitions);
-    }
-
-    /**
-     * Set definition for a given identifier.
-     *
-     * @param string $id Identifier to set definition for.
-     * @param mixed $definition Definition to set.
-     */
-    public function setDefinition(string $id, $definition): void
-    {
-        $this->definitions[$id] = $definition;
-    }
-
-    /**
-     * Set definitions for a given identifier.
-     *
-     * @psalm-param array<string,mixed> $definitions
-     */
-    public function setDefinitions(array $definitions): void
-    {
-        $this->definitions = $definitions;
     }
 
     /**
