@@ -161,7 +161,7 @@ final class FactoryContainer implements ContainerInterface
     }
 
     /**
-     * Set definition for a given identifier.
+     * Set definitions for a given identifier.
      *
      * @psalm-param array<string,mixed> $definitions
      */
