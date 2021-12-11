@@ -1716,7 +1716,7 @@ final class FactoryTest extends TestCase
                     '__construct()' => [
                         DynamicReference::to(
                             static fn (ContainerInterface $c) => $c->get(EngineInterface::class)
-                        )
+                        ),
                     ],
                 ],
             ]
@@ -1739,7 +1739,7 @@ final class FactoryTest extends TestCase
                     '__construct()' => [
                         DynamicReference::to(
                             static fn (ContainerInterface $c) => $c->get(EngineInterface::class)
-                        )
+                        ),
                     ],
                 ],
             ]
