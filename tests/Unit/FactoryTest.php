@@ -1643,4 +1643,21 @@ final class FactoryTest extends TestCase
 
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create('engine'));
     }
+
+    public function testTrivialDefinitionWithReference(): void
+    {
+        $container = new SimpleContainer([
+            EngineMarkOne::class => new EngineMarkOne(),
+        ]);
+
+        $factory = new Factory($container, [
+            EngineInterface::class => Reference::to(EngineMarkOne::class),
+        ]);
+
+        $one = $factory->create(EngineInterface::class);
+        $two = $factory->create(EngineInterface::class);
+        $this->assertInstanceOf(EngineInterface::class, $one);
+        $this->assertInstanceOf(EngineInterface::class, $two);
+        $this->assertNotSame($one, $two);
+    }
 }

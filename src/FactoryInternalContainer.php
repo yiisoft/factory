@@ -111,7 +111,7 @@ final class FactoryInternalContainer implements ContainerInterface
         }
 
         try {
-            return $definition->resolve($this);
+            return clone $definition->resolve($this);
         } finally {
             if ($definition instanceof ArrayDefinition) {
                 unset($this->creatingIds[$definition->getClass()]);
@@ -129,7 +129,7 @@ final class FactoryInternalContainer implements ContainerInterface
         if (!isset($this->definitionInstances[$id])) {
             if (isset($this->definitions[$id])) {
                 if (is_object($this->definitions[$id]) && !($this->definitions[$id] instanceof ReferenceInterface)) {
-                    return Normalizer::normalize(clone $this->definitions[$id], $id);
+                    return Normalizer::normalize($this->definitions[$id], $id);
                 }
 
                 if (
