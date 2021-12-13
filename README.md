@@ -49,7 +49,8 @@ $factoryConfig = [
 $factory = new Factory($container, $factoryConfig);
 
 $one = $factory->create(EngineInterface::class);
-$two = $factory->create(EngineInterface::class, [
+$two = $factory->create([
+    'class' => EngineInterface::class,
     '__construct()' => [
         'power' => 146,
     ],
