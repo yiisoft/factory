@@ -1,8 +1,8 @@
-# Factory Change Log
+# Yii Factory Change Log
 
 ## 1.0.1 under development
 
-- no changes in this release.
+- Enh #150: Add support for `yiisoft/definitions` version `^2.0` (vjik)
 
 ## 1.0.0 December 11, 2021
 
