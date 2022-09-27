@@ -26,11 +26,6 @@ final class Factory
     private FactoryInternalContainer $internalContainer;
 
     /**
-     * @var bool $validate If definitions should be validated when set.
-     */
-    private bool $validate;
-
-    /**
      * Factory constructor.
      *
      * @param ContainerInterface $container Container to use for resolving dependencies.
@@ -44,9 +39,8 @@ final class Factory
     public function __construct(
         ContainerInterface $container,
         array $definitions = [],
-        bool $validate = true
+        private bool $validate = true
     ) {
-        $this->validate = $validate;
         $this->validateDefinitions($definitions);
         $this->internalContainer = new FactoryInternalContainer($container, $definitions);
     }
@@ -56,8 +50,6 @@ final class Factory
      * @psalm-param array<string, mixed> $definitions
      *
      * @throws InvalidConfigException
-     *
-     * @return self
      */
     public function withDefinitions(array $definitions): self
     {
@@ -134,7 +126,7 @@ final class Factory
      * @psalm-return ($config is class-string ? T : mixed)
      * @psalm-suppress MixedReturnStatement
      */
-    public function create($config)
+    public function create(mixed $config)
     {
         if ($this->validate) {
             DefinitionValidator::validate($config);
@@ -156,11 +148,9 @@ final class Factory
     }
 
     /**
-     * @param mixed $config
-     *
      * @throws InvalidConfigException
      */
-    private function createDefinition($config): DefinitionInterface
+    private function createDefinition(mixed $config): DefinitionInterface
     {
         $definition = Normalizer::normalize($config);
 

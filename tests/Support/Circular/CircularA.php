@@ -6,10 +6,7 @@ namespace Yiisoft\Factory\Tests\Support\Circular;
 
 final class CircularA
 {
-    public ?CircularB $b;
-
-    public function __construct(?CircularB $b = null)
+    public function __construct(public ?\Yiisoft\Factory\Tests\Support\Circular\CircularB $b = null)
     {
-        $this->b = $b;
     }
 }
