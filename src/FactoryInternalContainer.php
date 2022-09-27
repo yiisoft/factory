@@ -27,17 +27,6 @@ use function is_string;
 final class FactoryInternalContainer implements ContainerInterface
 {
     /**
-     * @var ContainerInterface Container to use for resolving dependencies.
-     */
-    private ContainerInterface $container;
-
-    /**
-     * @var array Definitions to create objects with.
-     * @psalm-var array<string, mixed>
-     */
-    private array $definitions;
-
-    /**
      * @var DefinitionInterface[] Object created from definitions indexed by their types.
      * @psalm-var array<string, DefinitionInterface>
      */
@@ -55,17 +44,13 @@ final class FactoryInternalContainer implements ContainerInterface
      * @param array $definitions Definitions to create objects with.
      * @psalm-param array<string, mixed> $definitions
      */
-    public function __construct(ContainerInterface $container, array $definitions = [])
+    public function __construct(private ContainerInterface $container, private array $definitions = [])
     {
-        $this->container = $container;
-        $this->definitions = $definitions;
     }
 
     /**
      * @param array $definitions Definitions to create objects with.
      * @psalm-param array<string, mixed> $definitions
-     *
-     * @return self
      */
     public function withDefinitions(array $definitions): self
     {
@@ -170,8 +155,6 @@ final class FactoryInternalContainer implements ContainerInterface
     }
 
     /**
-     * @param string $id
-     *
      * @throws CircularReferenceException
      * @throws InvalidConfigException
      * @throws NotFoundException
