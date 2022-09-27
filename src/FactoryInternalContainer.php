@@ -155,11 +155,11 @@ final class FactoryInternalContainer implements ContainerInterface
     }
 
     /**
-     *
      * @throws CircularReferenceException
      * @throws InvalidConfigException
      * @throws NotFoundException
      * @throws NotInstantiableException
+     *
      * @return mixed|object
      */
     private function build(string $id)
