@@ -20,7 +20,7 @@ with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) co
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 8.0 or higher.
 
 ## Installation
 
