@@ -17,21 +17,16 @@ use function is_string;
 
 /**
  * Factory allows creating objects passing arguments runtime.
- * A factory will try to use a PSR-11 compliant container to get dependencies,
- * but will fall back to manual instantiation
- * if the container cannot provide a required dependency.
+ * A factory will try to use a PSR-11 compliant container to get dependencies, but will fall back to manual
+ * instantiation if the container cannot provide a required dependency.
  */
 final class Factory
 {
     private FactoryInternalContainer $internalContainer;
 
     /**
-     * Factory constructor.
-     *
      * @param ContainerInterface $container Container to use for resolving dependencies.
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
-     *
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      * @param bool $validate If definitions should be validated when set.
      *
      * @throws InvalidConfigException
@@ -126,7 +121,7 @@ final class Factory
      * @psalm-return ($config is class-string ? T : mixed)
      * @psalm-suppress MixedReturnStatement
      */
-    public function create(mixed $config)
+    public function create(mixed $config): mixed
     {
         if ($this->validate) {
             DefinitionValidator::validate($config);

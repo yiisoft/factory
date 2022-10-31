@@ -27,29 +27,28 @@ use function is_string;
 final class FactoryInternalContainer implements ContainerInterface
 {
     /**
-     * @var DefinitionInterface[] Object created from definitions indexed by their types.
-     * @psalm-var array<string, DefinitionInterface>
+     * @var array<string, DefinitionInterface> Object created from definitions indexed by their types.
      */
     private array $definitionInstances = [];
 
     /**
-     * @var array Used to collect IDs instantiated during build to detect circular references.
-     *
-     * @psalm-var array<string,1>
+     * @var array<string,1> Used to collect IDs instantiated during build to detect circular references.
      */
     private array $creatingIds = [];
 
     /**
      * @param ContainerInterface $container Container to use for resolving dependencies.
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      */
-    public function __construct(private ContainerInterface $container, private array $definitions = [])
-    {
+    public function __construct(
+        private ContainerInterface $container,
+        private array $definitions = []
+    ) {
     }
 
     /**
      * @param array $definitions Definitions to create objects with.
+     *
      * @psalm-param array<string, mixed> $definitions
      */
     public function withDefinitions(array $definitions): self
