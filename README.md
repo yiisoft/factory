@@ -27,7 +27,7 @@ with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) co
 The package could be installed with [composer](http://getcomposer.org/download/):
 
 ```shell
-composer require yiisoft/definitions --prefer-dist
+composer require yiisoft/definitions
 ```
 
 ## General usage

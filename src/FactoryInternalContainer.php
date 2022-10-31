@@ -62,9 +62,6 @@ final class FactoryInternalContainer implements ContainerInterface
      * @inheritDoc
      *
      * @param string $id
-     *
-     * @return mixed|object
-     * @psalm-suppress InvalidThrow
      */
     public function get($id): mixed
     {
