@@ -47,9 +47,7 @@ final class FactoryInternalContainer implements ContainerInterface
     }
 
     /**
-     * @param array $definitions Definitions to create objects with.
-     *
-     * @psalm-param array<string, mixed> $definitions
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      */
     public function withDefinitions(array $definitions): self
     {
@@ -68,7 +66,7 @@ final class FactoryInternalContainer implements ContainerInterface
      * @return mixed|object
      * @psalm-suppress InvalidThrow
      */
-    public function get($id)
+    public function get($id): mixed
     {
         if ($this->hasDefinition($id)) {
             return $this->build($id);
@@ -86,10 +84,7 @@ final class FactoryInternalContainer implements ContainerInterface
         return $this->hasDefinition($id) || $this->container->has($id);
     }
 
-    /**
-     * @return mixed
-     */
-    public function create(DefinitionInterface $definition)
+    public function create(DefinitionInterface $definition): mixed
     {
         if ($definition instanceof ArrayDefinition) {
             $this->creatingIds[$definition->getClass()] = 1;
@@ -158,17 +153,17 @@ final class FactoryInternalContainer implements ContainerInterface
      * @throws InvalidConfigException
      * @throws NotFoundException
      * @throws NotInstantiableException
-     *
-     * @return mixed|object
      */
-    private function build(string $id)
+    private function build(string $id): mixed
     {
         if (isset($this->creatingIds[$id])) {
-            throw new CircularReferenceException(sprintf(
-                'Circular reference to "%s" detected while creating: %s.',
-                $id,
-                implode(', ', array_keys($this->creatingIds))
-            ));
+            throw new CircularReferenceException(
+                sprintf(
+                    'Circular reference to "%s" detected while creating: %s.',
+                    $id,
+                    implode(', ', array_keys($this->creatingIds))
+                )
+            );
         }
 
         $definition = $this->getDefinition($id);

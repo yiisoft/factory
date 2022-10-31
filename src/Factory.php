@@ -41,8 +41,7 @@ final class Factory
     }
 
     /**
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      *
      * @throws InvalidConfigException
      */
@@ -150,9 +149,10 @@ final class Factory
         $definition = Normalizer::normalize($config);
 
         if (
-            ($definition instanceof ArrayDefinition) &&
-            $this->internalContainer->hasDefinition($definition->getClass()) &&
-            ($containerDefinition = $this->internalContainer->getDefinition($definition->getClass())) instanceof ArrayDefinition
+            ($definition instanceof ArrayDefinition)
+            && $this->internalContainer->hasDefinition($definition->getClass())
+            && ($containerDefinition = $this->internalContainer->getDefinition($definition->getClass()))
+            instanceof ArrayDefinition
         ) {
             $definition = $this->mergeDefinitions(
                 $containerDefinition,
