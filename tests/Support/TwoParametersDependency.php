@@ -6,14 +6,8 @@ namespace Yiisoft\Factory\Tests\Support;
 
 final class TwoParametersDependency
 {
-    private string $firstParameter;
-
-    private string $secondParameter;
-
-    public function __construct(string $firstParameter, string $secondParameter)
+    public function __construct(private string $firstParameter, private string $secondParameter)
     {
-        $this->firstParameter = $firstParameter;
-        $this->secondParameter = $secondParameter;
     }
 
     public function getFirstParameter(): string
