@@ -27,45 +27,27 @@ use function is_string;
 final class FactoryInternalContainer implements ContainerInterface
 {
     /**
-     * @var ContainerInterface Container to use for resolving dependencies.
-     */
-    private ContainerInterface $container;
-
-    /**
-     * @var array Definitions to create objects with.
-     * @psalm-var array<string, mixed>
-     */
-    private array $definitions;
-
-    /**
-     * @var DefinitionInterface[] Object created from definitions indexed by their types.
-     * @psalm-var array<string, DefinitionInterface>
+     * @var array<string, DefinitionInterface> Object created from definitions indexed by their types.
      */
     private array $definitionInstances = [];
 
     /**
-     * @var array Used to collect IDs instantiated during build to detect circular references.
-     *
-     * @psalm-var array<string,1>
+     * @var array<string,1> Used to collect IDs instantiated during build to detect circular references.
      */
     private array $creatingIds = [];
 
     /**
      * @param ContainerInterface $container Container to use for resolving dependencies.
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      */
-    public function __construct(ContainerInterface $container, array $definitions = [])
-    {
-        $this->container = $container;
-        $this->definitions = $definitions;
+    public function __construct(
+        private ContainerInterface $container,
+        private array $definitions = []
+    ) {
     }
 
     /**
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
-     *
-     * @return self
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      */
     public function withDefinitions(array $definitions): self
     {
@@ -80,11 +62,8 @@ final class FactoryInternalContainer implements ContainerInterface
      * @inheritDoc
      *
      * @param string $id
-     *
-     * @return mixed|object
-     * @psalm-suppress InvalidThrow
      */
-    public function get($id)
+    public function get($id): mixed
     {
         if ($this->hasDefinition($id)) {
             return $this->build($id);
@@ -102,10 +81,7 @@ final class FactoryInternalContainer implements ContainerInterface
         return $this->hasDefinition($id) || $this->container->has($id);
     }
 
-    /**
-     * @return mixed
-     */
-    public function create(DefinitionInterface $definition)
+    public function create(DefinitionInterface $definition): mixed
     {
         if ($definition instanceof ArrayDefinition) {
             $this->creatingIds[$definition->getClass()] = 1;
@@ -170,23 +146,21 @@ final class FactoryInternalContainer implements ContainerInterface
     }
 
     /**
-     * @param string $id
-     *
      * @throws CircularReferenceException
      * @throws InvalidConfigException
      * @throws NotFoundException
      * @throws NotInstantiableException
-     *
-     * @return mixed|object
      */
-    private function build(string $id)
+    private function build(string $id): mixed
     {
         if (isset($this->creatingIds[$id])) {
-            throw new CircularReferenceException(sprintf(
-                'Circular reference to "%s" detected while creating: %s.',
-                $id,
-                implode(', ', array_keys($this->creatingIds))
-            ));
+            throw new CircularReferenceException(
+                sprintf(
+                    'Circular reference to "%s" detected while creating: %s.',
+                    $id,
+                    implode(', ', array_keys($this->creatingIds))
+                )
+            );
         }
 
         $definition = $this->getDefinition($id);

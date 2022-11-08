@@ -12,14 +12,12 @@ use Psr\Container\NotFoundExceptionInterface;
  */
 final class NotFoundException extends Exception implements NotFoundExceptionInterface
 {
-    private string $id;
-
     /**
      * @param string $id ID of the definition or name of the class that was not found.
      */
-    public function __construct(string $id)
-    {
-        $this->id = $id;
+    public function __construct(
+        private string $id
+    ) {
         parent::__construct(sprintf('No definition or class found or resolvable for %s.', $id));
     }
 

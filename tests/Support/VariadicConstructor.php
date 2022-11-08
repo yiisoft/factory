@@ -6,22 +6,10 @@ namespace Yiisoft\Factory\Tests\Support;
 
 final class VariadicConstructor
 {
-    /**
-     * @var mixed
-     */
-    private $first;
-
-    private EngineInterface $engine;
     private array $parameters;
 
-    /**
-     * @param mixed $first
-     * @param mixed ...$parameters
-     */
-    public function __construct($first, EngineInterface $engine, ...$parameters)
+    public function __construct(private mixed $first, private EngineInterface $engine, mixed ...$parameters)
     {
-        $this->first = $first;
-        $this->engine = $engine;
         $this->parameters = $parameters;
     }
 

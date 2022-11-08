@@ -17,26 +17,16 @@ use function is_string;
 
 /**
  * Factory allows creating objects passing arguments runtime.
- * A factory will try to use a PSR-11 compliant container to get dependencies,
- * but will fall back to manual instantiation
- * if the container cannot provide a required dependency.
+ * A factory will try to use a PSR-11 compliant container to get dependencies, but will fall back to manual
+ * instantiation if the container cannot provide a required dependency.
  */
 final class Factory
 {
     private FactoryInternalContainer $internalContainer;
 
     /**
-     * @var bool $validate If definitions should be validated when set.
-     */
-    private bool $validate;
-
-    /**
-     * Factory constructor.
-     *
      * @param ContainerInterface $container Container to use for resolving dependencies.
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
-     *
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      * @param bool $validate If definitions should be validated when set.
      *
      * @throws InvalidConfigException
@@ -44,20 +34,16 @@ final class Factory
     public function __construct(
         ContainerInterface $container,
         array $definitions = [],
-        bool $validate = true
+        private bool $validate = true
     ) {
-        $this->validate = $validate;
         $this->validateDefinitions($definitions);
         $this->internalContainer = new FactoryInternalContainer($container, $definitions);
     }
 
     /**
-     * @param array $definitions Definitions to create objects with.
-     * @psalm-param array<string, mixed> $definitions
+     * @param array<string, mixed> $definitions Definitions to create objects with.
      *
      * @throws InvalidConfigException
-     *
-     * @return self
      */
     public function withDefinitions(array $definitions): self
     {
@@ -134,7 +120,7 @@ final class Factory
      * @psalm-return ($config is class-string ? T : mixed)
      * @psalm-suppress MixedReturnStatement
      */
-    public function create($config)
+    public function create(mixed $config): mixed
     {
         if ($this->validate) {
             DefinitionValidator::validate($config);
@@ -156,18 +142,17 @@ final class Factory
     }
 
     /**
-     * @param mixed $config
-     *
      * @throws InvalidConfigException
      */
-    private function createDefinition($config): DefinitionInterface
+    private function createDefinition(mixed $config): DefinitionInterface
     {
         $definition = Normalizer::normalize($config);
 
         if (
-            ($definition instanceof ArrayDefinition) &&
-            $this->internalContainer->hasDefinition($definition->getClass()) &&
-            ($containerDefinition = $this->internalContainer->getDefinition($definition->getClass())) instanceof ArrayDefinition
+            ($definition instanceof ArrayDefinition)
+            && $this->internalContainer->hasDefinition($definition->getClass())
+            && ($containerDefinition = $this->internalContainer->getDefinition($definition->getClass()))
+            instanceof ArrayDefinition
         ) {
             $definition = $this->mergeDefinitions(
                 $containerDefinition,
