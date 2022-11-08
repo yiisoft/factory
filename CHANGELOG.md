@@ -1,5 +1,9 @@
 # Yii Factory Change Log
 
+## 1.1.1 under development
+
+- no changes in this release.
+
 ## 1.1.0 November 08, 2022
 
 - Enh #162: Raise minimum PHP version to 8.0 and refactor code (@xepozz, @vjik)
