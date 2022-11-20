@@ -11,14 +11,10 @@ use Yiisoft\Factory\DependencyResolverInterface;
 final class LazyDefinitionDecorator implements DefinitionInterface
 {
     private DefinitionInterface $definition;
-    private string $objectClass;
-    private LazyLoadingValueHolderFactory $factory;
 
-    public function __construct(LazyLoadingValueHolderFactory $factory, DefinitionInterface $definition, string $objectClass)
+    public function __construct(private LazyLoadingValueHolderFactory $factory, DefinitionInterface $definition, private string $objectClass)
     {
         $this->definition = $definition;
-        $this->objectClass = $objectClass;
-        $this->factory = $factory;
     }
 
     public function resolve(DependencyResolverInterface $container)
