@@ -8,18 +8,18 @@ use PHPUnit\Framework\TestCase;
 use ProxyManager\Exception\InvalidProxiedClassException;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\Proxy\LazyLoadingInterface;
-use Yiisoft\Factory\Definition\ArrayDefinition;
+use Yiisoft\Definitions\ArrayDefinition;
 use Yiisoft\Factory\Definition\Decorator\LazyDefinitionDecorator;
 use Yiisoft\Factory\Tests\Support\EngineInterface;
 use Yiisoft\Factory\Tests\Support\NotFinalClass;
 use Yiisoft\Factory\Tests\Support\Phone;
-use Yiisoft\Factory\Tests\TestHelper;
+use Yiisoft\Test\Support\Container\SimpleContainer;
 
 final class LazyDefinitionDecoratorTest extends TestCase
 {
     public function testDecorateFinalClass(): void
     {
-        $dependencyResolver = TestHelper::createDependencyResolver();
+        $container = new SimpleContainer();
         $factory = new LazyLoadingValueHolderFactory();
 
         $class = Phone::class;
@@ -30,12 +30,12 @@ final class LazyDefinitionDecoratorTest extends TestCase
         $definition = new LazyDefinitionDecorator($factory, $definition, $class);
 
         $this->expectException(InvalidProxiedClassException::class);
-        $definition->resolve($dependencyResolver);
+        $definition->resolve($container);
     }
 
     public function testDecorateNotFinalClass(): void
     {
-        $dependencyResolver = TestHelper::createDependencyResolver();
+        $container = new SimpleContainer();
         $factory = new LazyLoadingValueHolderFactory();
 
         $class = NotFinalClass::class;
@@ -45,14 +45,14 @@ final class LazyDefinitionDecoratorTest extends TestCase
         ]);
         $definition = new LazyDefinitionDecorator($factory, $definition, $class);
 
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertInstanceOf(LazyLoadingInterface::class, $phone);
     }
 
     public function testDecorateInterface(): void
     {
-        $dependencyResolver = TestHelper::createDependencyResolver();
+        $container = new SimpleContainer();
         $factory = new LazyLoadingValueHolderFactory();
 
         $class = EngineInterface::class;
@@ -62,7 +62,7 @@ final class LazyDefinitionDecoratorTest extends TestCase
         ]);
         $definition = new LazyDefinitionDecorator($factory, $definition, $class);
 
-        $phone = $definition->resolve($dependencyResolver);
+        $phone = $definition->resolve($container);
 
         self::assertInstanceOf(LazyLoadingInterface::class, $phone);
     }

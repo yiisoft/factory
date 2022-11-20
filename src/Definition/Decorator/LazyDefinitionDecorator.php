@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Definition\Decorator;
 
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
-use Yiisoft\Factory\Definition\DefinitionInterface;
-use Yiisoft\Factory\DependencyResolverInterface;
+use Psr\Container\ContainerInterface;
+use Yiisoft\Definitions\Contract\DefinitionInterface;
 
 final class LazyDefinitionDecorator implements DefinitionInterface
 {
@@ -21,7 +21,7 @@ final class LazyDefinitionDecorator implements DefinitionInterface
         $this->factory = $factory;
     }
 
-    public function resolve(DependencyResolverInterface $container)
+    public function resolve(ContainerInterface $container): mixed
     {
         return $this->factory->createProxy(
             $this->objectClass,
