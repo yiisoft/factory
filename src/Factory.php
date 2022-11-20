@@ -5,42 +5,69 @@ declare(strict_types=1);
 namespace Yiisoft\Factory;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Factory\Definition\DefinitionValidator;
-use Yiisoft\Factory\Exception\InvalidConfigException;
-use Yiisoft\Factory\Exception\NotFoundException;
-use Yiisoft\Factory\Exception\NotInstantiableException;
+use Yiisoft\Definitions\ArrayDefinition;
+use Yiisoft\Definitions\Contract\DefinitionInterface;
+use Yiisoft\Definitions\Helpers\DefinitionValidator;
+use Yiisoft\Definitions\Exception\CircularReferenceException;
+use Yiisoft\Definitions\Exception\InvalidConfigException;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
+use Yiisoft\Definitions\Helpers\Normalizer;
+
+use function is_string;
 
 /**
  * Factory allows creating objects passing arguments runtime.
- * A factory will try to use a PSR-11 compliant container to get dependencies,
- * but will fall back to manual instantiation
- * if the container cannot provide a required dependency.
+ * A factory will try to use a PSR-11 compliant container to get dependencies, but will fall back to manual
+ * instantiation if the container cannot provide a required dependency.
  */
 final class Factory
 {
-    private DependencyResolver $container;
+    private FactoryInternalContainer $internalContainer;
 
     /**
-     * @var bool $validate Validate definitions when set
-     */
-    private bool $validate;
-
-    /**
-     * Factory constructor.
-     *
-     * @psalm-param array<string, mixed> $definitions
+     * @param ContainerInterface $container Container to use for resolving dependencies.
+     * @param array<string, mixed> $definitions Definitions to create objects with.
+     * @param bool $validate If definitions should be validated when set.
      *
      * @throws InvalidConfigException
      */
     public function __construct(
-        ContainerInterface $container = null,
+        ContainerInterface $container,
         array $definitions = [],
-        bool $validate = true
+        private bool $validate = true
     ) {
-        $this->container = new DependencyResolver($container);
-        $this->validate = $validate;
-        $this->setDefaultDefinitions();
-        $this->setMultiple($definitions);
+        $this->validateDefinitions($definitions);
+        $this->internalContainer = new FactoryInternalContainer($container, $definitions);
+    }
+
+    /**
+     * @param array<string, mixed> $definitions Definitions to create objects with.
+     *
+     * @throws InvalidConfigException
+     */
+    public function withDefinitions(array $definitions): self
+    {
+        $this->validateDefinitions($definitions);
+
+        $new = clone $this;
+        $new->internalContainer = $this->internalContainer->withDefinitions($definitions);
+        return $new;
+    }
+
+    /**
+     * @param array $definitions Definitions to validate.
+     * @psalm-param array<string, mixed> $definitions
+     *
+     * @throws InvalidConfigException
+     */
+    private function validateDefinitions(array $definitions): void
+    {
+        if ($this->validate) {
+            /** @var mixed $definition */
+            foreach ($definitions as $id => $definition) {
+                DefinitionValidator::validate($definition, $id);
+            }
+        }
     }
 
     /**
@@ -82,6 +109,7 @@ final class Factory
      *   (`[$class or $object, $method]`). The callable should return a new instance of the object being created.
      *
      * @throws InvalidConfigException If the configuration is invalid.
+     * @throws CircularReferenceException
      * @throws NotFoundException
      * @throws NotInstantiableException
      *
@@ -90,57 +118,53 @@ final class Factory
      * @psalm-template T
      * @psalm-param mixed|class-string<T> $config
      * @psalm-return ($config is class-string ? T : mixed)
+     * @psalm-suppress MixedReturnStatement
      */
-    public function create($config)
+    public function create(mixed $config): mixed
     {
         if ($this->validate) {
             DefinitionValidator::validate($config);
         }
 
-        /** @psalm-suppress MixedReturnStatement */
-        return $this->container
-            ->createDefinition($config)
-            ->resolve($this->container);
-    }
-
-    /**
-     * Sets a definition to the factory.
-     *
-     * @param mixed $definition
-     *
-     * @throws InvalidConfigException
-     */
-    public function set(string $id, $definition): void
-    {
-        if ($this->validate) {
-            DefinitionValidator::validate($definition, $id);
+        if (is_string($config)) {
+            if ($this->internalContainer->hasDefinition($config)) {
+                $definition = $this->internalContainer->getDefinition($config);
+            } elseif (class_exists($config)) {
+                $definition = ArrayDefinition::fromPreparedData($config);
+            } else {
+                throw new NotFoundException($config);
+            }
+        } else {
+            $definition = $this->createDefinition($config);
         }
 
-        $this->container->setFactoryDefinition($id, $definition);
+        return $this->internalContainer->create($definition);
     }
 
     /**
-     * Sets multiple definitions at once.
-     *
-     * @param array $definitions definitions indexed by their ids
-     *
-     * @psalm-param array<string, mixed> $definitions
-     *
      * @throws InvalidConfigException
      */
-    public function setMultiple(array $definitions): void
+    private function createDefinition(mixed $config): DefinitionInterface
     {
-        /** @var mixed $definition */
-        foreach ($definitions as $id => $definition) {
-            $this->set($id, $definition);
+        $definition = Normalizer::normalize($config);
+
+        if (
+            ($definition instanceof ArrayDefinition)
+            && $this->internalContainer->hasDefinition($definition->getClass())
+            && ($containerDefinition = $this->internalContainer->getDefinition($definition->getClass()))
+            instanceof ArrayDefinition
+        ) {
+            $definition = $this->mergeDefinitions(
+                $containerDefinition,
+                $definition
+            );
         }
+
+        return $definition;
     }
 
-    /**
-     * @throws InvalidConfigException
-     */
-    private function setDefaultDefinitions(): void
+    private function mergeDefinitions(DefinitionInterface $one, ArrayDefinition $two): DefinitionInterface
     {
-        $this->set(ContainerInterface::class, $this->container);
+        return $one instanceof ArrayDefinition ? $one->merge($two) : $two;
     }
 }

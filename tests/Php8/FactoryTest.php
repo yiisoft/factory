@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Factory\Tests\Php8;
 
 use PHPUnit\Framework\TestCase;
+use Yiisoft\Definitions\Exception\NotInstantiableException;
 use Yiisoft\Factory\Factory;
 use Yiisoft\Factory\Tests\Support\ColorPink;
 use Yiisoft\Factory\Tests\Support\SelfUnionType;
+use Yiisoft\Factory\Tests\Support\UnionBuiltInTypes;
 use Yiisoft\Factory\Tests\Support\VariadicUnionType;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
@@ -27,7 +29,7 @@ final class FactoryTest extends TestCase
      */
     public function testCreateObjectWithVariadicUnionTypeInConstructor(array $items): void
     {
-        $object = (new Factory())->create([
+        $object = (new Factory(new SimpleContainer()))->create([
             'class' => VariadicUnionType::class,
             '__construct()' => $items,
         ]);
@@ -47,5 +49,18 @@ final class FactoryTest extends TestCase
         $object = $factory->create(SelfUnionType::class);
 
         $this->assertSame('pink', $object->getColor());
+    }
+
+    public function testUnionBuiltInTypesDependency(): void
+    {
+        $factory = new Factory(new SimpleContainer());
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "values" parameter of type "string|int" when instantiating ' .
+            '"Yiisoft\Factory\Tests\Support\UnionBuiltInTypes::__construct()". ' .
+            'Please specify argument explicitly.'
+        );
+        $factory->create(UnionBuiltInTypes::class);
     }
 }

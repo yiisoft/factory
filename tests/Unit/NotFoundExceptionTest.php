@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit\Exception;
+namespace Yiisoft\Factory\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Factory\Exception\NotFoundException;
+use Yiisoft\Factory\NotFoundException;
 
 final class NotFoundExceptionTest extends TestCase
 {
@@ -20,6 +20,6 @@ final class NotFoundExceptionTest extends TestCase
     {
         $exception = new NotFoundException('test');
 
-        $this->assertSame('No definition or class found for "test".', $exception->getMessage());
+        $this->assertSame('No definition or class found or resolvable for test.', $exception->getMessage());
     }
 }

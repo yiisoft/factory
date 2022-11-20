@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-final class Firefighter
+final class NullableScalarConstructorArgument
 {
     public function __construct(private ?string $name)
     {

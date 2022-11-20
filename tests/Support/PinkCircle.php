@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests\Support;
 
-final class Cube
+final class PinkCircle
 {
-    public function __construct(private ColorInterface $color)
+    public function __construct(private ColorPink $color)
     {
     }
 
-    public function getColor(): ColorInterface
+    public function getColor(): ColorPink
     {
         return $this->color;
     }
