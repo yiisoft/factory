@@ -10,11 +10,8 @@ use Yiisoft\Definitions\Contract\DefinitionInterface;
 
 final class LazyDefinitionDecorator implements DefinitionInterface
 {
-    private DefinitionInterface $definition;
-
-    public function __construct(private LazyLoadingValueHolderFactory $factory, DefinitionInterface $definition, private string $objectClass)
+    public function __construct(private LazyLoadingValueHolderFactory $factory, private DefinitionInterface $definition, private string $objectClass)
     {
-        $this->definition = $definition;
     }
 
     public function resolve(ContainerInterface $container): mixed
