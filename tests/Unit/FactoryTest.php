@@ -663,9 +663,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage(
-            'Invalid definition: invalid key in array definition. Allow only string keys, got 0.'
-        );
+        $this->expectExceptionMessage('Invalid definition: no class name specified.');
         $factory->create([stdClass::class]);
     }
 

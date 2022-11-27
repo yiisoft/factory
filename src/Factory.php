@@ -111,6 +111,7 @@ final class Factory
      * @throws InvalidConfigException If the configuration is invalid.
      * @throws CircularReferenceException
      * @throws NotFoundException
+     * @throws ReflectionException
      * @throws NotInstantiableException
      *
      * @return mixed|object The created object.
