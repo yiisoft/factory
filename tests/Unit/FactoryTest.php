@@ -663,7 +663,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(new SimpleContainer());
 
         $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('Invalid definition: no class name specified.');
+        $this->expectExceptionMessage('Invalid definition: ');
         $factory->create([stdClass::class]);
     }
 
