@@ -63,7 +63,6 @@ final class Factory
     private function validateDefinitions(array $definitions): void
     {
         if ($this->validate) {
-            /** @var mixed $definition */
             foreach ($definitions as $id => $definition) {
                 DefinitionValidator::validate($definition, $id);
             }
