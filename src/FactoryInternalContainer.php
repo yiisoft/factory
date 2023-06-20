@@ -88,7 +88,6 @@ final class FactoryInternalContainer implements ContainerInterface
         }
 
         try {
-            /** @var mixed $result */
             $result = $definition->resolve($this);
             return is_object($result) ? clone $result : $result;
         } finally {
