@@ -32,13 +32,13 @@ final class FactoryInternalContainerTest extends TestCase
      */
     public function testHas(bool $expected, ?ContainerInterface $container): void
     {
-        $factoryContainer = new FactoryInternalContainer($container);
+        $factoryContainer = new FactoryInternalContainer($container, []);
         $this->assertSame($expected, $factoryContainer->has('test'));
     }
 
     public function testGetNonExistingDefinition(): void
     {
-        $factoryContainer = new FactoryInternalContainer(new SimpleContainer());
+        $factoryContainer = new FactoryInternalContainer(new SimpleContainer(), []);
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No definition found for "non-exists".');

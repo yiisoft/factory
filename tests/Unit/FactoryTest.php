@@ -650,7 +650,7 @@ final class FactoryTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
             '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
-            'Yiisoft\\\\Definitions\\\\ArrayDefinition::~'
+            '(\\\\|)Yiisoft\\\\Definitions\\\\ArrayDefinition::~'
         );
         $factory->create([
             'class' => Cube::class,
@@ -1353,7 +1353,7 @@ final class FactoryTest extends TestCase
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
             '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
-            'Yiisoft\\\\Definitions\\\\ValueDefinition::~'
+            '(\\\\|)Yiisoft\\\\Definitions\\\\ValueDefinition::~'
         );
         new Factory(new SimpleContainer(), ['test' => $definition]);
     }
@@ -1376,7 +1376,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(new SimpleContainer());
 
         $this->expectException(NotInstantiableException::class);
-        $object = $factory->create(NullableScalarConstructorArgument::class);
+        $factory->create(NullableScalarConstructorArgument::class);
     }
 
     public function testScalarConstructorArgument(): void
