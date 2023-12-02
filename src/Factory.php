@@ -32,7 +32,7 @@ final class Factory
      * @throws InvalidConfigException
      */
     public function __construct(
-        ContainerInterface $container,
+        ?ContainerInterface $container = null,
         array $definitions = [],
         private bool $validate = true
     ) {

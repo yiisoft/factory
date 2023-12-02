@@ -54,6 +54,18 @@ use function count;
 
 final class FactoryTest extends TestCase
 {
+    public function testBase(): void
+    {
+        $factory = new Factory();
+
+        $object1 = $factory->create(ColorRed::class);
+        $object2 = $factory->create(ColorRed::class);
+
+        $this->assertInstanceOf(ColorRed::class, $object1);
+        $this->assertInstanceOf(ColorRed::class, $object2);
+        $this->assertNotSame($object1, $object2);
+    }
+
     public function testWithDefinitions(): void
     {
         $container = new SimpleContainer();

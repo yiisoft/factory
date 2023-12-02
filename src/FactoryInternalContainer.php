@@ -37,12 +37,12 @@ final class FactoryInternalContainer implements ContainerInterface
     private array $creatingIds = [];
 
     /**
-     * @param ContainerInterface $container Container to use for resolving dependencies.
+     * @param ContainerInterface|null $container Container to use for resolving dependencies.
      * @param array<string, mixed> $definitions Definitions to create objects with.
      */
     public function __construct(
-        private ContainerInterface $container,
-        private array $definitions = []
+        private ?ContainerInterface $container,
+        private array $definitions
     ) {
     }
 
@@ -69,7 +69,7 @@ final class FactoryInternalContainer implements ContainerInterface
             return $this->build($id);
         }
 
-        if ($this->container->has($id)) {
+        if ($this->container?->has($id)) {
             return $this->container->get($id);
         }
 
@@ -78,7 +78,7 @@ final class FactoryInternalContainer implements ContainerInterface
 
     public function has($id): bool
     {
-        return $this->hasDefinition($id) || $this->container->has($id);
+        return $this->hasDefinition($id) || $this->container?->has($id);
     }
 
     public function create(DefinitionInterface $definition): mixed

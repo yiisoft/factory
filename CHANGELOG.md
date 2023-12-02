@@ -2,7 +2,7 @@
 
 ## 1.1.1 under development
 
-- no changes in this release.
+- Enh #198: Make container optional (@vjik)
 
 ## 1.1.0 November 08, 2022
 
