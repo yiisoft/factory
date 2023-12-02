@@ -69,7 +69,7 @@ final class FactoryInternalContainer implements ContainerInterface
             return $this->build($id);
         }
 
-        if ($this->container?->has($id) === true) {
+        if ($this->container?->has($id)) {
             return $this->container->get($id);
         }
 
@@ -78,7 +78,7 @@ final class FactoryInternalContainer implements ContainerInterface
 
     public function has($id): bool
     {
-        return $this->hasDefinition($id) || ($this->container?->has($id) === true);
+        return $this->hasDefinition($id) || $this->container?->has($id);
     }
 
     public function create(DefinitionInterface $definition): mixed
