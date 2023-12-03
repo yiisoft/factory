@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit;
+namespace Yiisoft\Factory\Tests;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;
