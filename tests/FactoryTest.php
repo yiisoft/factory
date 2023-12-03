@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Factory\Tests\Unit;
+namespace Yiisoft\Factory\Tests;
 
 use ArrayIterator;
 use PHPUnit\Framework\TestCase;
@@ -45,9 +45,12 @@ use Yiisoft\Factory\Tests\Support\PropertyTest;
 use Yiisoft\Factory\Tests\Support\Recorder;
 use Yiisoft\Factory\Tests\Support\ScalarConstructorArgument;
 use Yiisoft\Factory\Tests\Support\SelfType;
+use Yiisoft\Factory\Tests\Support\SelfUnionType;
 use Yiisoft\Factory\Tests\Support\TwoParametersDependency;
+use Yiisoft\Factory\Tests\Support\UnionBuiltInTypes;
 use Yiisoft\Factory\Tests\Support\VariadicClosures;
 use Yiisoft\Factory\Tests\Support\VariadicConstructor;
+use Yiisoft\Factory\Tests\Support\VariadicUnionType;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function count;
@@ -1673,5 +1676,54 @@ final class FactoryTest extends TestCase
         $this->assertInstanceOf(EngineInterface::class, $one);
         $this->assertInstanceOf(EngineInterface::class, $two);
         $this->assertNotSame($one, $two);
+    }
+
+    public function dataCreateObjectWithVariadicUnionTypeInConstructor(): array
+    {
+        return [
+            [[1, 'hello']],
+            [[1]],
+            [[]],
+        ];
+    }
+
+    /**
+     * @dataProvider dataCreateObjectWithVariadicUnionTypeInConstructor
+     */
+    public function testCreateObjectWithVariadicUnionTypeInConstructor(array $items): void
+    {
+        $object = (new Factory(new SimpleContainer()))->create([
+            'class' => VariadicUnionType::class,
+            '__construct()' => $items,
+        ]);
+
+        $this->assertSame($items, $object->getItems());
+    }
+
+    public function testSelfUnionTypeDependency(): void
+    {
+        $containerObject = new SelfUnionType(new ColorPink());
+
+        $factory = new Factory(
+            new SimpleContainer([SelfUnionType::class => $containerObject]),
+        );
+
+        /** @var SelfUnionType $object */
+        $object = $factory->create(SelfUnionType::class);
+
+        $this->assertSame('pink', $object->getColor());
+    }
+
+    public function testUnionBuiltInTypesDependency(): void
+    {
+        $factory = new Factory(new SimpleContainer());
+
+        $this->expectException(NotInstantiableException::class);
+        $this->expectExceptionMessage(
+            'Can not determine value of the "values" parameter of type "string|int" when instantiating ' .
+            '"Yiisoft\Factory\Tests\Support\UnionBuiltInTypes::__construct()". ' .
+            'Please specify argument explicitly.'
+        );
+        $factory->create(UnionBuiltInTypes::class);
     }
 }
