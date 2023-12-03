@@ -1,6 +1,6 @@
 # Yii Factory Change Log
 
-## 1.1.1 under development
+## 1.2.0 December 03, 2023
 
 - Enh #198: Make container optional (@vjik)
 
