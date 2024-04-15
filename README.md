@@ -24,7 +24,7 @@ with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) co
 
 ## Installation
 
-The package could be installed with [composer](http://getcomposer.org/download/):
+The package could be installed with [composer](https://getcomposer.org/download/):
 
 ```shell
 composer require yiisoft/definitions
@@ -101,7 +101,7 @@ The code is statically analyzed with [Psalm](https://psalm.dev/). To run static 
 ./vendor/bin/psalm
 ```
 
-### Code style
+### Rector
 
 Use [Rector](https://github.com/rectorphp/rector) to make codebase follow some specific rules or
 use either newest or any specific version of PHP:
@@ -114,6 +114,12 @@ use either newest or any specific version of PHP:
 
 Use [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker) to detect transitive
 [Composer](https://getcomposer.org/) dependencies.
+
+To run the checker, execute the following command:
+
+```shell
+./vendor/bin/composer-require-checker
+```
 
 ## License
 
