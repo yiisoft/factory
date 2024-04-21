@@ -76,7 +76,7 @@ $factory = new Factory($container, $factoryConfig, false);
 
 ## Documentation
 
-- More information can be found in the [Internals.](docs/internals.md)
+- [Internals](docs/internals.md)
 
 ## Support
 
