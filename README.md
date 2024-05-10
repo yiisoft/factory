@@ -1,13 +1,10 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
+        <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="100px" alt="Yii">
     </a>
     <h1 align="center">Yii Factory</h1>
     <br>
 </p>
-
-This package provides abstract object factory allowing to create objects by given definition
-with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) container.
 
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/factory/v/stable.png)](https://packagist.org/packages/yiisoft/factory)
 [![Total Downloads](https://poser.pugx.org/yiisoft/factory/downloads.png)](https://packagist.org/packages/yiisoft/factory)
@@ -17,6 +14,9 @@ with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) co
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Ffactory%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/factory/master)
 [![static analysis](https://github.com/yiisoft/factory/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/factory/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/factory/coverage.svg)](https://shepherd.dev/github/yiisoft/factory)
+
+This package provides abstract object factory allowing to create objects by given definition
+with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) container.
 
 ## Requirements
 

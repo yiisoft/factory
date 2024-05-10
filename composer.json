@@ -8,13 +8,23 @@
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/factory/issues",
+        "issues": "https://github.com/yiisoft/factory/issues?state=open",
+        "source": "https://github.com/yiisoft/factory",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "ircs://irc.libera.chat:6697/yii",
-        "chat": "https://t.me/yii3en",
-        "source": "https://github.com/yiisoft/factory"
+        "chat": "https://t.me/yii3en"
     },
+    "funding": [
+        {
+            "type": "opencollective",
+            "url": "https://opencollective.com/yiisoft"
+        },
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/yiisoft"
+        }
+    ],
     "require": {
         "php": "^8.0",
         "psr/container": "^1.0|^2.0",
