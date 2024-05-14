@@ -24,10 +24,10 @@ with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) co
 
 ## Installation
 
-The package could be installed with [Composer](https://getcomposer.org)::
+The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
-composer require yiisoft/definitions
+composer require yiisoft/factory
 ```
 
 ## General usage
