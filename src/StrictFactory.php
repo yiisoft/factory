@@ -44,10 +44,9 @@ final class StrictFactory
      *
      * @param string $id The identifier of the object to create.
      *
-     * @return mixed The created object.
-     *
      * @throws NotFoundException If no definition is found for the given identifier.
      * @throws InvalidConfigException If definition configuration is not valid.
+     * @return mixed The created object.
      */
     public function create(string $id): mixed
     {
