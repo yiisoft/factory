@@ -73,6 +73,29 @@ turn it off by passing `false` as a third constructor argument:
 $factory = new Factory($container, $factoryConfig, false);
 ```
 
+### Strict factory
+
+`StrictFactory` is similar to base factory, but creating objects for specified definitions only:
+
+```php
+$container = new PSR11DependencyInjectionContainer();
+$factoryConfig = [
+    EngineInterface::class => [
+        'class' => EngineMarkOne::class,
+        '__construct()' => [
+            'power' => 42,
+        ],
+    ]
+];
+
+$factory = new Factory($container, $factoryConfig);
+
+$engine = $factory->create(EngineInterface::class);
+
+// Throws `NotFoundException`
+$factory->create(EngineMarkOne::class);
+```
+
 ## Documentation
 
 - [Internals](docs/internals.md)
