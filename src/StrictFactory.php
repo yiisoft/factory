@@ -19,15 +19,15 @@ final class StrictFactory
     private FactoryInternalContainer $internalContainer;
 
     /**
-     * @param ContainerInterface|null $container Container to use for resolving dependencies.
      * @param array<string, mixed> $definitions Definitions to create objects with.
+     * @param ContainerInterface|null $container Container to use for resolving dependencies.
      * @param bool $validate If definitions should be validated when set.
      *
      * @throws InvalidConfigException When validation is enabled and definitions are invalid.
      */
     public function __construct(
+        array $definitions,
         ?ContainerInterface $container = null,
-        array $definitions = [],
         bool $validate = true,
     ) {
         if ($validate) {

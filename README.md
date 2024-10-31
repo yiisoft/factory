@@ -88,7 +88,7 @@ $factoryConfig = [
     ]
 ];
 
-$factory = new Factory($container, $factoryConfig);
+$factory = new Factory($factoryConfig, $container);
 
 $engine = $factory->create(EngineInterface::class);
 
