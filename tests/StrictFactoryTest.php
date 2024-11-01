@@ -22,6 +22,8 @@ final class StrictFactoryTest extends TestCase
         ]);
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
+        $this->assertTrue($factory->has('engine'));
+        $this->assertFalse($factory->has(EngineMarkOne::class));
 
         $this->expectException(NotFoundException::class);
         $factory->create(EngineMarkOne::class);

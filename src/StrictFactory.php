@@ -13,7 +13,7 @@ use Yiisoft\Definitions\Helpers\DefinitionValidator;
  *
  * A factory will try to use a PSR-11 compliant container to get dependencies, but will fall back to manual
  * instantiation if the container cannot provide a required dependency.
-  */
+ */
 final class StrictFactory
 {
     private FactoryInternalContainer $internalContainer;
@@ -57,5 +57,16 @@ final class StrictFactory
         return $this->internalContainer->create(
             $this->internalContainer->getDefinition($id)
         );
+    }
+
+    /**
+     * Checks if the factory has a definition for the specified identifier.
+     *
+     * @param string $id The identifier of the definition to check.
+     * @return bool Whether the factory has a definition for the specified identifier.
+     */
+    public function has(string $id): bool
+    {
+        return $this->internalContainer->hasDefinition($id);
     }
 }
