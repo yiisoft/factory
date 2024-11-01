@@ -25,7 +25,7 @@ final class Factory
     private FactoryInternalContainer $internalContainer;
 
     /**
-     * @param ContainerInterface $container Container to use for resolving dependencies.
+     * @param ContainerInterface|null $container Container to use for resolving dependencies.
      * @param array<string, mixed> $definitions Definitions to create objects with.
      * @param bool $validate If definitions should be validated when set.
      *

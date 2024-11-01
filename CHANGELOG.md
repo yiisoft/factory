@@ -2,7 +2,7 @@
 
 ## 1.2.1 under development
 
-- no changes in this release.
+- New #214: Add `StrictFactory` (@vjik)
 
 ## 1.2.0 December 03, 2023
 
