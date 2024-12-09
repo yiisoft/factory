@@ -73,6 +73,31 @@ turn it off by passing `false` as a third constructor argument:
 $factory = new Factory($container, $factoryConfig, false);
 ```
 
+### Strict factory
+
+`StrictFactory` differs in that it processes only configured definitions.
+When attempting to request an existing class that is not defined in the factory config,
+a `NotFoundException` will be thrown.
+
+```php
+$container = new PSR11DependencyInjectionContainer();
+$factoryConfig = [
+    EngineInterface::class => [
+        'class' => EngineMarkOne::class,
+        '__construct()' => [
+            'power' => 42,
+        ],
+    ]
+];
+
+$factory = new Factory($factoryConfig, $container);
+
+$engine = $factory->create(EngineInterface::class);
+
+// Throws `NotFoundException`
+$factory->create(EngineMarkOne::class);
+```
+
 ## Documentation
 
 - [Internals](docs/internals.md)
