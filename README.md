@@ -75,7 +75,9 @@ $factory = new Factory($container, $factoryConfig, false);
 
 ### Strict factory
 
-`StrictFactory` is similar to base factory, but creating objects for specified definitions only:
+`StrictFactory` differs in that it processes only configured definitions.
+When attempting to request an existing class that is not defined in the factory config,
+a `NotFoundException` will be thrown.
 
 ```php
 $container = new PSR11DependencyInjectionContainer();
