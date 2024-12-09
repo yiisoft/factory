@@ -1,5 +1,9 @@
 # Yii Factory Change Log
 
+## 1.3.1 under development
+
+- no changes in this release.
+
 ## 1.3.0 December 09, 2024
 
 - New #214: Add `StrictFactory` (@vjik)
