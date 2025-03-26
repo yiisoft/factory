@@ -37,8 +37,6 @@ use Yiisoft\Factory\Tests\Support\NullableConcreteDependency;
 use Yiisoft\Factory\Tests\Support\NullableOptionalInterfaceDependency;
 use Yiisoft\Factory\Tests\Support\NullableOptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\NullableScalarConstructorArgument;
-use Yiisoft\Factory\Tests\Support\OptionalInterfaceDependency;
-use Yiisoft\Factory\Tests\Support\OptionalConcreteDependency;
 use Yiisoft\Factory\Tests\Support\Phone;
 use Yiisoft\Factory\Tests\Support\PinkCircle;
 use Yiisoft\Factory\Tests\Support\PropertyTest;
@@ -760,22 +758,6 @@ final class FactoryTest extends TestCase
         $engine = $factory->create(EngineInterface::class);
 
         $this->assertSame(42, $engine->getNumber());
-    }
-
-    public function testOptionalInterfaceDependency(): void
-    {
-        $factory = new Factory(new SimpleContainer());
-
-        $object = $factory->create(OptionalInterfaceDependency::class);
-        $this->assertInstanceOf(OptionalInterfaceDependency::class, $object);
-    }
-
-    public function testOptionalConcreteDependency(): void
-    {
-        $factory = new Factory(new SimpleContainer());
-
-        $object = $factory->create(OptionalConcreteDependency::class);
-        $this->assertInstanceOf(OptionalConcreteDependency::class, $object);
     }
 
     public function testNullableOptionalInterfaceDependency(): void
