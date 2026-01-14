@@ -55,7 +55,7 @@ final class StrictFactory
         }
 
         return $this->internalContainer->create(
-            $this->internalContainer->getDefinition($id)
+            $this->internalContainer->getDefinition($id),
         );
     }
 

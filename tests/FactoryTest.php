@@ -265,7 +265,7 @@ final class FactoryTest extends TestCase
         $object = $factory->create([
             'class' => CallableDependency::class,
             '__construct()' => [
-                'callback' => static fn () => 42,
+                'callback' => static fn() => 42,
             ],
         ]);
 
@@ -349,7 +349,7 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => new EngineMarkTwo(),
                 'engine' => Reference::to(EngineInterface::class),
-            ]
+            ],
         );
 
         $engine = $factory->create('engine');
@@ -369,7 +369,7 @@ final class FactoryTest extends TestCase
                         Reference::to(EngineInterface::class),
                     ],
                 ],
-            ]
+            ],
         );
 
         $car = $factory->create(Car::class);
@@ -384,7 +384,7 @@ final class FactoryTest extends TestCase
             ]),
             [
                 EngineInterface::class => new EngineMarkTwo(),
-            ]
+            ],
         );
 
         $car = $factory->create([
@@ -410,7 +410,7 @@ final class FactoryTest extends TestCase
                         Reference::to(ColorInterface::class),
                     ],
                 ],
-            ]
+            ],
         );
 
         $car = $factory->create(Car::class);
@@ -426,7 +426,7 @@ final class FactoryTest extends TestCase
             ]),
             [
                 ColorInterface::class => new ColorPink(),
-            ]
+            ],
         );
 
         $car = $factory->create([
@@ -446,7 +446,7 @@ final class FactoryTest extends TestCase
             ]),
             [
                 'engine' => Reference::to(EngineInterface::class),
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
@@ -555,7 +555,7 @@ final class FactoryTest extends TestCase
         $expectedName,
         $expectedVersion,
         $factoryDefinition,
-        $createDefinition
+        $createDefinition,
     ): void {
         $factory = new Factory(new SimpleContainer(), [
             Phone::class => $factoryDefinition,
@@ -571,8 +571,8 @@ final class FactoryTest extends TestCase
     public function dataCreateObjectWithVariadicClosuresInConstructor(): array
     {
         return [
-            [[fn () => '1'], '1'],
-            [[fn () => '1', fn () => '2'], '12'],
+            [[fn() => '1'], '1'],
+            [[fn() => '1', fn() => '2'], '12'],
             [[], ''],
         ];
     }
@@ -646,7 +646,7 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '/^Only references are allowed in constructor arguments, a definition object was provided:/'
+            '/^Only references are allowed in constructor arguments, a definition object was provided:/',
         );
         $factory->create([
             'class' => Car::class,
@@ -662,8 +662,8 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
-            '(\\\\|)Yiisoft\\\\Definitions\\\\ArrayDefinition::~'
+            '~^Only references are allowed in constructor arguments, a definition object was provided: '
+            . '(\\\\|)Yiisoft\\\\Definitions\\\\ArrayDefinition::~',
         );
         $factory->create([
             'class' => Cube::class,
@@ -718,7 +718,7 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             new SimpleContainer([
                 ContainerInterface::class => new SimpleContainer(),
-            ])
+            ]),
         );
 
         $this->expectException(NotFoundException::class);
@@ -733,7 +733,7 @@ final class FactoryTest extends TestCase
             ]),
             [
                 EngineInterface::class => new EngineMarkTwo(),
-            ]
+            ],
         );
 
         $engine = $factory->create(EngineInterface::class);
@@ -751,7 +751,7 @@ final class FactoryTest extends TestCase
                     'class' => EngineMarkOne::class,
                     '__construct()' => [42],
                 ],
-            ]
+            ],
         );
 
         /** @var EngineMarkOne $engine */
@@ -827,7 +827,7 @@ final class FactoryTest extends TestCase
                         ArrayIterator::STD_PROP_LIST,
                     ],
                 ],
-            ]
+            ],
         );
 
         $items = $factory->create('items');
@@ -848,7 +848,7 @@ final class FactoryTest extends TestCase
                         'age' => 43,
                     ],
                 ],
-            ]
+            ],
         );
 
         $object = $factory->create('test');
@@ -882,7 +882,7 @@ final class FactoryTest extends TestCase
                         'parameters' => [42, 43, 44],
                     ],
                 ],
-            ]
+            ],
         );
 
         $object = $factory->create('test');
@@ -908,7 +908,7 @@ final class FactoryTest extends TestCase
                         44,
                     ],
                 ],
-            ]
+            ],
         );
 
         $object = $factory->create('test');
@@ -975,7 +975,7 @@ final class FactoryTest extends TestCase
 
     public function testClosureInProperty(): void
     {
-        $color = static fn (): ColorPink => new ColorPink();
+        $color = static fn(): ColorPink => new ColorPink();
 
         $factory = new Factory(
             new SimpleContainer(),
@@ -984,7 +984,7 @@ final class FactoryTest extends TestCase
                     'class' => PropertyTest::class,
                     '$property' => $color,
                 ],
-            ]
+            ],
         );
 
         /** @var PropertyTest $object */
@@ -1003,7 +1003,7 @@ final class FactoryTest extends TestCase
                     'class' => PropertyTest::class,
                     '$property' => Reference::to('color'),
                 ],
-            ]
+            ],
         );
 
         /** @var PropertyTest $object */
@@ -1021,9 +1021,9 @@ final class FactoryTest extends TestCase
             [
                 PropertyTest::class => [
                     'class' => PropertyTest::class,
-                    '$property' => DynamicReference::to(static fn () => $color),
+                    '$property' => DynamicReference::to(static fn() => $color),
                 ],
-            ]
+            ],
         );
 
         /** @var PropertyTest $object */
@@ -1034,7 +1034,7 @@ final class FactoryTest extends TestCase
 
     public function testClosureInMethod(): void
     {
-        $color = static fn (): ColorPink => new ColorPink();
+        $color = static fn(): ColorPink => new ColorPink();
 
         $factory = new Factory(
             new SimpleContainer(),
@@ -1043,7 +1043,7 @@ final class FactoryTest extends TestCase
                     'class' => MethodTest::class,
                     'setValue()' => [$color],
                 ],
-            ]
+            ],
         );
 
         /** @var MethodTest $object */
@@ -1062,7 +1062,7 @@ final class FactoryTest extends TestCase
                     'class' => MethodTest::class,
                     'setValue()' => [Reference::to('color')],
                 ],
-            ]
+            ],
         );
 
         /** @var MethodTest $object */
@@ -1080,9 +1080,9 @@ final class FactoryTest extends TestCase
             [
                 MethodTest::class => [
                     'class' => MethodTest::class,
-                    'setValue()' => [DynamicReference::to(static fn () => $color)],
+                    'setValue()' => [DynamicReference::to(static fn() => $color)],
                 ],
-            ]
+            ],
         );
 
         /** @var MethodTest $object */
@@ -1099,7 +1099,7 @@ final class FactoryTest extends TestCase
                 EngineInterface::class => Reference::to('engine'),
                 'engine' => Reference::to('engine-mark-one'),
                 'engine-mark-one' => EngineMarkOne::class,
-            ]
+            ],
         );
 
         $engine1 = $factory->create('engine-mark-one');
@@ -1116,7 +1116,7 @@ final class FactoryTest extends TestCase
     {
         $factory = new Factory(
             new SimpleContainer(),
-            ['car' => Car::class]
+            ['car' => Car::class],
         );
 
         $this->expectException(NotInstantiableClassException::class);
@@ -1130,7 +1130,7 @@ final class FactoryTest extends TestCase
             [
                 'car' => Car::class,
                 EngineInterface::class => EngineMarkTwo::class,
-            ]
+            ],
         );
 
         /** @var Car $car */
@@ -1145,8 +1145,8 @@ final class FactoryTest extends TestCase
             new SimpleContainer(),
             [
                 EngineInterface::class => EngineMarkOne::class,
-                'test' => static fn (EngineInterface $engine) => $engine,
-            ]
+                'test' => static fn(EngineInterface $engine) => $engine,
+            ],
         );
 
         $object = $factory->create('test');
@@ -1161,7 +1161,7 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'car' => [CarFactory::class, 'create'],
-            ]
+            ],
         );
 
         $car = $factory->create('car');
@@ -1178,7 +1178,7 @@ final class FactoryTest extends TestCase
                 ColorInterface::class => ColorPink::class,
                 CarFactory::class => CarFactory::class,
                 'car' => [CarFactory::class, 'createWithColor'],
-            ]
+            ],
         );
 
         $car = $factory->create('car');
@@ -1194,7 +1194,7 @@ final class FactoryTest extends TestCase
             [
                 ColorInterface::class => ColorPink::class,
                 'car' => [new CarFactory(), 'createWithColor'],
-            ]
+            ],
         );
 
         $car = $factory->create('car');
@@ -1210,7 +1210,7 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => EngineMarkOne::class,
                 'invokable' => new InvokableCarFactory(),
-            ]
+            ],
         );
 
         $object = $factory->create('invokable');
@@ -1242,7 +1242,7 @@ final class FactoryTest extends TestCase
                         ],
                     ],
                 ],
-            ]
+            ],
         );
 
         $car = $factory->create('car');
@@ -1271,7 +1271,7 @@ final class FactoryTest extends TestCase
                         $array,
                     ],
                 ],
-            ]
+            ],
         );
 
         /** @var Car $object */
@@ -1349,8 +1349,8 @@ final class FactoryTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessageMatches(
-            '~^Only references are allowed in constructor arguments, a definition object was provided: ' .
-            '(\\\\|)Yiisoft\\\\Definitions\\\\ValueDefinition::~'
+            '~^Only references are allowed in constructor arguments, a definition object was provided: '
+            . '(\\\\|)Yiisoft\\\\Definitions\\\\ValueDefinition::~',
         );
         new Factory(new SimpleContainer(), ['test' => $definition]);
     }
@@ -1382,9 +1382,9 @@ final class FactoryTest extends TestCase
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine value of the "name" parameter of type "string" when instantiating ' .
-            '"Yiisoft\Factory\Tests\Support\ScalarConstructorArgument::__construct()". ' .
-            'Please specify argument explicitly.'
+            'Can not determine value of the "name" parameter of type "string" when instantiating '
+            . '"Yiisoft\Factory\Tests\Support\ScalarConstructorArgument::__construct()". '
+            . 'Please specify argument explicitly.',
         );
         $factory->create(ScalarConstructorArgument::class);
     }
@@ -1410,9 +1410,9 @@ final class FactoryTest extends TestCase
             $container,
             [
                 EngineInterface::class => EngineMarkTwo::class,
-                'e' => fn (ContainerInterface $c) => $c->get(EngineInterface::class),
+                'e' => fn(ContainerInterface $c) => $c->get(EngineInterface::class),
                 'engine' => Reference::to('e'),
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
@@ -1428,8 +1428,8 @@ final class FactoryTest extends TestCase
             $container,
             [
                 EngineInterface::class => EngineMarkTwo::class,
-                'engine' => DynamicReference::to(fn (ContainerInterface $c) => $c->get(EngineInterface::class)),
-            ]
+                'engine' => DynamicReference::to(fn(ContainerInterface $c) => $c->get(EngineInterface::class)),
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
@@ -1444,8 +1444,8 @@ final class FactoryTest extends TestCase
         $factory = new Factory(
             $container,
             [
-                'engine' => DynamicReference::to(fn (EngineInterface $e) => $e),
-            ]
+                'engine' => DynamicReference::to(fn(EngineInterface $e) => $e),
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
@@ -1461,8 +1461,8 @@ final class FactoryTest extends TestCase
             $container,
             [
                 EngineInterface::class => new EngineMarkTwo(),
-                'engine' => DynamicReference::to(fn (EngineInterface $e) => $e),
-            ]
+                'engine' => DynamicReference::to(fn(EngineInterface $e) => $e),
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create('engine'));
@@ -1478,7 +1478,7 @@ final class FactoryTest extends TestCase
             $container,
             [
                 'engine' => Reference::to(EngineInterface::class),
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create('engine'));
@@ -1496,7 +1496,7 @@ final class FactoryTest extends TestCase
                 Car::class => [
                     '__construct()' => [Reference::to(EngineInterface::class)],
                 ],
-            ]
+            ],
         );
 
         $object1 = $factory->create(Car::class);
@@ -1516,9 +1516,9 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
+                    '__construct()' => [DynamicReference::to(fn(EngineInterface $e) => $e)],
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
@@ -1537,7 +1537,7 @@ final class FactoryTest extends TestCase
                 Car::class => [
                     '__construct()' => [Reference::to(EngineInterface::class)],
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create(Car::class)->getEngine());
@@ -1553,9 +1553,9 @@ final class FactoryTest extends TestCase
             $container,
             [
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
+                    '__construct()' => [DynamicReference::to(fn(EngineInterface $e) => $e)],
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
@@ -1573,11 +1573,11 @@ final class FactoryTest extends TestCase
                 Car::class => [
                     '__construct()' => [
                         DynamicReference::to(
-                            static fn (ContainerInterface $c) => $c->get(EngineInterface::class)
+                            static fn(ContainerInterface $c) => $c->get(EngineInterface::class),
                         ),
                     ],
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
@@ -1596,11 +1596,11 @@ final class FactoryTest extends TestCase
                 Car::class => [
                     '__construct()' => [
                         DynamicReference::to(
-                            static fn (ContainerInterface $c) => $c->get(EngineInterface::class)
+                            static fn(ContainerInterface $c) => $c->get(EngineInterface::class),
                         ),
                     ],
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkOne::class, $factory->create(Car::class)->getEngine());
@@ -1617,9 +1617,9 @@ final class FactoryTest extends TestCase
             [
                 EngineInterface::class => EngineMarkTwo::class,
                 Car::class => [
-                    '__construct()' => [DynamicReference::to(fn (EngineInterface $e) => $e)],
+                    '__construct()' => [DynamicReference::to(fn(EngineInterface $e) => $e)],
                 ],
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create(Car::class)->getEngine());
@@ -1635,9 +1635,9 @@ final class FactoryTest extends TestCase
             $container,
             [
                 EngineInterface::class => EngineMarkTwo::class,
-                'e' => fn (EngineInterface $e) => $e,
+                'e' => fn(EngineInterface $e) => $e,
                 'engine' => Reference::to('e'),
-            ]
+            ],
         );
 
         $this->assertInstanceOf(EngineMarkTwo::class, $factory->create('engine'));
@@ -1702,9 +1702,9 @@ final class FactoryTest extends TestCase
 
         $this->expectException(NotInstantiableException::class);
         $this->expectExceptionMessage(
-            'Can not determine value of the "values" parameter of type "string|int" when instantiating ' .
-            '"Yiisoft\Factory\Tests\Support\UnionBuiltInTypes::__construct()". ' .
-            'Please specify argument explicitly.'
+            'Can not determine value of the "values" parameter of type "string|int" when instantiating '
+            . '"Yiisoft\Factory\Tests\Support\UnionBuiltInTypes::__construct()". '
+            . 'Please specify argument explicitly.',
         );
         $factory->create(UnionBuiltInTypes::class);
     }

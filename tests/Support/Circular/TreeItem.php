@@ -6,7 +6,5 @@ namespace Yiisoft\Factory\Tests\Support\Circular;
 
 final class TreeItem
 {
-    public function __construct(self $treeItem)
-    {
-    }
+    public function __construct(self $treeItem) {}
 }

@@ -6,9 +6,7 @@ namespace Yiisoft\Factory\Tests\Support;
 
 final class TwoParametersDependency
 {
-    public function __construct(private string $firstParameter, private string $secondParameter)
-    {
-    }
+    public function __construct(private string $firstParameter, private string $secondParameter) {}
 
     public function getFirstParameter(): string
     {
