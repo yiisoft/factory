@@ -18,6 +18,7 @@ use Yiisoft\Definitions\Helpers\Normalizer;
 use function array_key_exists;
 use function is_object;
 use function is_string;
+use function sprintf;
 
 /**
  * Factory's primary container.
@@ -42,9 +43,8 @@ final class FactoryInternalContainer implements ContainerInterface
      */
     public function __construct(
         private ?ContainerInterface $container,
-        private array $definitions
-    ) {
-    }
+        private array $definitions,
+    ) {}
 
     /**
      * @param array<string, mixed> $definitions Definitions to create objects with.
@@ -117,14 +117,14 @@ final class FactoryInternalContainer implements ContainerInterface
                 ) {
                     $this->definitionInstances[$id] = $this->getDefinition($this->definitions[$id]);
                 } else {
-                    $this->definitionInstances[$id] =
-                        (is_string($this->definitions[$id]) && class_exists($this->definitions[$id]))
+                    $this->definitionInstances[$id]
+                        = (is_string($this->definitions[$id]) && class_exists($this->definitions[$id]))
                             ? ArrayDefinition::fromPreparedData($this->definitions[$id])
                             : Normalizer::normalize($this->definitions[$id], $id);
                 }
             } else {
                 throw new LogicException(
-                    sprintf('No definition found for "%s".', $id)
+                    sprintf('No definition found for "%s".', $id),
                 );
             }
         }
@@ -157,8 +157,8 @@ final class FactoryInternalContainer implements ContainerInterface
                 sprintf(
                     'Circular reference to "%s" detected while creating: %s.',
                     $id,
-                    implode(', ', array_keys($this->creatingIds))
-                )
+                    implode(', ', array_keys($this->creatingIds)),
+                ),
             );
         }
 

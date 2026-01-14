@@ -34,7 +34,7 @@ final class Factory
     public function __construct(
         ?ContainerInterface $container = null,
         array $definitions = [],
-        private bool $validate = true
+        private bool $validate = true,
     ) {
         $this->validateDefinitions($definitions);
         $this->internalContainer = new FactoryInternalContainer($container, $definitions);
@@ -52,21 +52,6 @@ final class Factory
         $new = clone $this;
         $new->internalContainer = $this->internalContainer->withDefinitions($definitions);
         return $new;
-    }
-
-    /**
-     * @param array $definitions Definitions to validate.
-     * @psalm-param array<string, mixed> $definitions
-     *
-     * @throws InvalidConfigException
-     */
-    private function validateDefinitions(array $definitions): void
-    {
-        if ($this->validate) {
-            foreach ($definitions as $id => $definition) {
-                DefinitionValidator::validate($definition, $id);
-            }
-        }
     }
 
     /**
@@ -141,6 +126,21 @@ final class Factory
     }
 
     /**
+     * @param array $definitions Definitions to validate.
+     * @psalm-param array<string, mixed> $definitions
+     *
+     * @throws InvalidConfigException
+     */
+    private function validateDefinitions(array $definitions): void
+    {
+        if ($this->validate) {
+            foreach ($definitions as $id => $definition) {
+                DefinitionValidator::validate($definition, $id);
+            }
+        }
+    }
+
+    /**
      * @throws InvalidConfigException
      */
     private function createDefinition(mixed $config): DefinitionInterface
@@ -155,7 +155,7 @@ final class Factory
         ) {
             $definition = $this->mergeDefinitions(
                 $containerDefinition,
-                $definition
+                $definition,
             );
         }
 

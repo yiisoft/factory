@@ -37,7 +37,7 @@ final class FactoryCircularReferencesTest extends TestCase
             [
                 Chicken::class => Chicken::class,
                 Egg::class => Egg::class,
-            ]
+            ],
         );
 
         $this->expectException(CircularReferenceException::class);
@@ -63,12 +63,12 @@ final class FactoryCircularReferencesTest extends TestCase
                 'engine-1' => Reference::to('engine-2'),
                 'engine-2' => Reference::to('engine-3'),
                 'engine-3' => Reference::to('engine-1'),
-            ]
+            ],
         );
 
         $this->expectException(CircularReferenceException::class);
         $this->expectExceptionMessage(
-            'Circular reference to "engine-2" detected while creating: engine-2, engine-3, engine-1.'
+            'Circular reference to "engine-2" detected while creating: engine-2, engine-3, engine-1.',
         );
         $factory->create('engine-1');
     }

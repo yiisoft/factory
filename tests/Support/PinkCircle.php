@@ -6,9 +6,7 @@ namespace Yiisoft\Factory\Tests\Support;
 
 final class PinkCircle
 {
-    public function __construct(private ColorPink $color)
-    {
-    }
+    public function __construct(private ColorPink $color) {}
 
     public function getColor(): ColorPink
     {

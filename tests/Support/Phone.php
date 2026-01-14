@@ -6,14 +6,13 @@ namespace Yiisoft\Factory\Tests\Support;
 
 final class Phone
 {
+    public bool $dev = false;
+    public ?string $codeName = null;
     private ?string $id = null;
     private array $colors;
     private array $apps = [];
     private ?string $author = null;
     private ?string $country = null;
-
-    public bool $dev = false;
-    public ?string $codeName = null;
 
     public function __construct(private ?string $name = null, private ?string $version = null, string ...$colors)
     {

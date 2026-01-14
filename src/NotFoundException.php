@@ -7,6 +7,8 @@ namespace Yiisoft\Factory;
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function sprintf;
+
 /**
  * NotFoundException is thrown when no definition or class was found in the factory for a given ID.
  */
@@ -16,7 +18,7 @@ final class NotFoundException extends Exception implements NotFoundExceptionInte
      * @param string $id ID of the definition or name of the class that was not found.
      */
     public function __construct(
-        private string $id
+        private string $id,
     ) {
         parent::__construct(sprintf('No definition or class found or resolvable for %s.', $id));
     }
