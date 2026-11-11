@@ -18,7 +18,7 @@ with dependencies resolved by a [PSR-11](https://www.php-fig.org/psr/psr-11/) co
 
 ## Requirements
 
-- PHP 8.0 - 8.5.
+- PHP 8.0 - 8.6.
 
 ## Installation
 
