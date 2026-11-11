@@ -4,6 +4,7 @@
 
 - Chg #238: Replace Psalm with PHPStan (@vjik)
 - Enh #220: Explicitly import functions in "use" section (@mspirkov)
+- Enh #239: Add PHP 8.6 support (@vjik)
 
 ## 1.3.1 December 02, 2025
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Factory\Tests;
 
-use ArrayIterator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -821,10 +820,10 @@ final class FactoryTest extends TestCase
             new SimpleContainer(),
             [
                 'items' => [
-                    'class' => ArrayIterator::class,
+                    'class' => TwoParametersDependency::class,
                     '__construct()' => [
-                        [],
-                        ArrayIterator::STD_PROP_LIST,
+                        'first',
+                        'second',
                     ],
                 ],
             ],
@@ -832,8 +831,9 @@ final class FactoryTest extends TestCase
 
         $items = $factory->create('items');
 
-        $this->assertInstanceOf(ArrayIterator::class, $items);
-        $this->assertSame(ArrayIterator::STD_PROP_LIST, $items->getFlags());
+        $this->assertInstanceOf(TwoParametersDependency::class, $items);
+        $this->assertSame('first', $items->getFirstParameter());
+        $this->assertSame('second', $items->getSecondParameter());
     }
 
     public function testExcessiveConstructorParametersIgnored(): void
