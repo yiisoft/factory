@@ -82,7 +82,8 @@ final class Factory
      * Using [[Container|dependency injection container]], this method can also identify
      * dependent objects, instantiate them and inject them into the newly created object.
      *
-     * @param mixed $config The object configuration. This can be specified in one of the following forms:
+     * @template T
+     * @param mixed|class-string<T> $config The object configuration. This can be specified in one of the following forms:
      *
      * - A string: representing the class name of the object to be created.
      *
@@ -97,12 +98,7 @@ final class Factory
      * @throws NotFoundException
      * @throws NotInstantiableException
      *
-     * @return mixed|object The created object.
-     *
-     * @psalm-template T
-     * @psalm-param mixed|class-string<T> $config
-     * @psalm-return ($config is class-string ? T : mixed)
-     * @psalm-suppress MixedReturnStatement
+     * @return ($config is class-string ? T : mixed) The created object.
      */
     public function create(mixed $config): mixed
     {
@@ -126,8 +122,7 @@ final class Factory
     }
 
     /**
-     * @param array $definitions Definitions to validate.
-     * @psalm-param array<string, mixed> $definitions
+     * @param array<string, mixed> $definitions Definitions to validate.
      *
      * @throws InvalidConfigException
      */

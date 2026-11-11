@@ -2,6 +2,7 @@
 
 ## 1.3.2 under development
 
+- Chg #238: Replace Psalm with PHPStan (@vjik)
 - Enh #220: Explicitly import functions in "use" section (@mspirkov)
 
 ## 1.3.1 December 02, 2025
