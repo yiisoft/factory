@@ -1,6 +1,6 @@
 # Yii Factory Change Log
 
-## 1.3.2 under development
+## 1.3.2 November 12, 2026
 
 - Chg #238: Replace Psalm with PHPStan (@vjik)
 - Enh #220: Explicitly import functions in "use" section (@mspirkov)
