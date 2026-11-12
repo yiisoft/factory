@@ -1,5 +1,9 @@
 # Yii Factory Change Log
 
+## 1.3.3 under development
+
+- no changes in this release.
+
 ## 1.3.2 November 12, 2026
 
 - Chg #238: Replace Psalm with PHPStan (@vjik)
